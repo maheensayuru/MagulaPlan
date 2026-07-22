@@ -1,0 +1,18 @@
+# Node/React
+node_modules/
+.env
+build/
+dist/
+
+# Java/Spring Boot
+target/
+*.class
+.mtj.tmp/
+*.jar
+*.war
+*.ear
+*.zip
+
+# IDEs
+.vscode/
+.idea/
