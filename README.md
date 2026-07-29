@@ -1,4 +1,4 @@
-# 💍 Magula.lk
+# 💍 MagulaPlan
 
 > **A Centralized Digital Wedding Planning Platform for the Sri Lankan Market**
 
@@ -31,7 +31,7 @@ Magula.lk acts as a centralized digital marketplace designed to solve the massiv
 
 This project is configured as a monorepo containing the frontend client, backend API, and project management documentation.
 
-    Magula.lk/
+    MagulaPlan/
     ├── frontend/       # React & Tailwind client application
     ├── backend/        # Java Spring Boot REST API
     └── docs/           # Project management deliverables, sprint reports, and diagrams
