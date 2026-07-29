@@ -2,7 +2,7 @@
 
 > **A Centralized Digital Wedding Planning Platform for the Sri Lankan Market**
 
-Magula.lk acts as a centralized digital marketplace designed to solve the massive time investment and manual effort required to plan a wedding locally. It eliminates the need for couples to manually track down vendor pricing, availability, and contact details across multiple disconnected social media apps.
+MagulaPlan acts as a centralized digital marketplace designed to solve the massive time investment and manual effort required to plan a wedding locally. It eliminates the need for couples to manually track down vendor pricing, availability, and contact details across multiple disconnected social media apps.
 
 ## ✨ Core Features
 
