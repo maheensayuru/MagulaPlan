@@ -8,7 +8,7 @@
 		<version>4.1.0</version>
 		<relativePath/> <!-- lookup parent from repository -->
 	</parent>
-	<groupId>com.zorestate</groupId>
+	<groupId>com.zerostate</groupId>
 	<artifactId>magulaplan</artifactId>
 	<version>0.0.1-SNAPSHOT</version>
 	<packaging>war</packaging>

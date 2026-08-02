@@ -1,4 +1,4 @@
-package com.zorestate.magulaplan;
+package com.zerostate.magulaplan;
 
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
