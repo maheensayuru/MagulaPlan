@@ -1,4 +1,4 @@
-package com.zorestate.magulaplan;
+package com.zerostate.magulaplan;
 
 import org.junit.jupiter.api.Test;
 import org.springframework.boot.test.context.SpringBootTest;
