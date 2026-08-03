@@ -1,0 +1,1 @@
+SELECT * FROM magulaplan_db.users;
