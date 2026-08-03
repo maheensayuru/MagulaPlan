@@ -31,3 +31,7 @@ build/
 
 ### VS Code ###
 .vscode/
+
+
+# Local application property(this consist with database pass and URL therefore this add to the gitignore)
+**/application-local.properties
