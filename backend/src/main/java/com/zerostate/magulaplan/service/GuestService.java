@@ -7,15 +7,4 @@ import java.util.UUID;
 
 public interface GuestService {
 
-//    save guest
-    Guest saveGuest(Guest guest);
-
-//    fetch all guest
-    List<Guest> getAllGuests();
-
-    Guest getGuestById(UUID guestId);
-
-    Guest UpdateGuest(Guest guest);
-
-
 }
