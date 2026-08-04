@@ -9,6 +9,7 @@ import java.util.UUID;
 
 @Entity
 @Data
+@Table(name = "guests")
 @AllArgsConstructor
 @NoArgsConstructor
 public class Guest {
