@@ -19,35 +19,35 @@ public class User {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "user_id")
-    Long userId;
+    private Long userId;
 
     @Column(name = "full_name", length = 100)
-    String fullName;
+    private String fullName;
 
     @Column(name = "partner_name", length = 100)
-    String partnerName;
+    private String partnerName;
 
     @Column(name = "email", length = 100, unique = true, nullable = false)
-    String email;
+    private String email;
 
     @Column(name = "password_hash", length = 150, nullable = false)
-    String passwordHash;
+    private String passwordHash;
 
     @Column(name = "phone_number", length = 20)
-    String phoneNumber;
+    private String phoneNumber;
 
     @Column(name = "role", length = 50)
-    String role;
+    private String role;
 
     @Column(name = "is_active")
-    Boolean isActive;
+    private Boolean isActive;
 
     @Column(name = "wedding_date")
-    LocalDate weddingDate;
+    private LocalDate weddingDate;
 
     @Column(name = "total_budget", precision = 12, scale = 2)
-    BigDecimal budget;
+    private BigDecimal budget;
 
     @Column(name = "created_at")
-    LocalDateTime createdAt;
+    private LocalDateTime createdAt;
 }
