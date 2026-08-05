@@ -1,4 +1,6 @@
--- Drop database if exists to ensure clean slate
+-- WARNING: The DROP DATABASE statement below will delete all data.
+-- Remove this line before running on shared/staging/production environments.
+
 DROP DATABASE IF EXISTS magulaplan_db;
 
 -- Create Schema
