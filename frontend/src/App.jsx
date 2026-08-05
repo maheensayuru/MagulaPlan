@@ -1,25 +1,35 @@
-import { Routes, Route } from 'react-router-dom'
+import { Routes, Route, useLocation } from 'react-router-dom'
+import { AnimatePresence } from 'framer-motion'
+import { ToastProvider } from './context/ToastContext'
+import PublicLayout from './components/layout/PublicLayout'
+import DashboardLayout from './components/layout/DashboardLayout'
+import PageTransition from './components/layout/PageTransition'
 
-function Home() {
-  return (
-    <div className="flex flex-col items-center justify-center min-h-screen bg-ivory-radial text-center px-4">
-      <span className="section-eyebrow mb-4">Frontend Setup Ready</span>
-      <h1 className="text-4xl sm:text-5xl font-display font-bold text-charcoal mb-3">
-        Magula<span className="text-gradient-gold">Plan</span>
-      </h1>
-      <p className="text-charcoal/60 max-w-md">
-        MagulaPlan එකට සාදරයෙන් පිළිගනිමු! Routing, Tailwind theme, and dependencies are wired up —
-        ready for pages.
-      </p>
-    </div>
-  )
-}
+import Landing from './pages/Landing'
+import Login from './pages/Login'
+import Register from './pages/Register'
+import Dashboard from './pages/Dashboard'
 
 function App() {
+  const location = useLocation()
+
   return (
-    <Routes>
-      <Route path="/" element={<Home />} />
-    </Routes>
+    <ToastProvider>
+      <AnimatePresence mode="wait">
+        <Routes location={location} key={location.pathname}>
+          <Route element={<PublicLayout />}>
+            <Route path="/" element={<PageTransition><Landing /></PageTransition>} />
+          </Route>
+
+          <Route path="/login" element={<PageTransition><Login /></PageTransition>} />
+          <Route path="/register" element={<PageTransition><Register /></PageTransition>} />
+
+          <Route element={<DashboardLayout />}>
+            <Route path="/dashboard" element={<PageTransition><Dashboard /></PageTransition>} />
+          </Route>
+        </Routes>
+      </AnimatePresence>
+    </ToastProvider>
   )
 }
 
