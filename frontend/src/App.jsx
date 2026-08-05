@@ -9,6 +9,8 @@ import Landing from './pages/Landing'
 import Login from './pages/Login'
 import Register from './pages/Register'
 import Dashboard from './pages/Dashboard'
+import VendorDirectory from './pages/VendorDirectory'
+import VendorDetails from './pages/VendorDetails'
 
 function App() {
   const location = useLocation()
@@ -26,6 +28,8 @@ function App() {
 
           <Route element={<DashboardLayout />}>
             <Route path="/dashboard" element={<PageTransition><Dashboard /></PageTransition>} />
+            <Route path="/vendors" element={<PageTransition><VendorDirectory /></PageTransition>} />
+            <Route path="/vendors/:id" element={<PageTransition><VendorDetails /></PageTransition>} />
           </Route>
         </Routes>
       </AnimatePresence>
