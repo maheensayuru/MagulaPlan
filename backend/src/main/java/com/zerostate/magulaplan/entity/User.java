@@ -27,10 +27,10 @@ public class User {
     @Column(name = "partner_name", length = 100)
     private String partnerName;
 
-    @Column(name = "email", length = 100, unique = true, nullable = false)
+    @Column(name = "email", length = 150, unique = true, nullable = false)
     private String email;
 
-    @Column(name = "password_hash", length = 150, nullable = false)
+    @Column(name = "password_hash", length = 255, nullable = false)
     private String passwordHash;
 
     @Column(name = "phone_number", length = 20)
