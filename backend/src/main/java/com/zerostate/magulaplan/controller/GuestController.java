@@ -16,7 +16,7 @@ import java.util.UUID;
 public class GuestController {
 
 
-    private GuestService guestService;
+    private final GuestService guestService;
 
     @Autowired
     public GuestController(GuestService guestService) {
@@ -28,10 +28,10 @@ public class GuestController {
     //    1. Create new guest
     @PostMapping
     public ResponseEntity<GuestResponseDto> createGuest(@RequestBody GuestRequestDto guestRequestDto) {
-        GuestResponseDto createGuest = guestService.saveGuest(guestRequestDto);
+        GuestResponseDto createdGuest = guestService.saveGuest(guestRequestDto);
 
 //        201
-        return new ResponseEntity<>(createGuest, HttpStatus.CREATED);
+        return new ResponseEntity<>(createdGuest, HttpStatus.CREATED);
     }
 
 //    2. Read all guests
@@ -40,7 +40,7 @@ public class GuestController {
         List<GuestResponseDto> getAllGuests = guestService.getAllGuests();
 
 //        200
-        return new ResponseEntity(getAllGuests, HttpStatus.OK);
+        return new ResponseEntity<>(getAllGuests, HttpStatus.OK);
     }
 
 //    3. Read one guest by ID
