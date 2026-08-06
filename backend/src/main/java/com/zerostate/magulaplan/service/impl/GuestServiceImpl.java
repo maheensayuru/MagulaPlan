@@ -13,8 +13,12 @@ import java.util.UUID;
 @Service
 public class GuestServiceImpl implements GuestService {
 
+    private final GuestRepository guestRepository;
+
     @Autowired
-    private GuestRepository guestRepository;
+    public GuestServiceImpl(GuestRepository guestRepository){
+        this.guestRepository = guestRepository;
+    }
 
     @Override
     public GuestResponseDto saveGuest(GuestRequestDto guestRequestDto) {
