@@ -12,14 +12,19 @@ import java.util.List;
 import java.util.UUID;
 
 @RestController
-@RequestMapping("/api/vi/guests")
+@RequestMapping("/api/v1/guests")
 public class GuestController {
 
 
-    @Autowired
     private GuestService guestService;
 
-//    1. Create new guest
+    @Autowired
+    public GuestController(GuestService guestService) {
+        this.guestService = guestService;
+    }
+
+
+    //    1. Create new guest
     @PostMapping
     public ResponseEntity<GuestResponseDto> createGuest(@RequestBody GuestRequestDto guestRequestDto) {
         GuestResponseDto createGuest = guestService.saveGuest(guestRequestDto);
