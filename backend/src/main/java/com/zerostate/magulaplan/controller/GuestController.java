@@ -20,6 +20,7 @@ public class GuestController {
 
     @Autowired
     public GuestController(GuestService guestService) {
+
         this.guestService = guestService;
     }
 
@@ -36,10 +37,10 @@ public class GuestController {
 //    2. Read all guests
     @GetMapping
     public ResponseEntity<List<GuestResponseDto>> getAllGuests(){
-        List<GuestResponseDto> guests = guestService.getAllGuests();
+        List<GuestResponseDto> getAllGuests = guestService.getAllGuests();
 
 //        200
-        return ResponseEntity.ok(guests);
+        return new ResponseEntity(getAllGuests, HttpStatus.OK);
     }
 
 //    3. Read one guest by ID
