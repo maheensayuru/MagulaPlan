@@ -9,6 +9,7 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 public class GuestRequestDto {
 
+    private Long userId;
     private String guestName;
     private String contactNumber;
     private String sideOfFamily;
