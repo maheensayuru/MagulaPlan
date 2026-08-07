@@ -4,9 +4,11 @@ import com.zerostate.magulaplan.dto.UserRequestDto;
 import com.zerostate.magulaplan.dto.UserResponseDto;
 import com.zerostate.magulaplan.repo.UserRepository;
 import com.zerostate.magulaplan.service.UserService;
+import org.springframework.stereotype.Service;
 
 import java.util.List;
 
+@Service
 public class UserServiceImpl implements UserService {
 
     private UserRepository userRepository;
