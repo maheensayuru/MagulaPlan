@@ -2,6 +2,7 @@ package com.zerostate.magulaplan.entity;
 
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
+import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
@@ -12,6 +13,7 @@ import java.util.UUID;
 @Table(name = "guests")
 @AllArgsConstructor
 @NoArgsConstructor
+@Builder
 public class Guest {
 
     @Id
@@ -19,8 +21,9 @@ public class Guest {
     @Column(name = "guest_id",updatable = false, nullable = false, columnDefinition = "VARCHAR(36)")
     private UUID guestId;
 
-    @Column(name = "user_id",nullable = false)
-    private Long userId;
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "user_id",  nullable = false)
+    private User user;
 
     @Column(name = "guest_name", length = 100, nullable = false)
     private String guestName;
