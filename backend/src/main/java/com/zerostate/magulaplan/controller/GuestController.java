@@ -15,8 +15,8 @@ import java.util.UUID;
 @RequestMapping("/api/v1/guests")
 public class GuestController {
 
-
     private final GuestService guestService;
+
 
     @Autowired
     public GuestController(GuestService guestService) {
