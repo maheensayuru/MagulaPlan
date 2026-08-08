@@ -1,0 +1,111 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  html {
+    scroll-behavior: smooth;
+  }
+
+  body {
+    @apply bg-ivory text-charcoal font-sans antialiased;
+  }
+
+  h1, h2, h3, h4 {
+    @apply font-display text-charcoal;
+  }
+
+  ::selection {
+    @apply bg-gold-200 text-maroon-700;
+  }
+
+  :focus-visible {
+    outline: 2px solid #C9A24B;
+    outline-offset: 2px;
+  }
+}
+
+@layer components {
+  .container-app {
+    @apply max-w-7xl mx-auto px-4 sm:px-6 lg:px-8;
+  }
+
+  .btn-primary {
+    @apply inline-flex items-center justify-center gap-2 rounded-full bg-maroon-500 text-ivory-50 font-semibold px-6 py-3 shadow-soft transition-all duration-300 hover:bg-maroon-600 hover:-translate-y-0.5 hover:shadow-gold active:translate-y-0 disabled:opacity-50 disabled:pointer-events-none;
+  }
+
+  .btn-gold {
+    @apply inline-flex items-center justify-center gap-2 rounded-full bg-gold-gradient text-maroon-800 font-semibold px-6 py-3 shadow-gold transition-all duration-300 hover:-translate-y-0.5 hover:shadow-lg active:translate-y-0;
+  }
+
+  .btn-outline {
+    @apply inline-flex items-center justify-center gap-2 rounded-full border-2 border-maroon-500 text-maroon-500 font-semibold px-6 py-3 transition-all duration-300 hover:bg-maroon-500 hover:text-ivory-50;
+  }
+
+  .btn-ghost {
+    @apply inline-flex items-center justify-center gap-2 rounded-full text-charcoal/80 font-medium px-4 py-2 transition-all duration-300 hover:bg-charcoal/5;
+  }
+
+  .card {
+    @apply bg-white rounded-xl2 shadow-card border border-charcoal/5 transition-all duration-300;
+  }
+
+  .card-hover {
+    @apply hover:-translate-y-1 hover:shadow-soft;
+  }
+
+  .input-field {
+    @apply w-full rounded-xl border border-charcoal/15 bg-white px-4 py-3 text-charcoal placeholder:text-charcoal/40 transition-all duration-200 focus:border-gold-400 focus:ring-2 focus:ring-gold-200 outline-none;
+  }
+
+  .section-eyebrow {
+    @apply inline-flex items-center gap-2 text-xs font-semibold tracking-[0.2em] uppercase text-gold-600;
+  }
+
+  .divider-ornament {
+    @apply flex items-center justify-center gap-3 text-gold-500;
+  }
+
+  .skeleton {
+    @apply relative overflow-hidden bg-charcoal/5 rounded-lg;
+  }
+
+  .skeleton::after {
+    content: '';
+    @apply absolute inset-0;
+    background: linear-gradient(90deg, transparent, rgba(201,162,75,0.15), transparent);
+    background-size: 1000px 100%;
+    animation: shimmer 1.6s infinite linear;
+  }
+}
+
+/* subtle Kandyan-inspired repeating border pattern, used sparingly */
+.pattern-border {
+  background-image: repeating-linear-gradient(
+    45deg,
+    rgba(201, 162, 75, 0.35) 0px,
+    rgba(201, 162, 75, 0.35) 2px,
+    transparent 2px,
+    transparent 10px
+  );
+  height: 4px;
+}
+
+.text-gradient-gold {
+  background: linear-gradient(135deg, #E9CE87 0%, #C9A24B 50%, #A9822F 100%);
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
+}
+
+::-webkit-scrollbar {
+  width: 10px;
+  height: 10px;
+}
+::-webkit-scrollbar-track {
+  background: #F6EBDA;
+}
+::-webkit-scrollbar-thumb {
+  background: #C9A24B;
+  border-radius: 999px;
+}
