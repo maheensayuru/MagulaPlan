@@ -11,6 +11,7 @@ import org.springframework.stereotype.Service;
 import java.time.LocalDateTime;
 import java.time.LocalTime;
 import java.util.List;
+import java.util.stream.Collectors;
 
 @Service
 public class UserServiceImpl implements UserService {
@@ -38,22 +39,41 @@ public class UserServiceImpl implements UserService {
 
     @Override
     public List<UserResponseDto> getAllUsers() {
-        return List.of();
+
+            return userRepository.findAll().stream().map(this::mapToResponseDto).collect(Collectors.toList());
     }
 
     @Override
     public UserResponseDto getUserById(Long userId) {
-        return null;
+        User user = userRepository.findById(userId).orElseThrow(()-> new RuntimeException("User not found " + userId));
+
+        return mapToResponseDto(user);
     }
 
     @Override
     public UserResponseDto updateUser(Long userId, UserRequestDto userRequestDto) {
-        return null;
+
+        User existingUser = userRepository.findById(userId).orElseThrow(()-> new RuntimeException("User not found " + userId));
+        existingUser.setFullName(userRequestDto.getFullName());
+        existingUser.setPartnerName(userRequestDto.getPartnerName());
+        existingUser.setEmail(userRequestDto.getEmail());
+
+        if (userRequestDto.getPassword() != null && !userRequestDto.getPassword().isEmpty()) {
+            existingUser.setPasswordHash(userRequestDto.getPassword());
+        }
+
+        existingUser.setPhoneNumber(userRequestDto.getPhoneNumber());
+        existingUser.setRole(userRequestDto.getRole());
+        existingUser.setWeddingDate(userRequestDto.getWeddingDate());
+        existingUser.setBudget(userRequestDto.getTotalBudget());
+
+        User updatedUser = userRepository.save(existingUser);
+        return mapToResponseDto(updatedUser);
     }
 
     @Override
     public void deleteUser(Long userId) {
-
+        userRepository.deleteById(userId);
     }
 
     private UserResponseDto mapToResponseDto(User user){
