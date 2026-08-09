@@ -31,7 +31,8 @@ public class UserServiceImpl implements UserService {
                 .phoneNumber(userRequestDto.getPhoneNumber())
                 .role(userRequestDto.getRole() != null ? userRequestDto.getRole() : "USER").isActive(true)
                 .weddingDate(userRequestDto.getWeddingDate()).budget(userRequestDto.getTotalBudget())
-                .createdAt(LocalDateTime.from(LocalTime.now())).build();
+                .createdAt(LocalDateTime.now())
+                .build();
         User savedUser = userRepository.save(user);
 
         return mapToResponseDto(savedUser);
@@ -56,7 +57,10 @@ public class UserServiceImpl implements UserService {
         User existingUser = userRepository.findById(userId).orElseThrow(()-> new RuntimeException("User not found " + userId));
         existingUser.setFullName(userRequestDto.getFullName());
         existingUser.setPartnerName(userRequestDto.getPartnerName());
-        existingUser.setEmail(userRequestDto.getEmail());
+
+        if (userRequestDto.getEmail() != null && !userRequestDto.getEmail().isEmpty()) {
+            existingUser.setEmail(userRequestDto.getEmail());
+        }
 
         if (userRequestDto.getPassword() != null && !userRequestDto.getPassword().isEmpty()) {
             existingUser.setPasswordHash(userRequestDto.getPassword());
