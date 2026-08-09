@@ -34,6 +34,7 @@ public class UserController {
     public ResponseEntity<List<UserResponseDto>> getAllUser(){
         List<UserResponseDto> users = userService.getAllUsers();
         return new ResponseEntity<> (users, HttpStatus.OK);
+//         200
     }
 
 //    3. Get User By ID
@@ -41,6 +42,7 @@ public class UserController {
     public ResponseEntity<UserResponseDto> getUserById (@PathVariable Long userId, @RequestBody UserRequestDto userRequestDto){
         UserResponseDto user = userService.getUserById(userId);
         return ResponseEntity.ok(user);
+//          200 
     }
 
 //    4. Update existing user
@@ -48,6 +50,7 @@ public class UserController {
     public ResponseEntity<UserResponseDto> updateUser(@PathVariable Long userId, @RequestBody UserRequestDto userRequestDto){
         UserResponseDto updatedUser = userService.updateUser(userId, userRequestDto);
         return ResponseEntity.ok(updatedUser);
+//      200 ok
     }
 
 //    5. Delete user
@@ -55,5 +58,6 @@ public class UserController {
     public ResponseEntity<Void> deleteUser(@PathVariable Long userId){
          userService.deleteUser(userId);
          return ResponseEntity.noContent().build();
+//         204 no content
     }
 }
