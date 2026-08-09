@@ -26,6 +26,7 @@ public class UserController {
     public ResponseEntity<UserResponseDto> saveUser(@RequestBody UserRequestDto userRequestDto){
         UserResponseDto userResponseDto = userService.saveUser(userRequestDto);
         return new ResponseEntity<>(userResponseDto, HttpStatus.CREATED);
+//        201 Created
     }
 
 //    2. Get all users
