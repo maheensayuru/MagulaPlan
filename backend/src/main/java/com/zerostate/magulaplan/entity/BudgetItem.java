@@ -19,7 +19,7 @@ public class BudgetItem {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name = "budget_item_id")
+    @Column(name = "budget_id")
     private Long budgetItemId;
 
     @Column(name = "item_name", length = 100, nullable = false)
