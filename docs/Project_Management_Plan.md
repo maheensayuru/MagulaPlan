@@ -30,7 +30,7 @@ The five-member team is organized into three parallel development tracks, ensuri
 
 | Member | Student ID | Role | Primary Responsibilities |
 |---|---|---|---|
-| Maheen Sayuru | CIT-24-02-0189 | Project Manager / Backend Developer | Sprint planning, timeline management, stakeholder communication, documentation compilation, WhatsApp Business API integration (MAG-11) |
+| Maheen Sayuru | CIT-24-02-0189 | Project Manager / Backend Developer | Sprint planning, timeline management, stakeholder communication, documentation compilation, Share Invitations implementation (MAG-11) |
 | Ruchira Nimnaka | CIT-24-02-0029 | QA Engineer | Test plan authorship, system test execution, defect logging and tracking, final MVP quality sign-off |
 
 ### 2.2 Frontend Development Track
@@ -79,13 +79,15 @@ Sprint 2 transitions from design to implementation. The database engineer execut
 
 ### 3.3 Sprint 3: Integration, Testing & Deployment (Weeks 5–6)
 
-**Focus:** Quality assurance, cloud deployment, and final documentation.
+**Focus:** Unit testing, quality assurance, cloud deployment, and final documentation.
 
-The final sprint delivers the completed MVP. The QA engineer executes the full system test plan, logging defects in a structured defect register with severity classifications and retesting resolved issues. The frontend is deployed to Vercel with environment-specific configuration, while the Spring Boot API and MySQL database are deployed to Render with connection string and secret management in place. The team compiles final project documentation, including the system design report, sprint review summaries, and the end-of-semester presentation slide deck.
+The final sprint completes the MVP and prepares it for submission. Ruchira carries over MAG-10 (Automated JUnit Tests) from Sprint 2, writing unit and integration tests for the Guest, User, Budget, Vendor, and VendorCategory service layers using JUnit 5, Mockito, and an H2 in-memory database. In parallel, she executes the full system test plan, logging defects in a structured defect register with severity classifications and retesting resolved issues. Sammani deploys the React frontend to Vercel with environment-specific configuration and the Spring Boot API and MySQL database to Render with connection string and secret management in place. Dileepa polishes UI components, implements the Guest List page with Web Share API invitation buttons, and connects frontend forms to the live backend API endpoints. The project manager compiles the final project documentation, including the system design report, sprint review summaries, and the end-of-semester presentation slide deck.
+- Automated JUnit test suite (Guest, User, Budget, Vendor, VendorCategory)
 - Completed system test execution report with defect log
 - Production deployment: Vercel (frontend) + Render (backend + database)
-- Final project documentation package
+- Guest List page with share invitation links
 - End-of-semester presentation
+- Final project documentation package
 
 ---
 
@@ -149,21 +151,17 @@ The following Work Breakdown Structure decomposes the four core features into gr
 | GL-12 | Write unit tests for GuestService and integration tests for GuestController | MAG-9 | Amanda | 3 hours |
 | GL-13 | Execute UI tests on Guest List and RSVP Manager across device breakpoints | MAG-10 | Ruchira | 3 hours |
 
-### 4.4 WhatsApp Invitation Integration Module
+### 4.4 Share Invitations Module
 
 | Task ID | Task Description | Jira Story | Assigned To | Estimated Effort |
 |---|---|---|---|
-| WA-01 | Register Meta Developer account and create WhatsApp Business App | MAG-11 | Maheen | 3 hours |
-| WA-02 | Configure WhatsApp Cloud API webhook endpoint and verify callback URL | MAG-11 | Maheen | 4 hours |
-| WA-03 | Design invitation message template with dynamic guest name, couple names, and RSVP link placeholders | MAG-11 | Maheen | 2 hours |
-| WA-04 | Implement `WhatsAppService` with message template rendering and Cloud API HTTP client | MAG-11 | Maheen | 6 hours |
-| WA-05 | Implement RSVP confirmation webhook receiver endpoint (inbound message handling) | MAG-11 | Maheen | 4 hours |
-| WA-06 | Implement `InvitationController` endpoints (POST send invitation, GET invitation status) | MAG-11 | Maheen | 3 hours |
-| WA-07 | Integrate invitation trigger into Guest List UI (Send Invitation button per guest) | MAG-6 | Dileepa | 4 hours |
-| WA-08 | Implement Invitation Status column with sent/failed/delivered/read indicators in Guest List | MAG-6 | Dileepa | 3 hours |
-| WA-09 | Handle webhook signature verification (X-Hub-Signature-256) for security | MAG-11 | Maheen | 3 hours |
-| WA-10 | Write unit tests for WhatsAppService and integration tests for InvitationController | MAG-11 | Maheen | 3 hours |
-| WA-11 | Execute end-to-end test: send invitation to test WhatsApp number, verify delivery, and confirm RSVP webhook | MAG-10 | Ruchira | 4 hours |
+| WA-01 | Generate shareable RSVP link per guest (UUID-based URL) | MAG-11 | Maheen | 1 hour |
+| WA-02 | Implement `GET /api/v1/guests/{guestId}/share` endpoint with invitation message and RSVP URL | MAG-11 | Maheen | 2 hours |
+| WA-03 | Update `GuestServiceImpl` to mark `whatsapp_status = SENT` when share link is generated | MAG-11 | Maheen | 1 hour |
+| WA-04 | Implement Guest List page with guest table, RSVP badges, and stats | MAG-11 | Dileepa | 4 hours |
+| WA-05 | Add Share button per guest using `navigator.share()` API (mobile) with clipboard copy fallback (desktop) | MAG-11 | Dileepa | 3 hours |
+| WA-06 | Add Guests route in App.jsx and nav item in Sidebar and MobileBottomNav | MAG-11 | Dileepa | 1 hour |
+| WA-07 | Execute end-to-end test: generate share link, verify clipboard copy, verify share sheet on mobile | MAG-13 | Ruchira | 2 hours |
 
 ### 4.5 Cross-Cutting Concerns
 
@@ -196,10 +194,12 @@ The following table lists every Jira user story in the MagulaPlan backlog, mappe
 | MAG-7 | Vendor Directory UI | Frontend | Sprint 2 |
 | MAG-8 | Create MySQL Database Tables | Database | Sprint 2 |
 | MAG-9 | Budget and Guest List REST APIs | Backend | Sprint 2 |
-| MAG-10 | Automated JUnit Tests | QA | Sprint 2 |
-| MAG-11 | WhatsApp Business API Integration | Backend | Sprint 2 |
-
-
+| MAG-10 | Automated JUnit Tests | QA | Sprint 3 |
+| MAG-11 | Share Invitations (Web Share API) | Backend | Sprint 2 |
+| MAG-12 | Deploy Frontend to Vercel | DevOps | Sprint 3 |
+| MAG-13 | Deploy Backend & Database to Render | DevOps | Sprint 3 |
+| MAG-14 | System Testing & Defect Management | QA | Sprint 3 |
+| MAG-15 | Final Documentation & Presentation | Management | Sprint 3 |
 
 ---
 
@@ -243,7 +243,7 @@ All project documentation — including this Project Management Plan, the system
 
 | Risk | Likelihood | Impact | Mitigation Strategy |
 |---|---|---|---|
-| WhatsApp Business API approval delay | Medium | High | Begin Meta Developer account registration early in Sprint 2; have a manual invitation fallback (copy-paste template) ready |
+| WhatsApp Business API approval delay | Medium | High | Replaced with Web Share API (navigator.share) — no Meta approval required; clipboard copy fallback covers desktop browsers |
 | Backend developer bottleneck (single Amanda) | Medium | Medium | Project Manager (Maheen) is cross-trained on Spring Boot and can implement assigned modules (MAG-11) independently |
 | Frontend-backend integration issues at sprint boundaries | Medium | Medium | Schedule a mid-sprint integration checkpoint in each sprint; define API contracts (request/response shapes) before implementation begins |
 | MySQL schema changes after backend development starts | Low | High | Freeze the schema at the end of Sprint 1; any post-freeze changes require a migration script and team-wide notification |
