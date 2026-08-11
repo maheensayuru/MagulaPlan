@@ -1,9 +1,10 @@
 import { NavLink } from 'react-router-dom'
-import { FaTachometerAlt, FaStore } from 'react-icons/fa'
+import { FaTachometerAlt, FaStore, FaUsers } from 'react-icons/fa'
 
 const items = [
   { to: '/dashboard', label: 'Home', icon: FaTachometerAlt, end: true },
   { to: '/vendors', label: 'Vendors', icon: FaStore },
+  { to: '/guests', label: 'Guests', icon: FaUsers },
 ]
 
 export default function MobileBottomNav() {
@@ -12,7 +13,7 @@ export default function MobileBottomNav() {
       className="lg:hidden fixed bottom-0 left-0 right-0 z-40 bg-white/95 backdrop-blur border-t border-charcoal/8 pb-[env(safe-area-inset-bottom)]"
       aria-label="Mobile navigation"
     >
-      <div className="grid grid-cols-2">
+      <div className="grid grid-cols-3">
         {items.map((item) => (
           <NavLink
             key={item.to}
