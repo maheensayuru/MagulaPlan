@@ -81,7 +81,7 @@ Sprint 2 transitions from design to implementation. The database engineer execut
 
 **Focus:** Unit testing, quality assurance, cloud deployment, and final documentation.
 
-The final sprint completes the MVP and prepares it for submission. Ruchira carries over MAG-10 (Automated JUnit Tests) from Sprint 2, writing unit and integration tests for the Guest, User, Budget, Vendor, and VendorCategory service layers using JUnit 5, Mockito, and an H2 in-memory database. In parallel, she executes the full system test plan, logging defects in a structured defect register with severity classifications and retesting resolved issues. Sammani deploys the React frontend to Vercel with environment-specific configuration and the Spring Boot API and MySQL database to Render with connection string and secret management in place. Dileepa polishes UI components, implements the Guest List page with Web Share API invitation buttons, and connects frontend forms to the live backend API endpoints. The project manager compiles the final project documentation, including the system design report, sprint review summaries, and the end-of-semester presentation slide deck.
+The final sprint completes the MVP and prepares it for submission. Ruchira carries over MAG-10 (Automated JUnit Tests) from Sprint 2, writing unit and integration tests for the Guest, User, Budget, Vendor, and VendorCategory service layers using JUnit 5, Mockito, and an H2 in-memory database. In parallel, she executes the full system test plan (MAG-14), logging defects in a structured defect register with severity classifications and retesting resolved issues. Amanda implements Spring Security with JWT-based authentication (MAG-16), configuring the filter chain, building user registration and login endpoints, and adding a global exception handler. Dileepa replaces the frontend mock data with live API integration (MAG-17), connecting the Guest List, Dashboard, Vendor Directory, and Budget pages to the Spring Boot REST endpoints. Sammani supports deployment verification (MAG-18), ensuring the MySQL schema on Render matches the development database and assisting with environment configuration. The project manager deploys the frontend to Vercel (MAG-12) and the backend with database to Render (MAG-13), then compiles the final project documentation and presentation (MAG-15).
 - Automated JUnit test suite (Guest, User, Budget, Vendor, VendorCategory)
 - Completed system test execution report with defect log
 - Production deployment: Vercel (frontend) + Render (backend + database)
@@ -200,6 +200,9 @@ The following table lists every Jira user story in the MagulaPlan backlog, mappe
 | MAG-13 | Deploy Backend & Database to Render | DevOps | Sprint 3 |
 | MAG-14 | System Testing & Defect Management | QA | Sprint 3 |
 | MAG-15 | Final Documentation & Presentation | Management | Sprint 3 |
+| MAG-16 | Spring Security & JWT Authentication | Backend | Sprint 3 |
+| MAG-17 | Frontend-Backend API Integration | Frontend | Sprint 3 |
+| MAG-18 | Deployment Support & DB Verification | Database | Sprint 3 |
 
 ---
 
