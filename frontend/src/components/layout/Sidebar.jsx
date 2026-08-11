@@ -1,10 +1,11 @@
 import { NavLink } from 'react-router-dom'
-import { FaTachometerAlt, FaStore, FaSignOutAlt } from 'react-icons/fa'
+import { FaTachometerAlt, FaStore, FaUsers, FaSignOutAlt } from 'react-icons/fa'
 import Logo from './Logo'
 
 const items = [
   { to: '/dashboard', label: 'Dashboard', icon: FaTachometerAlt, end: true },
   { to: '/vendors', label: 'Vendors', icon: FaStore },
+  { to: '/guests', label: 'Guests', icon: FaUsers },
 ]
 
 export default function Sidebar() {
