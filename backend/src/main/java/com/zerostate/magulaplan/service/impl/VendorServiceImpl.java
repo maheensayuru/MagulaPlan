@@ -4,6 +4,7 @@ import com.zerostate.magulaplan.dto.VendorRequestDto;
 import com.zerostate.magulaplan.dto.VendorResponseDto;
 import com.zerostate.magulaplan.entity.Vendor;
 import com.zerostate.magulaplan.entity.VendorCategory;
+import com.zerostate.magulaplan.exception.ResourceNotFoundException;
 import com.zerostate.magulaplan.repo.VendorCategoryRepository;
 import com.zerostate.magulaplan.repo.VendorRepository;
 import com.zerostate.magulaplan.service.VendorService;
@@ -28,7 +29,7 @@ public class VendorServiceImpl implements VendorService {
     @Override
     public VendorResponseDto saveVendor(VendorRequestDto requestDto) {
         VendorCategory category = vendorCategoryRepository.findById(requestDto.getCategoryId())
-                .orElseThrow(() -> new RuntimeException("Vendor Category not found with id: " + requestDto.getCategoryId()));
+                .orElseThrow(() -> new ResourceNotFoundException("Vendor Category not found with id: " + requestDto.getCategoryId()));
 
         Vendor vendor = Vendor.builder()
                 .category(category)
@@ -61,17 +62,17 @@ public class VendorServiceImpl implements VendorService {
     @Override
     public VendorResponseDto getVendorById(Long vendorId) {
         Vendor vendor = vendorRepository.findById(vendorId)
-                .orElseThrow(() -> new RuntimeException("Vendor not found with id: " + vendorId));
+                .orElseThrow(() -> new ResourceNotFoundException("Vendor not found with id: " + vendorId));
         return mapToResponseDto(vendor);
     }
 
     @Override
     public VendorResponseDto updateVendor(Long vendorId, VendorRequestDto requestDto) {
         Vendor existingVendor = vendorRepository.findById(vendorId)
-                .orElseThrow(() -> new RuntimeException("Vendor not found with id: " + vendorId));
+                .orElseThrow(() -> new ResourceNotFoundException("Vendor not found with id: " + vendorId));
 
         VendorCategory category = vendorCategoryRepository.findById(requestDto.getCategoryId())
-                .orElseThrow(() -> new RuntimeException("Vendor Category not found with id: " + requestDto.getCategoryId()));
+                .orElseThrow(() -> new ResourceNotFoundException("Vendor Category not found with id: " + requestDto.getCategoryId()));
 
         existingVendor.setCategory(category);
         existingVendor.setBusinessName(requestDto.getBusinessName());
