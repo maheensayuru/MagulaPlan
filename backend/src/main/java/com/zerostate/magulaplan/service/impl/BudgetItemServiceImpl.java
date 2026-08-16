@@ -4,6 +4,7 @@ import com.zerostate.magulaplan.dto.BudgetItemRequestDto;
 import com.zerostate.magulaplan.dto.BudgetItemResponseDto;
 import com.zerostate.magulaplan.entity.BudgetItem;
 import com.zerostate.magulaplan.entity.User;
+import com.zerostate.magulaplan.exception.ResourceNotFoundException;
 import com.zerostate.magulaplan.repo.BudgetItemRepository;
 import com.zerostate.magulaplan.repo.UserRepository;
 import com.zerostate.magulaplan.service.BudgetItemService;
@@ -28,7 +29,7 @@ public class BudgetItemServiceImpl implements BudgetItemService {
     @Override
     public BudgetItemResponseDto saveBudgetItem(BudgetItemRequestDto budgetItemRequestDto) {
         User user = userRepository.findById(budgetItemRequestDto.getUserId())
-                .orElseThrow(() -> new RuntimeException("User not found with ID: " + budgetItemRequestDto.getUserId()));
+                .orElseThrow(() -> new ResourceNotFoundException("User not found with ID: " + budgetItemRequestDto.getUserId()));
         BudgetItem budgetItem = BudgetItem.builder()
                 .itemName(budgetItemRequestDto.getItemName())
                 .category(budgetItemRequestDto.getCategory())
@@ -57,7 +58,7 @@ public class BudgetItemServiceImpl implements BudgetItemService {
     @Override
     public BudgetItemResponseDto getBudgetItemById(Long budgetItemId) {
         BudgetItem budgetItem = budgetItemRepository.findById(budgetItemId)
-                .orElseThrow(() -> new RuntimeException("Budget Item not found with ID: " + budgetItemId));
+                .orElseThrow(() -> new ResourceNotFoundException("Budget Item not found with ID: " + budgetItemId));
 
 
         return mapToResponseDto(budgetItem);
@@ -66,7 +67,7 @@ public class BudgetItemServiceImpl implements BudgetItemService {
     @Override
     public BudgetItemResponseDto updateBudgetItem(Long budgetItemId, BudgetItemRequestDto budgetItemRequestDto) {
         BudgetItem existingBudgetItem = budgetItemRepository.findById(budgetItemId)
-                .orElseThrow(() -> new RuntimeException("Budget Item not found with ID: " + budgetItemId));
+                .orElseThrow(() -> new ResourceNotFoundException("Budget Item not found with ID: " + budgetItemId));
 
         existingBudgetItem.setItemName(budgetItemRequestDto.getItemName());
         existingBudgetItem.setCategory(budgetItemRequestDto.getCategory());

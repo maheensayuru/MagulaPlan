@@ -3,6 +3,7 @@ package com.zerostate.magulaplan.service.impl;
 import com.zerostate.magulaplan.dto.UserRequestDto;
 import com.zerostate.magulaplan.dto.UserResponseDto;
 import com.zerostate.magulaplan.entity.User;
+import com.zerostate.magulaplan.exception.ResourceNotFoundException;
 import com.zerostate.magulaplan.repo.UserRepository;
 import com.zerostate.magulaplan.service.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -45,7 +46,7 @@ public class UserServiceImpl implements UserService {
 
     @Override
     public UserResponseDto getUserById(Long userId) {
-        User user = userRepository.findById(userId).orElseThrow(()-> new RuntimeException("User not found " + userId));
+        User user = userRepository.findById(userId).orElseThrow(()-> new ResourceNotFoundException("User not found " + userId));
 
         return mapToResponseDto(user);
     }
@@ -53,7 +54,7 @@ public class UserServiceImpl implements UserService {
     @Override
     public UserResponseDto updateUser(Long userId, UserRequestDto userRequestDto) {
 
-        User existingUser = userRepository.findById(userId).orElseThrow(()-> new RuntimeException("User not found " + userId));
+        User existingUser = userRepository.findById(userId).orElseThrow(()-> new ResourceNotFoundException("User not found " + userId));
         existingUser.setFullName(userRequestDto.getFullName());
         existingUser.setPartnerName(userRequestDto.getPartnerName());
 
