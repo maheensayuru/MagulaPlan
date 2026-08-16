@@ -2,6 +2,7 @@ package com.zerostate.magulaplan.service.impl;
 
 import com.zerostate.magulaplan.dto.GuestRequestDto;
 import com.zerostate.magulaplan.dto.GuestResponseDto;
+import com.zerostate.magulaplan.dto.ShareInvitationResponse;
 import com.zerostate.magulaplan.entity.Guest;
 import com.zerostate.magulaplan.entity.User;
 import com.zerostate.magulaplan.exception.ResourceNotFoundException;
@@ -81,6 +82,30 @@ public class GuestServiceImpl implements GuestService {
     @Override
     public void deleteGuest(UUID guestId) {
         guestRepository.deleteById(guestId);
+    }
+
+    @Override
+    public ShareInvitationResponse getShareInvitation(UUID guestId) {
+        Guest guest = guestRepository.findById(guestId)
+                .orElseThrow(() -> new RuntimeException("Guest Not Found with ID: " + guestId));
+
+        String rsvpUrl = "https://magulaplan.com/rsvp/" + guest.getGuestId();
+        String coupleName = guest.getUser().getFullName() != null
+                ? guest.getUser().getFullName()
+                : "Us";
+        String message = "You're invited! " + coupleName
+                + " request the pleasure of your company at our wedding. "
+                + "Please RSVP here: " + rsvpUrl;
+
+        guest.setWhatsappStatus("SENT");
+        guestRepository.save(guest);
+
+        return new ShareInvitationResponse(
+                "Wedding Invitation",
+                message,
+                rsvpUrl,
+                guest.getGuestName(),
+                guest.getWhatsappStatus());
     }
 
     private GuestResponseDto mapToResponseDto(Guest guest) {
