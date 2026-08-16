@@ -17,7 +17,7 @@ public class GlobalExceptionHandler {
 
 
         Map<String, Object> errorDetails = new HashMap<>();
-        errorDetails.put("time", new Date());
+        errorDetails.put("timestamp", new Date());
         errorDetails.put("message", ex.getMessage());
 
 
@@ -32,7 +32,7 @@ public class GlobalExceptionHandler {
         return new ResponseEntity<>(errorDetails, HttpStatus.BAD_REQUEST);
     }
 
-    // ResourceAlreadyExistsException eka allaganna
+    // Handle duplicate resource creation attempts
     @ExceptionHandler(ResourceAlreadyExistsException.class)
     public ResponseEntity<Object> handleResourceAlreadyExistsException(ResourceAlreadyExistsException ex, WebRequest request) {
         Map<String, Object> errorDetails = new HashMap<>();
@@ -47,8 +47,6 @@ public class GlobalExceptionHandler {
         Map<String, Object> errorDetails = new HashMap<>();
         errorDetails.put("timestamp", new Date());
         errorDetails.put("message", "Please try again after few minutes");
-        errorDetails.put("error", ex.getMessage());
-
         return new ResponseEntity<>(errorDetails, HttpStatus.INTERNAL_SERVER_ERROR);
     }
 }
