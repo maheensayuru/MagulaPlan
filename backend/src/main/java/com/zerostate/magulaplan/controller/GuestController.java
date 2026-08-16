@@ -2,6 +2,7 @@ package com.zerostate.magulaplan.controller;
 
 import com.zerostate.magulaplan.dto.GuestRequestDto;
 import com.zerostate.magulaplan.dto.GuestResponseDto;
+import com.zerostate.magulaplan.dto.ShareInvitationResponse;
 import com.zerostate.magulaplan.service.GuestService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -69,4 +70,12 @@ public class GuestController {
 //  Return 204 NO Content status
         return ResponseEntity.noContent().build();
     }
+
+    // 6. Generate shareable invitation link
+    @GetMapping("/{guestId}/share")
+    public ResponseEntity<ShareInvitationResponse> getShareInvitation(@PathVariable UUID guestId) {
+        ShareInvitationResponse share = guestService.getShareInvitation(guestId);
+        return ResponseEntity.ok(share);
+    }
 }
+
