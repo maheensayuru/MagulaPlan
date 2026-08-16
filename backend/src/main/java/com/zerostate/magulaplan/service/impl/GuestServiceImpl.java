@@ -5,7 +5,9 @@ import com.zerostate.magulaplan.dto.GuestResponseDto;
 import com.zerostate.magulaplan.dto.ShareInvitationResponse;
 import com.zerostate.magulaplan.entity.Guest;
 import com.zerostate.magulaplan.entity.User;
+import com.zerostate.magulaplan.exception.ResourceNotFoundException;
 import com.zerostate.magulaplan.repo.GuestRepository;
+import com.zerostate.magulaplan.repo.UserRepository;
 import com.zerostate.magulaplan.service.GuestService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -17,17 +19,22 @@ import java.util.stream.Collectors;
 @Service
 public class GuestServiceImpl implements GuestService {
 
-    private GuestRepository guestRepository;
+    private final GuestRepository guestRepository;
+    private final UserRepository userRepository;
 
     @Autowired
-    public GuestServiceImpl(GuestRepository guestRepository) {
+    public GuestServiceImpl(GuestRepository guestRepository, UserRepository userRepository) {
         this.guestRepository = guestRepository;
+        this.userRepository = userRepository;
     }
 
     @Override
     public GuestResponseDto saveGuest(GuestRequestDto guestRequestDto) {
-        User user = new User();
-        user.setUserId(guestRequestDto.getUserId());
+
+        // 3. UPDATED: Fetch the real User from the database first
+        User user = userRepository.findById(guestRequestDto.getUserId())
+                .orElseThrow(() -> new ResourceNotFoundException("User Not Found with ID: " + guestRequestDto.getUserId()));
+
         Guest savedGuest = guestRepository.save(
                 Guest.builder()
                         .user(user)
@@ -52,13 +59,13 @@ public class GuestServiceImpl implements GuestService {
     public GuestResponseDto getGuestById(UUID guestId) {
 
         Guest guest = guestRepository.findById(guestId)
-                .orElseThrow(() -> new RuntimeException("Guest Not Found with ID: " + guestId));
+                .orElseThrow(() -> new ResourceNotFoundException("Guest Not Found with ID: " + guestId));
         return mapToResponseDto(guest);
     }
 
     @Override
     public GuestResponseDto updateGuest(UUID guestId, GuestRequestDto guestRequestDto) {
-        Guest existingGuest = guestRepository.findById(guestId).orElseThrow(() -> new RuntimeException("Guest Not Found with ID: " + guestId));
+        Guest existingGuest = guestRepository.findById(guestId).orElseThrow(() -> new ResourceNotFoundException("Guest Not Found with ID: " + guestId));
 
         existingGuest.setGuestName(guestRequestDto.getGuestName());
         existingGuest.setContactNumber(guestRequestDto.getContactNumber());
