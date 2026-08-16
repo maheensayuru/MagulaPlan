@@ -9,6 +9,7 @@ import Landing from './pages/Landing'
 import Login from './pages/Login'
 import Register from './pages/Register'
 import Dashboard from './pages/Dashboard'
+import VendorDirectory from './pages/VendorDirectory'
 import VendorDetails from './pages/VendorDetails'
 import GuestList from './pages/GuestList'
 
