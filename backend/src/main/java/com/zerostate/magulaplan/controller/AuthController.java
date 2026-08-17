@@ -47,7 +47,7 @@ public class AuthController {
                 .email(dto.getEmail())
                 .passwordHash(passwordEncoder.encode(dto.getPassword()))
                 .phoneNumber(dto.getPhoneNumber())
-                .role(dto.getRole())
+                .role(dto.getRole() != null ? dto.getRole() : "USER")
                 .weddingDate(dto.getWeddingDate())
                 .budget(dto.getTotalBudget())
                 .isActive(true)
