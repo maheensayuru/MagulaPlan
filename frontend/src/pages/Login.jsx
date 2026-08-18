@@ -1,24 +1,32 @@
 import { useState } from 'react'
 import { Link, useNavigate } from 'react-router-dom'
 import { motion } from 'framer-motion'
-import { FaEnvelope, FaLock, FaEye, FaEyeSlash, FaGoogle, FaFacebook } from 'react-icons/fa'
+import { FaEnvelope, FaLock, FaEye, FaEyeSlash } from 'react-icons/fa'
 import Logo from '../components/layout/Logo'
 import { useToast } from '../context/ToastContext'
+import { useAuth } from '../context/AuthContext'
 
 export default function Login() {
   const [showPw, setShowPw] = useState(false)
   const [loading, setLoading] = useState(false)
+  const [email, setEmail] = useState('')
+  const [password, setPassword] = useState('')
   const navigate = useNavigate()
   const { showToast } = useToast()
+  const { login } = useAuth()
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault()
     setLoading(true)
-    setTimeout(() => {
-      setLoading(false)
-      showToast('Welcome back! Redirecting to your dashboard...', 'success')
+    try {
+      await login(email, password)
+      showToast('Welcome back!', 'success')
       navigate('/dashboard')
-    }, 1000)
+    } catch (err) {
+      showToast(err.message || 'Login failed', 'error')
+    } finally {
+      setLoading(false)
+    }
   }
 
   return (
@@ -47,40 +55,23 @@ export default function Login() {
               <label htmlFor="email" className="text-sm font-medium text-charcoal/70 mb-1.5 block">Email address</label>
               <div className="relative">
                 <FaEnvelope className="absolute left-4 top-1/2 -translate-y-1/2 text-charcoal/30" size={14} />
-                <input id="email" type="email" required placeholder="you@example.com" className="input-field pl-11" />
+                <input id="email" type="email" required value={email} onChange={(e) => setEmail(e.target.value)} placeholder="you@example.com" className="input-field pl-11" />
               </div>
             </div>
             <div>
               <label htmlFor="password" className="text-sm font-medium text-charcoal/70 mb-1.5 block">Password</label>
               <div className="relative">
                 <FaLock className="absolute left-4 top-1/2 -translate-y-1/2 text-charcoal/30" size={14} />
-                <input id="password" type={showPw ? 'text' : 'password'} required placeholder="••••••••" className="input-field pl-11 pr-11" />
+                <input id="password" type={showPw ? 'text' : 'password'} required value={password} onChange={(e) => setPassword(e.target.value)} placeholder="••••••••" className="input-field pl-11 pr-11" />
                 <button type="button" onClick={() => setShowPw((s) => !s)} className="absolute right-4 top-1/2 -translate-y-1/2 text-charcoal/30" aria-label="Toggle password visibility">
                   {showPw ? <FaEyeSlash size={14} /> : <FaEye size={14} />}
                 </button>
               </div>
             </div>
-            <div className="flex items-center justify-between text-sm">
-              <label className="flex items-center gap-2 text-charcoal/60">
-                <input type="checkbox" className="rounded border-charcoal/20 text-maroon-500 focus:ring-gold-300" /> Remember me
-              </label>
-              <a href="#" className="text-maroon-500 font-medium hover:underline">Forgot password?</a>
-            </div>
             <button type="submit" disabled={loading} className="btn-primary w-full">
               {loading ? 'Logging in...' : 'Log In'}
             </button>
           </form>
-
-          <div className="flex items-center gap-3 my-6">
-            <div className="h-px bg-charcoal/10 flex-1" />
-            <span className="text-xs text-charcoal/40">OR</span>
-            <div className="h-px bg-charcoal/10 flex-1" />
-          </div>
-
-          <div className="grid grid-cols-2 gap-3">
-            <button className="btn-outline text-sm py-2.5"><FaGoogle size={14} /> Google</button>
-            <button className="btn-outline text-sm py-2.5"><FaFacebook size={14} /> Facebook</button>
-          </div>
 
           <p className="text-center text-sm text-charcoal/60 mt-8">
             Don't have an account? <Link to="/register" className="text-maroon-500 font-semibold hover:underline">Sign up free</Link>
