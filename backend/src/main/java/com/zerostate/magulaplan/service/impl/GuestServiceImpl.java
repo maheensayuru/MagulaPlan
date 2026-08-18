@@ -87,7 +87,7 @@ public class GuestServiceImpl implements GuestService {
     @Override
     public ShareInvitationResponse getShareInvitation(UUID guestId) {
         Guest guest = guestRepository.findById(guestId)
-                .orElseThrow(() -> new RuntimeException("Guest Not Found with ID: " + guestId));
+                .orElseThrow(() -> new ResourceNotFoundException("Guest Not Found with ID: " + guestId));
 
         String rsvpUrl = "https://magulaplan.com/rsvp/" + guest.getGuestId();
         String coupleName = guest.getUser().getFullName() != null
