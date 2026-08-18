@@ -48,6 +48,9 @@ export default function Navbar() {
           ))}
         </div>
         <div className="hidden md:flex items-center gap-3">
+          <Link to="/vendors/new" className="btn-ghost text-sm">
+            List your business
+          </Link>
           <Link to="/login" className="btn-ghost text-sm">
             Log in
           </Link>
@@ -79,6 +82,9 @@ export default function Navbar() {
                   {l.label}
                 </a>
               ))}
+              <Link to="/vendors/new" onClick={() => setOpen(false)} className="py-2 text-charcoal/80 font-medium">
+                List your business
+              </Link>
               <div className="flex gap-3 pt-2">
                 <Link to="/login" onClick={() => setOpen(false)} className="btn-outline flex-1 text-sm py-2.5">
                   Log in
