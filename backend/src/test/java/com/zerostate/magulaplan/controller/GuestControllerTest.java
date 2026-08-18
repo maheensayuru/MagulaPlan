@@ -139,16 +139,13 @@ class GuestControllerTest {
                 .andExpect(jsonPath("$.whatsappStatus").value("SENT"));
     }
 
-    // NOTE: getShareInvitation throws plain RuntimeException (not ResourceNotFoundException)
-    // when guest is not found — this falls through to the generic 500 handler.
-    // This is a known inconsistency documented here rather than "fixed".
     @Test
-    @DisplayName("GET /api/v1/guests/{guestId}/share -> 500 when guest not found (known inconsistency: uses RuntimeException, not ResourceNotFoundException)")
-    void getShareInvitation_returns500_whenGuestNotFound() throws Exception {
+    @DisplayName("GET /api/v1/guests/{guestId}/share -> 404 when guest not found")
+    void getShareInvitation_returns404_whenGuestNotFound() throws Exception {
         when(guestService.getShareInvitation(GUEST_ID))
-                .thenThrow(new RuntimeException("Guest Not Found with ID: " + GUEST_ID));
+                .thenThrow(new ResourceNotFoundException("Guest Not Found with ID: " + GUEST_ID));
 
         mockMvc.perform(get("/api/v1/guests/" + GUEST_ID + "/share"))
-                .andExpect(status().isInternalServerError());
+                .andExpect(status().isNotFound());
     }
 }

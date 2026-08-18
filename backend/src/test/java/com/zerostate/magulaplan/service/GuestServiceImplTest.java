@@ -179,16 +179,12 @@ class GuestServiceImplTest {
         assertThat(result.getWhatsappStatus()).isEqualTo("SENT");
     }
 
-    // NOTE: getShareInvitation throws plain RuntimeException (NOT ResourceNotFoundException)
-    // when the guest is missing — this is a known inconsistency in the codebase.
-    // The generic Exception handler returns HTTP 500, not 404, in this case.
     @Test
-    @DisplayName("getShareInvitation() throws plain RuntimeException (not ResourceNotFoundException) when guest not found — known inconsistency")
-    void getShareInvitation_throwsRuntimeException_whenGuestNotFound() {
+    @DisplayName("getShareInvitation() throws ResourceNotFoundException when guest not found")
+    void getShareInvitation_throwsResourceNotFoundException_whenGuestNotFound() {
         when(guestRepository.findById(GUEST_ID)).thenReturn(Optional.empty());
 
         assertThatThrownBy(() -> guestService.getShareInvitation(GUEST_ID))
-                .isInstanceOf(RuntimeException.class)
-                .isNotInstanceOf(ResourceNotFoundException.class);
+                .isInstanceOf(ResourceNotFoundException.class);
     }
 }
