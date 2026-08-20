@@ -1,11 +1,13 @@
 import { motion } from 'framer-motion'
 import { Link } from 'react-router-dom'
-import { FaStar, FaMapMarkerAlt, FaCheckCircle, FaHeart } from 'react-icons/fa'
+import { FaStar, FaMapMarkerAlt, FaCheckCircle, FaHeart, FaStore, FaShoppingBag, FaCheck } from 'react-icons/fa'
 import { useState } from 'react'
 import Badge from '../ui/Badge'
+import { useCart } from '../../context/CartContext'
 
 export default function VendorCard({ vendor, index = 0 }) {
   const [saved, setSaved] = useState(false)
+  const { addItem, removeItem, isInCart } = useCart()
 
   const id = vendor.vendorId ?? vendor.id
   const name = vendor.businessName ?? vendor.name
@@ -13,7 +15,7 @@ export default function VendorCard({ vendor, index = 0 }) {
   const price = vendor.startingPrice ?? vendor.priceFrom ?? 0
   const rating = vendor.rating
   const reviews = vendor.reviewCount ?? vendor.reviews
-  const image = vendor.imageUrl ?? vendor.image ?? `https://picsum.photos/seed/vendor-${id}/600/400`
+  const image = vendor.imageUrl ?? vendor.image
 
   return (
     <motion.div
@@ -26,12 +28,18 @@ export default function VendorCard({ vendor, index = 0 }) {
     >
       <div className="relative overflow-hidden">
         <Link to={`/vendors/${id}`}>
-          <img
-            src={image}
-            alt={name}
-            loading="lazy"
-            className="h-48 w-full object-cover transition-transform duration-500 group-hover:scale-110"
-          />
+          {image ? (
+            <img
+              src={image}
+              alt={name}
+              loading="lazy"
+              className="h-48 w-full object-cover transition-transform duration-500 group-hover:scale-110"
+            />
+          ) : (
+            <div className="h-48 w-full flex items-center justify-center bg-gold-50 text-gold-400">
+              <FaStore size={28} />
+            </div>
+          )}
         </Link>
         <button
           aria-label={saved ? 'Remove from saved' : 'Save vendor'}
@@ -49,7 +57,7 @@ export default function VendorCard({ vendor, index = 0 }) {
       <div className="p-4">
         <div className="flex items-start justify-between gap-2 mb-1">
           <h3 className="font-display font-semibold text-charcoal leading-snug">{name}</h3>
-          {vendor.verified && <FaCheckCircle className="text-emerald-500 shrink-0 mt-1" title="Verified vendor" size={14} />}
+          {vendor.verified && <FaCheckCircle className="text-gold-600 shrink-0 mt-1" title="Verified vendor" size={14} />}
         </div>
         <p className="text-xs text-charcoal/50 mb-2">{vendor.categoryName}</p>
         <div className="flex items-center gap-3 text-sm text-charcoal/60 mb-3">
@@ -65,13 +73,25 @@ export default function VendorCard({ vendor, index = 0 }) {
             </span>
           )}
         </div>
-        <div className="flex items-center justify-between">
+        <div className="flex items-center justify-between gap-2">
           <p className="text-sm text-charcoal/70">
-            From <span className="font-semibold text-maroon-600">Rs. {(Number(price) || 0).toLocaleString()}</span>
+            From <span className="font-semibold text-gold-800">Rs. {(Number(price) || 0).toLocaleString()}</span>
           </p>
-          <Link to={`/vendors/${id}`} className="text-sm font-semibold text-gold-600 hover:text-gold-700">
-            View →
-          </Link>
+          <div className="flex items-center gap-3 shrink-0">
+            <button
+              onClick={() => (isInCart(id) ? removeItem(id) : addItem(vendor))}
+              className={`inline-flex items-center gap-1.5 text-xs font-semibold px-3 py-1.5 rounded-full border transition-colors ${
+                isInCart(id)
+                  ? 'bg-gold-700 border-gold-700 text-white'
+                  : 'border-charcoal/15 text-charcoal/70 hover:border-gold-600 hover:text-gold-800'
+              }`}
+            >
+              {isInCart(id) ? <><FaCheck size={10} /> Added</> : <><FaShoppingBag size={10} /> Add</>}
+            </button>
+            <Link to={`/vendors/${id}`} className="text-sm font-semibold text-gold-600 hover:text-gold-700">
+              View →
+            </Link>
+          </div>
         </div>
       </div>
     </motion.div>
