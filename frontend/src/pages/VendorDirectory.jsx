@@ -9,10 +9,9 @@ import EmptyState from '../components/ui/EmptyState'
 import Dropdown from '../components/ui/Dropdown'
 import { useToast } from '../context/ToastContext'
 import { vendorsApi, categoriesApi } from '../services/api'
+import { DISTRICTS } from '../constants/districts'
 
 const PAGE_SIZE = 8
-
-const DISTRICTS = ['Colombo', 'Gampaha', 'Kalutara', 'Kandy', 'Galle', 'Matara', 'Kurunegala', 'Jaffna', 'Anuradhapura', 'Ratnapura', 'Badulla', 'Nuwara Eliya']
 
 export default function VendorDirectory() {
   const [searchParams, setSearchParams] = useSearchParams()
@@ -21,7 +20,7 @@ export default function VendorDirectory() {
   const [categories, setCategories] = useState([])
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState('')
-  const [query, setQuery] = useState('')
+  const [query, setQuery] = useState(searchParams.get('search') || '')
   const [district, setDistrict] = useState('')
   const [sort, setSort] = useState('name')
   const [page, setPage] = useState(1)
@@ -81,7 +80,7 @@ export default function VendorDirectory() {
       <div className="container-app py-8">
         <div className="flex items-center justify-between mb-6">
           <div>
-            <h1 className="text-3xl font-display font-bold text-charcoal">Vendor Directory</h1>
+            <h1 className="text-3xl font-display font-medium text-charcoal">Vendor Directory</h1>
             <p className="text-charcoal/50 text-sm mt-1">Find trusted wedding vendors across Sri Lanka.</p>
           </div>
           <Link to="/vendors/new" className="btn-gold text-sm">
@@ -104,7 +103,7 @@ export default function VendorDirectory() {
         <div className="flex items-center gap-2 overflow-x-auto pb-4 mb-2">
           <button
             onClick={() => setCategory('')}
-            className={`shrink-0 px-4 py-2 rounded-full text-sm font-medium transition-colors ${!activeCategory ? 'bg-maroon-500 text-white' : 'bg-white text-charcoal/60 border border-charcoal/10 hover:bg-charcoal/5'}`}
+            className={`shrink-0 px-4 py-2 rounded-full text-sm font-medium transition-colors ${!activeCategory ? 'bg-gold-700 text-white' : 'bg-white text-charcoal/60 border border-charcoal/10 hover:bg-charcoal/5'}`}
           >
             All
           </button>
@@ -112,7 +111,7 @@ export default function VendorDirectory() {
             <button
               key={c.categoryId}
               onClick={() => setCategory(c.categoryId)}
-              className={`shrink-0 px-4 py-2 rounded-full text-sm font-medium transition-colors ${String(activeCategory) === String(c.categoryId) ? 'bg-maroon-500 text-white' : 'bg-white text-charcoal/60 border border-charcoal/10 hover:bg-charcoal/5'}`}
+              className={`shrink-0 px-4 py-2 rounded-full text-sm font-medium transition-colors ${String(activeCategory) === String(c.categoryId) ? 'bg-gold-700 text-white' : 'bg-white text-charcoal/60 border border-charcoal/10 hover:bg-charcoal/5'}`}
             >
               {c.categoryName}
             </button>
@@ -157,7 +156,7 @@ export default function VendorDirectory() {
                     <button
                       key={d}
                       onClick={() => { setDistrict(d === district ? '' : d); setPage(1) }}
-                      className={`px-3 py-1.5 rounded-full text-xs font-semibold transition-colors ${district === d ? 'bg-maroon-500 text-white' : 'bg-charcoal/5 text-charcoal/60 hover:bg-charcoal/10'}`}
+                      className={`px-3 py-1.5 rounded-full text-xs font-semibold transition-colors ${district === d ? 'bg-gold-700 text-white' : 'bg-charcoal/5 text-charcoal/60 hover:bg-charcoal/10'}`}
                     >
                       {d}
                     </button>

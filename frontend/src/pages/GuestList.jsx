@@ -1,25 +1,27 @@
-import { useState, useEffect } from 'react'
-import { motion } from 'framer-motion'
-import { FaShare, FaCheck, FaCopy, FaUsers, FaPlus, FaEdit, FaTrash } from 'react-icons/fa'
+import { useState, useEffect, useMemo } from 'react'
+import { FaShare, FaCheck, FaUsers, FaPlus, FaEdit, FaTrash, FaSearch } from 'react-icons/fa'
 import Modal from '../components/ui/Modal'
 import ConfirmDialog from '../components/ui/ConfirmDialog'
 import FormField from '../components/ui/FormField'
 import Select from '../components/ui/Select'
 import Badge from '../components/ui/Badge'
+import StatCard from '../components/ui/StatCard'
+import Tabs from '../components/ui/Tabs'
 import { SkeletonCard } from '../components/ui/Skeleton'
 import EmptyState from '../components/ui/EmptyState'
 import { useToast } from '../context/ToastContext'
 import { guestsApi } from '../services/api'
 
+const FILTER_TABS = [
+  { id: 'all', label: 'All' },
+  { id: 'Attending', label: 'Attending' },
+  { id: 'Pending', label: 'Pending' },
+  { id: 'Declined', label: 'Declined' },
+]
+
 const SIDE_OPTIONS = [
   { value: 'Bride', label: 'Bride' },
   { value: 'Groom', label: 'Groom' },
-]
-
-const RSVP_OPTIONS = [
-  { value: 'Pending', label: 'Pending' },
-  { value: 'Attending', label: 'Attending' },
-  { value: 'Declined', label: 'Declined' },
 ]
 
 const emptyForm = {
@@ -41,6 +43,8 @@ export default function GuestList() {
   const [deleting, setDeleting] = useState(null)
   const [deleteLoading, setDeleteLoading] = useState(false)
   const [copiedId, setCopiedId] = useState(null)
+  const [search, setSearch] = useState('')
+  const [statusFilter, setStatusFilter] = useState('all')
   const { showToast } = useToast()
 
   const load = async () => {
@@ -151,13 +155,23 @@ export default function GuestList() {
   const pending = guests.filter((g) => g.rsvpStatus !== 'Attending' && g.rsvpStatus !== 'Declined')
   const declined = guests.filter((g) => g.rsvpStatus === 'Declined')
 
+  const visibleGuests = useMemo(() => {
+    return guests.filter((g) => {
+      const matchesStatus =
+        statusFilter === 'all' ||
+        (statusFilter === 'Pending' ? g.rsvpStatus !== 'Attending' && g.rsvpStatus !== 'Declined' : g.rsvpStatus === statusFilter)
+      const matchesSearch = !search.trim() || (g.guestName || '').toLowerCase().includes(search.trim().toLowerCase())
+      return matchesStatus && matchesSearch
+    })
+  }, [guests, statusFilter, search])
+
   const rsvpVariant = (s) => (s === 'Attending' ? 'success' : s === 'Declined' ? 'error' : 'gold')
 
   return (
     <div className="space-y-6">
       <div className="flex items-center justify-between">
         <div>
-          <h1 className="text-2xl font-display font-bold text-charcoal">Guest List</h1>
+          <h1 className="text-2xl font-display font-medium text-charcoal">Guest List</h1>
           <p className="text-charcoal/50 text-sm mt-1">{guests.length} guests · {confirmed.length} attending</p>
         </div>
         <button onClick={openAdd} className="btn-primary text-sm">
@@ -178,17 +192,24 @@ export default function GuestList() {
         </div>
       ) : (
         <>
-          <div className="grid grid-cols-3 gap-4">
-            {[
-              { label: 'Attending', count: confirmed.length, color: 'bg-emerald-50 text-emerald-700 border-emerald-200' },
-              { label: 'Pending', count: pending.length, color: 'bg-gold-50 text-gold-700 border-gold-200' },
-              { label: 'Declined', count: declined.length, color: 'bg-maroon-50 text-maroon-700 border-maroon-200' },
-            ].map((s) => (
-              <motion.div key={s.label} initial={{ opacity: 0, y: 12 }} animate={{ opacity: 1, y: 0 }} className={`rounded-xl border px-4 py-3 text-center ${s.color}`}>
-                <div className="text-2xl font-bold font-display">{s.count}</div>
-                <div className="text-xs font-medium mt-0.5">{s.label}</div>
-              </motion.div>
-            ))}
+          <div className="grid grid-cols-2 lg:grid-cols-4 gap-4">
+            <StatCard icon={FaUsers} label="Total Guests" value={guests.length} color="ink" />
+            <StatCard icon={FaCheck} label="Attending" value={confirmed.length} color="gold" />
+            <StatCard icon={FaUsers} label="Pending" value={pending.length} color="ink" />
+            <StatCard icon={FaUsers} label="Declined" value={declined.length} color="maroon" />
+          </div>
+
+          <div className="flex flex-col sm:flex-row sm:items-center gap-3 justify-between">
+            <Tabs tabs={FILTER_TABS} defaultTab="all" onChange={setStatusFilter} />
+            <div className="relative sm:w-72">
+              <FaSearch className="absolute left-4 top-1/2 -translate-y-1/2 text-charcoal/30" size={13} />
+              <input
+                value={search}
+                onChange={(e) => setSearch(e.target.value)}
+                placeholder="Search guests..."
+                className="input-field pl-10 py-2.5 text-sm"
+              />
+            </div>
           </div>
 
           {guests.length === 0 ? (
@@ -201,6 +222,8 @@ export default function GuestList() {
                 </button>
               }
             />
+          ) : visibleGuests.length === 0 ? (
+            <EmptyState title="No guests match" subtitle="Try a different search or filter." />
           ) : (
             <div className="card overflow-hidden">
               <div className="overflow-x-auto">
@@ -215,7 +238,7 @@ export default function GuestList() {
                     </tr>
                   </thead>
                   <tbody>
-                    {guests.map((guest) => (
+                    {visibleGuests.map((guest) => (
                       <tr key={guest.guestId} className="border-b border-charcoal/5 last:border-0 hover:bg-charcoal/[0.02] transition-colors">
                         <td className="px-5 py-3.5 font-medium text-charcoal">{guest.guestName}</td>
                         <td className="px-5 py-3.5 text-charcoal/50 hidden sm:table-cell">{guest.sideOfFamily}</td>

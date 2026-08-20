@@ -20,7 +20,7 @@ export default function Pagination({ page, totalPages, onChange }) {
           aria-current={p === page ? 'page' : undefined}
           onClick={() => onChange(p)}
           className={`h-10 w-10 rounded-full text-sm font-medium transition-colors ${
-            p === page ? 'bg-maroon-500 text-white' : 'text-charcoal/60 hover:bg-charcoal/5'
+            p === page ? 'bg-gold-700 text-white' : 'text-charcoal/60 hover:bg-charcoal/5'
           }`}
         >
           {p}

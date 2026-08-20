@@ -1,6 +1,7 @@
 import { useState, useEffect, useMemo } from 'react'
 import { motion } from 'framer-motion'
 import { FaWallet, FaPlus, FaEdit, FaTrash } from 'react-icons/fa'
+import { PieChart, Pie, Cell, Tooltip, ResponsiveContainer } from 'recharts'
 import Modal from '../components/ui/Modal'
 import ConfirmDialog from '../components/ui/ConfirmDialog'
 import FormField from '../components/ui/FormField'
@@ -10,6 +11,8 @@ import { SkeletonCard } from '../components/ui/Skeleton'
 import EmptyState from '../components/ui/EmptyState'
 import { useToast } from '../context/ToastContext'
 import { budgetApi } from '../services/api'
+
+const CHART_COLORS = ['#1B5744', '#C9A24B', '#4E9479', '#DFC069', '#78B29A', '#A9822F']
 
 const STATUS_OPTIONS = [
   { value: 'Planned', label: 'Planned' },
@@ -66,6 +69,17 @@ export default function BudgetTracker() {
   }, [items])
 
   const categories = useMemo(() => [...new Set(items.map((i) => i.category).filter(Boolean))], [items])
+
+  const spendByCategory = useMemo(() => {
+    const map = new Map()
+    items.forEach((i) => {
+      const key = i.category || 'Uncategorized'
+      const amount = Number(i.estimatedCost) || 0
+      if (amount <= 0) return
+      map.set(key, (map.get(key) || 0) + amount)
+    })
+    return [...map.entries()].map(([name, value]) => ({ name, value }))
+  }, [items])
 
   const filtered = useMemo(() => {
     if (!categoryFilter) return items
@@ -146,7 +160,7 @@ export default function BudgetTracker() {
     <div className="space-y-6">
       <div className="flex items-center justify-between">
         <div>
-          <h1 className="text-2xl font-display font-bold text-charcoal">Budget Tracker</h1>
+          <h1 className="text-2xl font-display font-medium text-charcoal">Budget Tracker</h1>
           <p className="text-charcoal/50 text-sm mt-1">Track your wedding expenses and payments.</p>
         </div>
         <button onClick={openAdd} className="btn-primary text-sm">
@@ -168,9 +182,9 @@ export default function BudgetTracker() {
           <div className="grid sm:grid-cols-2 lg:grid-cols-4 gap-4">
             {[
               { label: 'Total Estimated', value: money(totals.estimated), tone: 'text-charcoal' },
-              { label: 'Total Actual', value: money(totals.actual), tone: 'text-maroon-600' },
+              { label: 'Total Actual', value: money(totals.actual), tone: 'text-charcoal' },
               { label: 'Deposit Paid', value: money(totals.deposit), tone: 'text-gold-600' },
-              { label: 'Remaining', value: money(totals.estimated - totals.actual), tone: 'text-emerald-600' },
+              { label: 'Remaining', value: money(totals.estimated - totals.actual), tone: 'text-gold-800' },
             ].map((c, i) => (
               <motion.div
                 key={c.label}
@@ -188,11 +202,43 @@ export default function BudgetTracker() {
             ))}
           </div>
 
+          {spendByCategory.length > 0 && (
+            <div className="card p-5 sm:p-6">
+              <h2 className="font-display font-semibold text-charcoal mb-1">Spend by category</h2>
+              <p className="text-xs text-charcoal/50 mb-4">Estimated cost, based on your budget items</p>
+              <div className="grid sm:grid-cols-2 gap-6 items-center">
+                <div className="h-56">
+                  <ResponsiveContainer width="100%" height="100%">
+                    <PieChart>
+                      <Pie data={spendByCategory} dataKey="value" nameKey="name" innerRadius={55} outerRadius={80} paddingAngle={2}>
+                        {spendByCategory.map((entry, i) => (
+                          <Cell key={entry.name} fill={CHART_COLORS[i % CHART_COLORS.length]} />
+                        ))}
+                      </Pie>
+                      <Tooltip formatter={(value) => money(value)} />
+                    </PieChart>
+                  </ResponsiveContainer>
+                </div>
+                <ul className="space-y-2">
+                  {spendByCategory.map((entry, i) => (
+                    <li key={entry.name} className="flex items-center justify-between text-sm">
+                      <span className="flex items-center gap-2 text-charcoal/70">
+                        <span className="h-2.5 w-2.5 rounded-full shrink-0" style={{ background: CHART_COLORS[i % CHART_COLORS.length] }} />
+                        {entry.name}
+                      </span>
+                      <span className="font-medium text-charcoal">{money(entry.value)}</span>
+                    </li>
+                  ))}
+                </ul>
+              </div>
+            </div>
+          )}
+
           {categories.length > 0 && (
             <div className="flex items-center gap-2 flex-wrap">
               <button
                 onClick={() => setCategoryFilter('')}
-                className={`px-3 py-1.5 rounded-full text-xs font-semibold transition-colors ${!categoryFilter ? 'bg-maroon-500 text-white' : 'bg-charcoal/5 text-charcoal/60 hover:bg-charcoal/10'}`}
+                className={`px-3 py-1.5 rounded-full text-xs font-semibold transition-colors ${!categoryFilter ? 'bg-gold-700 text-white' : 'bg-charcoal/5 text-charcoal/60 hover:bg-charcoal/10'}`}
               >
                 All
               </button>
@@ -200,7 +246,7 @@ export default function BudgetTracker() {
                 <button
                   key={c}
                   onClick={() => setCategoryFilter(c)}
-                  className={`px-3 py-1.5 rounded-full text-xs font-semibold transition-colors ${categoryFilter === c ? 'bg-maroon-500 text-white' : 'bg-charcoal/5 text-charcoal/60 hover:bg-charcoal/10'}`}
+                  className={`px-3 py-1.5 rounded-full text-xs font-semibold transition-colors ${categoryFilter === c ? 'bg-gold-700 text-white' : 'bg-charcoal/5 text-charcoal/60 hover:bg-charcoal/10'}`}
                 >
                   {c}
                 </button>
