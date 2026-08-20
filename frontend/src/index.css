@@ -12,15 +12,15 @@
   }
 
   h1, h2, h3, h4 {
-    @apply font-display text-charcoal;
+    @apply font-display font-medium text-charcoal;
   }
 
   ::selection {
-    @apply bg-gold-200 text-maroon-700;
+    @apply bg-gold-200 text-gold-900;
   }
 
   :focus-visible {
-    outline: 2px solid #C9A24B;
+    outline: 2px solid #A9822F;
     outline-offset: 2px;
   }
 }
@@ -30,20 +30,23 @@
     @apply max-w-7xl mx-auto px-4 sm:px-6 lg:px-8;
   }
 
+  /* Editorial button language, matched to the Eterna reference: sharp/minimal
+     radius (not rounded pills or soft-radius cards), small tracked uppercase
+     labels rather than sentence-case, muted bronze-gold as the primary fill. */
   .btn-primary {
-    @apply inline-flex items-center justify-center gap-2 rounded-full bg-maroon-500 text-ivory-50 font-semibold px-6 py-3 shadow-soft transition-all duration-300 hover:bg-maroon-600 hover:-translate-y-0.5 hover:shadow-gold active:translate-y-0 disabled:opacity-50 disabled:pointer-events-none;
+    @apply inline-flex items-center justify-center gap-2.5 rounded-sm bg-gold-700 text-ivory-50 text-xs font-semibold tracking-[0.14em] uppercase px-7 py-3.5 transition-all duration-300 hover:bg-gold-800 active:translate-y-px disabled:opacity-50 disabled:pointer-events-none;
   }
 
   .btn-gold {
-    @apply inline-flex items-center justify-center gap-2 rounded-full bg-gold-gradient text-maroon-800 font-semibold px-6 py-3 shadow-gold transition-all duration-300 hover:-translate-y-0.5 hover:shadow-lg active:translate-y-0;
+    @apply inline-flex items-center justify-center gap-2.5 rounded-sm bg-gold-gradient text-charcoal text-xs font-semibold tracking-[0.14em] uppercase px-7 py-3.5 shadow-gold transition-all duration-300 hover:-translate-y-0.5 hover:shadow-lg active:translate-y-0;
   }
 
   .btn-outline {
-    @apply inline-flex items-center justify-center gap-2 rounded-full border-2 border-maroon-500 text-maroon-500 font-semibold px-6 py-3 transition-all duration-300 hover:bg-maroon-500 hover:text-ivory-50;
+    @apply inline-flex items-center justify-center gap-2.5 rounded-sm border border-charcoal/20 bg-white text-charcoal text-xs font-semibold tracking-[0.14em] uppercase px-7 py-3.5 transition-all duration-300 hover:border-gold-700 hover:text-gold-800;
   }
 
   .btn-ghost {
-    @apply inline-flex items-center justify-center gap-2 rounded-full text-charcoal/80 font-medium px-4 py-2 transition-all duration-300 hover:bg-charcoal/5;
+    @apply inline-flex items-center justify-center gap-2 text-charcoal/70 text-xs font-medium tracking-[0.12em] uppercase px-4 py-2 transition-all duration-300 hover:text-gold-800;
   }
 
   .card {
@@ -55,11 +58,13 @@
   }
 
   .input-field {
-    @apply w-full rounded-xl border border-charcoal/15 bg-white px-4 py-3 text-charcoal placeholder:text-charcoal/40 transition-all duration-200 focus:border-gold-400 focus:ring-2 focus:ring-gold-200 outline-none;
+    @apply w-full rounded-xl border border-charcoal/15 bg-white px-4 py-3 text-charcoal placeholder:text-charcoal/40 transition-all duration-200 focus:border-gold-500 focus:ring-2 focus:ring-gold-100 outline-none;
   }
 
+  /* Lighter, tracked small-caps label used before section headings —
+     replaces the previous bold-uppercase-gold badge treatment. */
   .section-eyebrow {
-    @apply inline-flex items-center gap-2 text-xs font-semibold tracking-[0.2em] uppercase text-gold-600;
+    @apply inline-flex items-center gap-2 text-[11px] font-medium tracking-[0.28em] uppercase text-gold-700/90;
   }
 
   .divider-ornament {

@@ -1,5 +1,5 @@
 import { NavLink, useNavigate } from 'react-router-dom'
-import { FaTachometerAlt, FaStore, FaUsers, FaWallet, FaSignOutAlt } from 'react-icons/fa'
+import { FaTachometerAlt, FaStore, FaUsers, FaWallet, FaBell, FaUser, FaCog, FaSignOutAlt } from 'react-icons/fa'
 import Logo from './Logo'
 import { useAuth } from '../../context/AuthContext'
 
@@ -8,6 +8,12 @@ const items = [
   { to: '/vendors', label: 'Vendors', icon: FaStore },
   { to: '/guests', label: 'Guests', icon: FaUsers },
   { to: '/budget', label: 'Budget', icon: FaWallet },
+]
+
+const accountItems = [
+  { to: '/notifications', label: 'Notifications', icon: FaBell },
+  { to: '/profile', label: 'Profile', icon: FaUser },
+  { to: '/settings', label: 'Settings', icon: FaCog },
 ]
 
 export default function Sidebar() {
@@ -32,7 +38,7 @@ export default function Sidebar() {
             end={item.end}
             className={({ isActive }) =>
               `flex items-center gap-3 px-4 py-3 rounded-xl text-sm font-medium transition-colors relative ${
-                isActive ? 'bg-maroon-50 text-maroon-600' : 'text-charcoal/60 hover:bg-charcoal/5 hover:text-charcoal'
+                isActive ? 'bg-gold-50 text-gold-800' : 'text-charcoal/60 hover:bg-charcoal/5 hover:text-charcoal'
               }`
             }
           >
@@ -40,6 +46,22 @@ export default function Sidebar() {
             {item.label}
           </NavLink>
         ))}
+        <div className="pt-4 mt-4 border-t border-charcoal/8 space-y-1">
+          {accountItems.map((item) => (
+            <NavLink
+              key={item.to}
+              to={item.to}
+              className={({ isActive }) =>
+                `flex items-center gap-3 px-4 py-3 rounded-xl text-sm font-medium transition-colors relative ${
+                  isActive ? 'bg-gold-50 text-gold-800' : 'text-charcoal/60 hover:bg-charcoal/5 hover:text-charcoal'
+                }`
+              }
+            >
+              <item.icon size={16} />
+              {item.label}
+            </NavLink>
+          ))}
+        </div>
       </nav>
       <div className="p-4 border-t border-charcoal/8">
         <button

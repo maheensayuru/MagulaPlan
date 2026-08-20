@@ -7,11 +7,10 @@ import FormField from '../components/ui/FormField'
 import Select from '../components/ui/Select'
 import { useToast } from '../context/ToastContext'
 import { vendorsApi, categoriesApi } from '../services/api'
+import { DISTRICTS } from '../constants/districts'
+import { EditorialEyebrow } from '../components/ui/Ornament'
 
-const districts = [
-  'Colombo', 'Gampaha', 'Kalutara', 'Kandy', 'Galle', 'Matara', 'Kurunegala',
-  'Jaffna', 'Anuradhapura', 'Ratnapura', 'Badulla', 'Nuwara Eliya', 'Other',
-]
+const districts = [...DISTRICTS, 'Other']
 
 const emptyForm = {
   businessName: '',
@@ -79,7 +78,7 @@ export default function VendorRegistration() {
   return (
     <div className="min-h-screen bg-ivory-radial py-8 px-4 sm:px-6">
       <div className="max-w-2xl mx-auto">
-        <Link to="/" className="inline-flex items-center gap-2 text-sm text-charcoal/60 hover:text-maroon-500 mb-6">
+        <Link to="/" className="inline-flex items-center gap-2 text-sm text-charcoal/60 hover:text-gold-700 mb-6">
           <FaArrowLeft size={13} /> Back to home
         </Link>
 
@@ -95,7 +94,10 @@ export default function VendorRegistration() {
             </div>
             <Logo />
           </div>
-          <h1 className="text-2xl font-display font-bold text-charcoal mt-4">List your business</h1>
+          <div className="mt-5 mb-1">
+            <EditorialEyebrow>Join The Directory</EditorialEyebrow>
+          </div>
+          <h1 className="text-2xl font-display font-medium text-charcoal">List your business</h1>
           <p className="text-charcoal/50 text-sm mt-1 mb-8">Join the MagulaPlan vendor directory and reach engaged couples.</p>
 
           <form onSubmit={handleSubmit} className="space-y-4">
