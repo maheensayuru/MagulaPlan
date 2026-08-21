@@ -1,8 +1,9 @@
 import { useEffect, useState } from 'react'
 import { Link } from 'react-router-dom'
 import { AnimatePresence, motion } from 'framer-motion'
-import { FaBars, FaTimes } from 'react-icons/fa'
+import { FaBars, FaTimes, FaShoppingBag } from 'react-icons/fa'
 import Logo from './Logo'
+import { useCart } from '../../context/CartContext'
 
 const links = [
   { href: '#features', label: 'Features' },
@@ -17,6 +18,7 @@ const DRAWER_CLOSE_MS = 300
 export default function Navbar() {
   const [scrolled, setScrolled] = useState(false)
   const [open, setOpen] = useState(false)
+  const { count, setOpen: setCartOpen } = useCart()
 
   useEffect(() => {
     const onScroll = () => setScrolled(window.scrollY > 12)
@@ -34,38 +36,56 @@ export default function Navbar() {
 
   return (
     <header
-      className={`sticky top-0 z-50 transition-all duration-300 ${
+      className={`fixed top-0 inset-x-0 z-50 transition-all duration-300 ${
         scrolled ? 'bg-white/90 backdrop-blur-md shadow-card' : 'bg-transparent'
       }`}
     >
-      <nav className="container-app flex items-center justify-between h-18 py-3">
-        <Logo />
-        <div className="hidden md:flex items-center gap-8">
+      <nav className="container-app flex items-center justify-between h-20 py-3">
+        <Logo tagline />
+        <div className="hidden md:flex items-center gap-9">
           {links.map((l) => (
-            <a key={l.href} href={l.href} className="text-sm font-medium text-charcoal/70 transition-colors hover:text-maroon-500">
+            <a key={l.href} href={l.href} className="text-[11px] font-medium tracking-[0.16em] uppercase text-charcoal/70 transition-colors hover:text-gold-800">
               {l.label}
             </a>
           ))}
         </div>
-        <div className="hidden md:flex items-center gap-3">
-          <Link to="/vendors/new" className="btn-ghost text-sm">
+        <div className="hidden md:flex items-center gap-5">
+          <Link to="/vendors/new" className="btn-ghost">
             List your business
           </Link>
-          <Link to="/login" className="btn-ghost text-sm">
+          <Link to="/login" className="btn-ghost">
             Log in
           </Link>
-          <Link to="/register" className="btn-primary text-sm py-2.5">
+          <button onClick={() => setCartOpen(true)} aria-label="Open cart" className="relative h-10 w-10 flex items-center justify-center rounded-full text-charcoal/70 hover:bg-charcoal/5 transition-colors">
+            <FaShoppingBag size={16} />
+            {count > 0 && (
+              <span className="absolute -top-0.5 -right-0.5 h-4 w-4 rounded-full bg-gold-700 text-white text-[9px] font-bold flex items-center justify-center">
+                {count}
+              </span>
+            )}
+          </button>
+          <Link to="/register" className="btn-outline py-3">
             Get Started
           </Link>
         </div>
-        <button
-          className="md:hidden h-10 w-10 flex items-center justify-center rounded-full text-charcoal"
-          aria-label={open ? 'Close menu' : 'Open menu'}
-          aria-expanded={open}
-          onClick={() => setOpen((o) => !o)}
-        >
-          {open ? <FaTimes size={18} /> : <FaBars size={18} />}
-        </button>
+        <div className="md:hidden flex items-center gap-1">
+          <button onClick={() => setCartOpen(true)} aria-label="Open cart" className="relative h-10 w-10 flex items-center justify-center rounded-full text-charcoal">
+            <FaShoppingBag size={17} />
+            {count > 0 && (
+              <span className="absolute top-0.5 right-0.5 h-4 w-4 rounded-full bg-gold-700 text-white text-[9px] font-bold flex items-center justify-center">
+                {count}
+              </span>
+            )}
+          </button>
+          <button
+            className="h-10 w-10 flex items-center justify-center rounded-full text-charcoal"
+            aria-label={open ? 'Close menu' : 'Open menu'}
+            aria-expanded={open}
+            onClick={() => setOpen((o) => !o)}
+          >
+            {open ? <FaTimes size={18} /> : <FaBars size={18} />}
+          </button>
+        </div>
       </nav>
       <AnimatePresence>
         {open && (
@@ -78,11 +98,11 @@ export default function Navbar() {
           >
             <div className="container-app py-4 flex flex-col gap-3">
               {links.map((l) => (
-                <a key={l.href} href={l.href} onClick={(e) => handleMobileNavClick(e, l.href)} className="py-2 text-charcoal/80 font-medium">
+                <a key={l.href} href={l.href} onClick={(e) => handleMobileNavClick(e, l.href)} className="py-2 text-charcoal/80 text-xs font-medium tracking-[0.16em] uppercase">
                   {l.label}
                 </a>
               ))}
-              <Link to="/vendors/new" onClick={() => setOpen(false)} className="py-2 text-charcoal/80 font-medium">
+              <Link to="/vendors/new" onClick={() => setOpen(false)} className="py-2 text-charcoal/80 text-xs font-medium tracking-[0.16em] uppercase">
                 List your business
               </Link>
               <div className="flex gap-3 pt-2">

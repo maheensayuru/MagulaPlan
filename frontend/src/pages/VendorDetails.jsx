@@ -2,12 +2,13 @@ import { useState, useEffect } from 'react'
 import { useParams, Link } from 'react-router-dom'
 import { motion } from 'framer-motion'
 import {
-  FaStar, FaMapMarkerAlt, FaWhatsapp, FaPhone, FaEnvelope, FaHeart,
-  FaShare, FaArrowLeft, FaStore,
+  FaMapMarkerAlt, FaWhatsapp, FaPhone, FaEnvelope, FaHeart,
+  FaShare, FaArrowLeft, FaStore, FaShoppingBag, FaCheck,
 } from 'react-icons/fa'
 import Badge from '../components/ui/Badge'
 import { SkeletonCard } from '../components/ui/Skeleton'
 import { useToast } from '../context/ToastContext'
+import { useCart } from '../context/CartContext'
 import { vendorsApi } from '../services/api'
 
 export default function VendorDetails() {
@@ -17,6 +18,7 @@ export default function VendorDetails() {
   const [error, setError] = useState('')
   const [saved, setSaved] = useState(false)
   const { showToast } = useToast()
+  const { addItem, removeItem, isInCart } = useCart()
 
   useEffect(() => {
     const load = async () => {
@@ -76,12 +78,14 @@ export default function VendorDetails() {
   return (
     <div className="bg-ivory-100 min-h-screen pb-16">
       {/* Hero */}
-      <div className="relative h-64 sm:h-80 bg-charcoal overflow-hidden">
-        <img
-          src={vendor.imageUrl || `https://picsum.photos/seed/vendor-${vendor.vendorId}/1200/600`}
-          alt={vendor.businessName}
-          className="h-full w-full object-cover opacity-80"
-        />
+      <div className="relative h-64 sm:h-80 bg-ink-gradient overflow-hidden">
+        {vendor.imageUrl ? (
+          <img src={vendor.imageUrl} alt={vendor.businessName} className="h-full w-full object-cover opacity-80" />
+        ) : (
+          <div className="h-full w-full flex items-center justify-center text-gold-200/40">
+            <FaStore size={64} />
+          </div>
+        )}
         <div className="absolute inset-0 bg-gradient-to-t from-charcoal/70 via-transparent to-transparent" />
       </div>
 
@@ -93,7 +97,7 @@ export default function VendorDetails() {
                 <Badge variant="gold">{vendor.categoryName || 'Vendor'}</Badge>
                 {vendor.verified && <Badge variant="success">Verified</Badge>}
               </div>
-              <h1 className="text-3xl font-display font-bold text-charcoal">{vendor.businessName}</h1>
+              <h1 className="text-3xl font-display font-medium text-charcoal">{vendor.businessName}</h1>
               {vendor.districtLocation && (
                 <p className="flex items-center gap-1.5 text-charcoal/50 mt-2">
                   <FaMapMarkerAlt size={13} /> {vendor.districtLocation}
@@ -114,12 +118,23 @@ export default function VendorDetails() {
             </div>
           </div>
 
-          {vendor.startingPrice != null && (
-            <div className="mt-6 inline-flex items-baseline gap-2 bg-gold-50 rounded-xl px-5 py-3">
-              <span className="text-sm text-charcoal/50">Starting from</span>
-              <span className="text-2xl font-bold text-maroon-600">Rs. {(Number(vendor.startingPrice) || 0).toLocaleString()}</span>
-            </div>
-          )}
+          <div className="mt-6 flex flex-wrap items-center gap-4">
+            {vendor.startingPrice != null && (
+              <div className="inline-flex items-baseline gap-2 bg-gold-50 rounded-xl px-5 py-3">
+                <span className="text-sm text-charcoal/50">Starting from</span>
+                <span className="text-2xl font-bold text-gold-800">Rs. {(Number(vendor.startingPrice) || 0).toLocaleString()}</span>
+              </div>
+            )}
+            <button
+              onClick={() => {
+                const vendorId = vendor.vendorId ?? vendor.id
+                return isInCart(vendorId) ? removeItem(vendorId) : addItem(vendor)
+              }}
+              className={isInCart(vendor.vendorId ?? vendor.id) ? 'btn-outline' : 'btn-primary'}
+            >
+              {isInCart(vendor.vendorId ?? vendor.id) ? <><FaCheck size={13} /> Added to Selections</> : <><FaShoppingBag size={13} /> Add to Selections</>}
+            </button>
+          </div>
 
           {vendor.description && (
             <div className="mt-6">
@@ -137,7 +152,7 @@ export default function VendorDetails() {
                   <a href={`tel:${vendor.contactPhone}`} className="btn-outline text-sm py-2.5">
                     <FaPhone size={13} /> Call
                   </a>
-                  <a href={toWhatsApp(vendor.contactPhone)} target="_blank" rel="noreferrer" className="inline-flex items-center gap-2 rounded-full bg-emerald-500 text-white font-semibold px-6 py-2.5 text-sm hover:bg-emerald-600 transition-colors">
+                  <a href={toWhatsApp(vendor.contactPhone)} target="_blank" rel="noreferrer" className="inline-flex items-center gap-2.5 rounded-sm bg-[#25D366] text-white text-xs font-semibold tracking-[0.14em] uppercase px-6 py-3 hover:bg-[#1EBE5A] transition-colors">
                     <FaWhatsapp size={14} /> WhatsApp
                   </a>
                 </>

@@ -2,7 +2,13 @@ import { useEffect } from 'react'
 import { motion, AnimatePresence } from 'framer-motion'
 import { FaTimes } from 'react-icons/fa'
 
-export default function Modal({ open, onClose, title, children }) {
+const sizes = {
+  sm: 'sm:max-w-sm',
+  md: 'sm:max-w-lg',
+  lg: 'sm:max-w-2xl',
+}
+
+export default function Modal({ open, onClose, title, children, size = 'md' }) {
   useEffect(() => {
     if (!open) return
     const onKey = (e) => {
@@ -31,7 +37,7 @@ export default function Modal({ open, onClose, title, children }) {
             animate={{ opacity: 1, y: 0, scale: 1 }}
             exit={{ opacity: 0, y: 40, scale: 0.98 }}
             transition={{ duration: 0.25 }}
-            className="relative w-full sm:max-w-lg card rounded-b-none sm:rounded-xl2 p-6 sm:p-8 max-h-[90vh] overflow-y-auto"
+            className={`relative w-full ${sizes[size]} card rounded-b-none sm:rounded-xl2 p-6 sm:p-8 max-h-[90vh] overflow-y-auto`}
             role="dialog"
             aria-modal="true"
           >

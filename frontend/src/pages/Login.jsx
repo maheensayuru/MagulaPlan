@@ -5,12 +5,16 @@ import { FaEnvelope, FaLock, FaEye, FaEyeSlash } from 'react-icons/fa'
 import Logo from '../components/layout/Logo'
 import { useToast } from '../context/ToastContext'
 import { useAuth } from '../context/AuthContext'
+import { riseIn } from '../lib/motion'
+import { EditorialEyebrow } from '../components/ui/Ornament'
+import heroGolden from '../assets/hero-golden.jpg'
 
 export default function Login() {
   const [showPw, setShowPw] = useState(false)
   const [loading, setLoading] = useState(false)
   const [email, setEmail] = useState('')
   const [password, setPassword] = useState('')
+  const [remember, setRemember] = useState(true)
   const navigate = useNavigate()
   const { showToast } = useToast()
   const { login } = useAuth()
@@ -19,7 +23,7 @@ export default function Login() {
     e.preventDefault()
     setLoading(true)
     try {
-      await login(email, password)
+      await login(email, password, remember)
       showToast('Welcome back!', 'success')
       navigate('/dashboard')
     } catch (err) {
@@ -31,23 +35,28 @@ export default function Login() {
 
   return (
     <div className="min-h-screen grid lg:grid-cols-2 bg-ivory-100">
-      <div className="hidden lg:block relative">
-        <img src="https://picsum.photos/seed/loginwedding/900/1200" alt="Sri Lankan wedding" className="h-full w-full object-cover" />
-        <div className="absolute inset-0 bg-maroon-gradient opacity-70" />
+      <div className="hidden lg:block relative overflow-hidden">
+        <img src={heroGolden} alt="Sri Lankan couple in traditional Kandyan wedding attire at golden hour" className="absolute inset-0 h-full w-full object-cover" />
+        <div className="absolute inset-0 bg-gradient-to-t from-charcoal/85 via-charcoal/25 to-transparent" />
+        <div className="absolute top-10 left-12">
+          <Logo light tagline />
+        </div>
         <div className="absolute inset-0 flex flex-col justify-end p-12">
-          <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.6 }}>
-            <h2 className="text-3xl font-display font-bold text-ivory-50 mb-3">Welcome back to MagulaPlan</h2>
+          <motion.div initial="hidden" animate="show" variants={riseIn}>
+            <EditorialEyebrow tone="light" className="mb-4">Welcome Back</EditorialEyebrow>
+            <h2 className="text-3xl font-display font-medium text-ivory-50 mb-3">Welcome back to MagulaPlan</h2>
             <p className="text-ivory-100/70 max-w-sm">Pick up right where you left off planning your dream wedding.</p>
           </motion.div>
         </div>
       </div>
 
       <div className="flex items-center justify-center p-6 sm:p-12">
-        <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.5 }} className="w-full max-w-sm">
+        <motion.div initial="hidden" animate="show" variants={riseIn} className="w-full max-w-sm">
           <div className="mb-8">
             <Logo />
           </div>
-          <h1 className="text-2xl font-display font-bold text-charcoal mb-1">Log in to your account</h1>
+          <EditorialEyebrow className="mb-4">Sign In</EditorialEyebrow>
+          <h1 className="text-2xl font-display font-medium text-charcoal mb-1">Log in to your account</h1>
           <p className="text-charcoal/50 text-sm mb-8">Continue planning your perfect day.</p>
 
           <form onSubmit={handleSubmit} className="space-y-4">
@@ -68,13 +77,22 @@ export default function Login() {
                 </button>
               </div>
             </div>
+            <label className="flex items-center gap-2 text-sm text-charcoal/70">
+              <input
+                type="checkbox"
+                checked={remember}
+                onChange={(e) => setRemember(e.target.checked)}
+                className="h-4 w-4 rounded border-charcoal/25 accent-gold-700"
+              />
+              Remember me
+            </label>
             <button type="submit" disabled={loading} className="btn-primary w-full">
               {loading ? 'Logging in...' : 'Log In'}
             </button>
           </form>
 
           <p className="text-center text-sm text-charcoal/60 mt-8">
-            Don't have an account? <Link to="/register" className="text-maroon-500 font-semibold hover:underline">Sign up free</Link>
+            Don't have an account? <Link to="/register" className="text-gold-800 font-semibold hover:underline">Sign up free</Link>
           </p>
         </motion.div>
       </div>

@@ -49,7 +49,7 @@ export default function Dropdown({ label, options, value, onChange }) {
                   setOpen(false)
                 }}
                 className={`px-4 py-2 text-sm cursor-pointer hover:bg-gold-50 ${
-                  opt.value === value ? 'text-maroon-600 font-semibold bg-gold-50' : 'text-charcoal/80'
+                  opt.value === value ? 'text-gold-800 font-semibold bg-gold-50' : 'text-charcoal/80'
                 }`}
               >
                 {opt.label}
