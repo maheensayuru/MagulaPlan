@@ -22,7 +22,7 @@ export default function MobileBottomNav() {
             end={item.end}
             className={({ isActive }) =>
               `flex flex-col items-center justify-center gap-1 py-2.5 text-[11px] font-medium transition-colors ${
-                isActive ? 'text-maroon-500' : 'text-charcoal/45'
+                isActive ? 'text-gold-800' : 'text-charcoal/45'
               }`
             }
           >

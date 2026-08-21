@@ -6,9 +6,9 @@ const AuthContext = createContext(null)
 export function AuthProvider({ children }) {
   const [token, setTokenState] = useState(getToken())
 
-  const login = async (email, password) => {
+  const login = async (email, password, remember = true) => {
     const data = await authApi.login({ email, password })
-    setToken(data.token)
+    setToken(data.token, remember)
     setTokenState(data.token)
     return data
   }

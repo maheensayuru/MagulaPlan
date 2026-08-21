@@ -5,6 +5,8 @@ import { FaUser, FaEnvelope, FaLock, FaCalendarAlt, FaPhone, FaWallet, FaCheck }
 import Logo from '../components/layout/Logo'
 import { useToast } from '../context/ToastContext'
 import { useAuth } from '../context/AuthContext'
+import { riseIn } from '../lib/motion'
+import { EditorialEyebrow } from '../components/ui/Ornament'
 
 const steps = ['Your Details', 'Wedding Info', 'Confirm']
 
@@ -53,12 +55,7 @@ export default function Register() {
 
   return (
     <div className="min-h-screen flex items-center justify-center bg-ivory-radial p-4 sm:p-8">
-      <motion.div
-        initial={{ opacity: 0, y: 20 }}
-        animate={{ opacity: 1, y: 0 }}
-        transition={{ duration: 0.5 }}
-        className="w-full max-w-lg card p-8 sm:p-10"
-      >
+      <motion.div initial="hidden" animate="show" variants={riseIn} className="w-full max-w-lg card p-8 sm:p-10">
         <div className="flex justify-center mb-6">
           <Logo />
         </div>
@@ -68,17 +65,20 @@ export default function Register() {
             <div key={s} className="flex items-center gap-2">
               <div
                 className={`h-8 w-8 rounded-full flex items-center justify-center text-xs font-bold transition-colors ${
-                  i < step ? 'bg-emerald-500 text-white' : i === step ? 'bg-maroon-500 text-white' : 'bg-charcoal/10 text-charcoal/40'
+                  i < step ? 'bg-gold-600 text-white' : i === step ? 'bg-gold-500 text-charcoal' : 'bg-charcoal/10 text-charcoal/40'
                 }`}
               >
                 {i < step ? <FaCheck size={10} /> : i + 1}
               </div>
-              {i < steps.length - 1 && <div className={`h-0.5 w-8 sm:w-12 ${i < step ? 'bg-emerald-500' : 'bg-charcoal/10'}`} />}
+              {i < steps.length - 1 && <div className={`h-0.5 w-8 sm:w-12 ${i < step ? 'bg-gold-600' : 'bg-charcoal/10'}`} />}
             </div>
           ))}
         </div>
 
-        <h1 className="text-2xl font-display font-bold text-charcoal text-center mb-1">{steps[step]}</h1>
+        <div className="flex justify-center mb-3">
+          <EditorialEyebrow>Create Your Account</EditorialEyebrow>
+        </div>
+        <h1 className="text-2xl font-display font-medium text-charcoal text-center mb-1">{steps[step]}</h1>
         <p className="text-charcoal/50 text-sm text-center mb-8">
           {step === 0 && "Let's create your MagulaPlan account"}
           {step === 1 && 'Tell us a little about your big day'}
@@ -156,7 +156,7 @@ export default function Register() {
                 <p className="flex justify-between"><span className="text-charcoal/50">Wedding date</span><span className="font-medium text-charcoal">{weddingDate || 'Not set'}</span></p>
               </div>
               <label className="flex items-start gap-2 text-sm text-charcoal/60">
-                <input type="checkbox" required className="mt-1 rounded border-charcoal/20 text-maroon-500" />
+                <input type="checkbox" required className="mt-1 rounded border-charcoal/20 text-gold-700" />
                 I agree to the Terms of Service and Privacy Policy.
               </label>
             </motion.div>
@@ -175,7 +175,7 @@ export default function Register() {
         </form>
 
         <p className="text-center text-sm text-charcoal/60 mt-8">
-          Already have an account? <Link to="/login" className="text-maroon-500 font-semibold hover:underline">Log in</Link>
+          Already have an account? <Link to="/login" className="text-gold-800 font-semibold hover:underline">Log in</Link>
         </p>
       </motion.div>
     </div>
