@@ -39,6 +39,11 @@ public class VendorServiceImpl implements VendorService {
                 .contactPhone(requestDto.getContactPhone())
                 .contactEmail(requestDto.getContactEmail())
                 .startingPrice(requestDto.getStartingPrice())
+                .imageUrl(requestDto.getImageUrl())
+                .rating(requestDto.getRating())
+                .reviewCount(requestDto.getReviewCount())
+                .verified(requestDto.getVerified())
+                .featured(requestDto.getFeatured())
                 .build();
 
         Vendor savedVendor = vendorRepository.save(vendor);
@@ -81,6 +86,11 @@ public class VendorServiceImpl implements VendorService {
         existingVendor.setContactPhone(requestDto.getContactPhone());
         existingVendor.setContactEmail(requestDto.getContactEmail());
         existingVendor.setStartingPrice(requestDto.getStartingPrice());
+        existingVendor.setImageUrl(requestDto.getImageUrl());
+        existingVendor.setRating(requestDto.getRating());
+        existingVendor.setReviewCount(requestDto.getReviewCount());
+        existingVendor.setVerified(requestDto.getVerified());
+        existingVendor.setFeatured(requestDto.getFeatured());
 
         Vendor updatedVendor = vendorRepository.save(existingVendor);
         return mapToResponseDto(updatedVendor);
@@ -104,6 +114,11 @@ public class VendorServiceImpl implements VendorService {
         responseDto.setContactPhone(vendor.getContactPhone());
         responseDto.setContactEmail(vendor.getContactEmail());
         responseDto.setStartingPrice(vendor.getStartingPrice());
+        responseDto.setImageUrl(vendor.getImageUrl());
+        responseDto.setRating(vendor.getRating());
+        responseDto.setReviewCount(vendor.getReviewCount());
+        responseDto.setVerified(vendor.getVerified());
+        responseDto.setFeatured(vendor.getFeatured());
         return responseDto;
     }
 }

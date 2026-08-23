@@ -41,6 +41,11 @@ class VendorRepositoryTest {
                 .contactPhone("0711111111")
                 .contactEmail("vendor@test.com")
                 .startingPrice(new BigDecimal("25000.00"))
+                .imageUrl("https://cdn.example.com/vendor.jpg")
+                .rating(new BigDecimal("4.7"))
+                .reviewCount(85)
+                .verified(true)
+                .featured(true)
                 .build();
     }
 
@@ -50,6 +55,19 @@ class VendorRepositoryTest {
         Vendor saved = vendorRepository.save(buildVendor("Sunset Studios"));
         assertThat(saved.getVendorId()).isNotNull();
         assertThat(saved.getBusinessName()).isEqualTo("Sunset Studios");
+    }
+
+    @Test
+    @DisplayName("save() persists MAG-25 fields: imageUrl, rating, reviewCount, verified, featured")
+    void save_persistsMag25Fields() {
+        Vendor saved = vendorRepository.save(buildVendor("Golden Lens"));
+        Vendor found = vendorRepository.findById(saved.getVendorId()).orElseThrow();
+
+        assertThat(found.getImageUrl()).isEqualTo("https://cdn.example.com/vendor.jpg");
+        assertThat(found.getRating()).isEqualByComparingTo("4.7");
+        assertThat(found.getReviewCount()).isEqualTo(85);
+        assertThat(found.getVerified()).isTrue();
+        assertThat(found.getFeatured()).isTrue();
     }
 
     @Test
