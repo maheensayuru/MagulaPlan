@@ -42,4 +42,21 @@ public class Vendor {
 
     @Column(name = "starting_price", precision = 10, scale = 2)
     private BigDecimal startingPrice;
+
+    @Column(name = "image_url", length = 500)
+    private String imageUrl;
+
+    @Column(name = "rating", precision = 2, scale = 1)
+    private BigDecimal rating;
+
+    @Column(name = "review_count")
+    private Integer reviewCount;
+
+    @Builder.Default
+    @Column(name = "verified", columnDefinition = "BOOLEAN DEFAULT FALSE")
+    private Boolean verified = false;
+
+    @Builder.Default
+    @Column(name = "featured", columnDefinition = "BOOLEAN DEFAULT FALSE")
+    private Boolean featured = false;
 }
