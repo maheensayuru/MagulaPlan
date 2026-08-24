@@ -19,4 +19,9 @@ public class VendorResponseDto {
     private String contactPhone;
     private String contactEmail;
     private BigDecimal startingPrice;
+    private String imageUrl;
+    private BigDecimal rating;
+    private Integer reviewCount;
+    private Boolean verified;
+    private Boolean featured;
 }
