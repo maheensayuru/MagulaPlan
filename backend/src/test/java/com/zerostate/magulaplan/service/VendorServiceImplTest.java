@@ -50,12 +50,18 @@ class VendorServiceImplTest {
                 .contactPhone("0711111111")
                 .contactEmail("studio@test.com")
                 .startingPrice(new BigDecimal("25000.00"))
+                .imageUrl("https://cdn.example.com/sunset.jpg")
+                .rating(new BigDecimal("4.5"))
+                .reviewCount(120)
+                .verified(true)
+                .featured(true)
                 .build();
     }
 
     private VendorRequestDto buildRequest() {
         return new VendorRequestDto(1L, "Sunset Studios", "Wedding photography",
-                "Colombo", "0711111111", "studio@test.com", new BigDecimal("25000.00"));
+                "Colombo", "0711111111", "studio@test.com", new BigDecimal("25000.00"),
+                "https://cdn.example.com/sunset.jpg", new BigDecimal("4.5"), 120, true, true);
     }
 
     @Test
@@ -70,6 +76,11 @@ class VendorServiceImplTest {
 
         assertThat(result.getVendorId()).isEqualTo(1L);
         assertThat(result.getBusinessName()).isEqualTo("Sunset Studios");
+        assertThat(result.getImageUrl()).isEqualTo("https://cdn.example.com/sunset.jpg");
+        assertThat(result.getRating()).isEqualByComparingTo("4.5");
+        assertThat(result.getReviewCount()).isEqualTo(120);
+        assertThat(result.getVerified()).isTrue();
+        assertThat(result.getFeatured()).isTrue();
         verify(vendorRepository).save(any(Vendor.class));
     }
 

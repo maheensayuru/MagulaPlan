@@ -38,6 +38,11 @@ CREATE TABLE IF NOT EXISTS vendors (
     contact_phone VARCHAR(20) NOT NULL,
     contact_email VARCHAR(150) DEFAULT NULL,
     starting_price DECIMAL(10,2) DEFAULT 0.00,
+    image_url VARCHAR(500) DEFAULT NULL,
+    rating DECIMAL(2,1) DEFAULT NULL,
+    review_count INT DEFAULT 0,
+    verified BOOLEAN DEFAULT FALSE,
+    featured BOOLEAN DEFAULT FALSE,
     FOREIGN KEY (category_id) REFERENCES vendor_categories(category_id) ON DELETE CASCADE
 );
 

@@ -13,7 +13,11 @@
 ## 2. Git State (as of handover)
 
 - **Branch:** `main`, clean working tree
-- **main HEAD:** `63e6300` = merge of PR #22 (MAG-26 UI redesign)
+**main HEAD:** `63e6300` = merge of PR #22 (MAG-26 UI redesign). MAG-25 in-flight on `feature/MAG-25-vendor-fields`.
+All feature branches already merged into main: frontend-completion (#21), MAG-10 tests (#20), MAG-19 security, MAG-26 UI redesign
+Backend CRUD (User, Guest, Budget, Vendor, VendorCategory) | ✅ |
+| Vendor `imageUrl`/`rating`/`reviewCount`/`verified`/`featured` fields (MAG-25) | ✅ on `feature/MAG-25-vendor-fields` |
+| Spring Security + JWT (register/login, BCrypt, externalized secret) | ✅ |
 - All feature branches already merged into main: frontend-completion (#21), MAG-10 tests (#20), MAG-19 security, MAG-26 UI redesign
 - Old merged branches still exist remotely (MAG-9, MAG-11, MAG-6, MAG-7) — harmless, can delete
 
@@ -32,8 +36,12 @@
 
 ## 4. What's REMAINING (dependency order + owner)
 
-| # | Task | Owner | Depends on |
-|---|---|---|---|
+| 1 | MAG-16: Deploy backend + MySQL to Render; set env vars (`JWT_SECRET`, DB URL, CORS) | Maheen | — |
+| 2 | MAG-21: Verify Render DB matches schema.sql | Sammani | #1 |
+| 3 | MAG-17: System testing + defect register | Ruchira | frontend+backend deployed |
+| 4 | MAG-18: Final docs + presentation | Maheen | all |
+ 
+**Critical path:** MAG-16 → MAG-17 → MAG-18.
 | 1 | MAG-25: Vendor `imageUrl`/`rating`/`reviewCount`/`verified`/`featured` fields (entity + DTO + schema) | Amanda | — |
 | 2 | MAG-16: Deploy backend + MySQL to Render; set env vars (`JWT_SECRET`, DB URL, CORS) | Maheen | #1 |
 | 3 | MAG-21: Verify Render DB matches schema.sql | Sammani | #2 |
@@ -48,7 +56,7 @@
 - **CORS** in `SecurityConfig` allows `https://gentle-cucurucho-a28226.netlify.app` + `http://localhost:5173`. If Netlify site renamed, update.
 - **Frontend API base:** `VITE_API_URL` (`.env` → localhost:8080 fallback). **Set `VITE_API_URL` on Netlify** to the future Render URL.
 - **`application-local.properties` + `.env`** are gitignored (verified) — hold local secrets.
-- **Known gaps:** vendor cards use placeholder images/rating (MAG-25 pending); admin/cart/notifications pages are UI-only (backend endpoints don't exist); bundle 830 KB (recharts) — code-split later.
+- **Known gaps:** vendor cards use placeholder images/rating (backend fields exist since MAG-25, but no seed data — frontend falls back to placeholders); admin/cart/notifications pages are UI-only (backend endpoints don't exist); bundle 830 KB (recharts) — code-split later.
 - **Deploy note:** Netlify auto-deploys from `main`. Frontend deploy done; backend Render deploy is the blocker for register/login working live.
 
 ## 6. Jira Ticket Map (verified via API)
@@ -56,7 +64,7 @@
 - MAG-1..11: Sprint 1-2 (ER, API, wireframes, repo, schema, UI, backend, share invites)
 - MAG-10: JUnit tests (✅ merged, branch `feature/MAG-10-backend-test-coverage`)
 - MAG-15..21: Sprint 3 (Vercel/Netlify, Render, system testing, docs, security, API integration, DB verify)
-- MAG-22..25: Budget page, auth, shared UI/guest, vendor fields
+- MAG-22..25: Budget page, auth, shared UI/guest, vendor fields (MAG-25 ✅ implemented)
 - MAG-26: UI redesign (✅ merged)
 - MAG-12/13/14: reserved/unused
 
@@ -72,5 +80,5 @@
 cd "D:/My projects/ZeroState projects/Wedding Planing Platform/Magula.lk"
 git checkout main && git pull   # sync
 cd frontend && npm run build     # verify frontend
-cd backend && cmd /c "mvnw.cmd test"   # 111 tests
+cd backend && cmd /c "mvnw.cmd test"   # 112 tests (as of MAG-25)
 ```

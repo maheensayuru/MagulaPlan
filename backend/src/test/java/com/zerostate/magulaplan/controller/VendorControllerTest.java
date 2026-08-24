@@ -44,8 +44,6 @@ class VendorControllerTest {
         objectMapper.disable(com.fasterxml.jackson.databind.SerializationFeature.WRITE_DATES_AS_TIMESTAMPS);
     }
 
-
-
     private VendorResponseDto buildResponse() {
         VendorResponseDto dto = new VendorResponseDto();
         dto.setVendorId(1L);
@@ -57,12 +55,18 @@ class VendorControllerTest {
         dto.setContactPhone("0711111111");
         dto.setContactEmail("studio@test.com");
         dto.setStartingPrice(new BigDecimal("25000.00"));
+        dto.setImageUrl("https://cdn.example.com/sunset.jpg");
+        dto.setRating(new BigDecimal("4.5"));
+        dto.setReviewCount(120);
+        dto.setVerified(true);
+        dto.setFeatured(true);
         return dto;
     }
 
     private VendorRequestDto buildRequest() {
         return new VendorRequestDto(1L, "Sunset Studios", "Wedding photography",
-                "Colombo", "0711111111", "studio@test.com", new BigDecimal("25000.00"));
+                "Colombo", "0711111111", "studio@test.com", new BigDecimal("25000.00"),
+                "https://cdn.example.com/sunset.jpg", new BigDecimal("4.5"), 120, true, true);
     }
 
     @Test
@@ -75,7 +79,12 @@ class VendorControllerTest {
                         .content(objectMapper.writeValueAsString(buildRequest())))
                 .andExpect(status().isCreated())
                 .andExpect(jsonPath("$.vendorId").value(1))
-                .andExpect(jsonPath("$.businessName").value("Sunset Studios"));
+                .andExpect(jsonPath("$.businessName").value("Sunset Studios"))
+                .andExpect(jsonPath("$.imageUrl").value("https://cdn.example.com/sunset.jpg"))
+                .andExpect(jsonPath("$.rating").value(4.5))
+                .andExpect(jsonPath("$.reviewCount").value(120))
+                .andExpect(jsonPath("$.verified").value(true))
+                .andExpect(jsonPath("$.featured").value(true));
     }
 
     @Test
