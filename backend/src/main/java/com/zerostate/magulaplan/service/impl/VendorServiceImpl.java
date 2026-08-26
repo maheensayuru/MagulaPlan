@@ -104,6 +104,11 @@ public class VendorServiceImpl implements VendorService {
         responseDto.setContactPhone(vendor.getContactPhone());
         responseDto.setContactEmail(vendor.getContactEmail());
         responseDto.setStartingPrice(vendor.getStartingPrice());
+        responseDto.setImageUrl(vendor.getImageUrl());
+        responseDto.setRating(vendor.getRating());
+        responseDto.setReviewCount(vendor.getReviewCount());
+        responseDto.setVerified(vendor.getVerified());
+        responseDto.setFeatured(vendor.getFeatured());
         return responseDto;
     }
 }
