@@ -4,10 +4,12 @@ import com.zerostate.magulaplan.dto.VendorRequestDto;
 import com.zerostate.magulaplan.dto.VendorResponseDto;
 import com.zerostate.magulaplan.service.VendorService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.math.BigDecimal;
 import java.util.List;
 
 @RestController
@@ -32,6 +34,19 @@ public class VendorController {
     @GetMapping
     public ResponseEntity<List<VendorResponseDto>> getAllVendors() {
         List<VendorResponseDto> vendors = vendorService.getAllVendors();
+        return new ResponseEntity<>(vendors, HttpStatus.OK);
+    }
+
+    // 2.1 Search / filter / paginate vendors
+    @GetMapping("/search")
+    public ResponseEntity<Page<VendorResponseDto>> searchVendors(
+            @RequestParam(required = false) String search,
+            @RequestParam(required = false) String district,
+            @RequestParam(required = false) BigDecimal minPrice,
+            @RequestParam(required = false) BigDecimal maxPrice,
+            @RequestParam(defaultValue = "0") int page,
+            @RequestParam(defaultValue = "10") int size) {
+        Page<VendorResponseDto> vendors = vendorService.searchVendors(search, district, minPrice, maxPrice, page, size);
         return new ResponseEntity<>(vendors, HttpStatus.OK);
     }
 
@@ -65,4 +80,3 @@ public class VendorController {
         return new ResponseEntity<>(HttpStatus.NO_CONTENT);
     }
 }
-    

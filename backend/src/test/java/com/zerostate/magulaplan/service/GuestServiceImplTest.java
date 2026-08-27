@@ -187,4 +187,19 @@ class GuestServiceImplTest {
         assertThatThrownBy(() -> guestService.getShareInvitation(GUEST_ID))
                 .isInstanceOf(ResourceNotFoundException.class);
     }
+
+
+    @Test
+    @DisplayName("updateRsvpStatus() updates status and returns DTO")
+    void updateRsvpStatus_updatesStatus() {
+        User user = buildUser();
+        Guest guest = buildGuest(GUEST_ID, user);
+        when(guestRepository.findById(GUEST_ID)).thenReturn(Optional.of(guest));
+        when(guestRepository.save(any(Guest.class))).thenReturn(guest);
+
+        GuestResponseDto result = guestService.updateRsvpStatus(GUEST_ID, "Accepted");
+
+        assertThat(result.getRsvpStatus()).isEqualTo("Accepted");
+        verify(guestRepository).save(guest);
+    }
 }

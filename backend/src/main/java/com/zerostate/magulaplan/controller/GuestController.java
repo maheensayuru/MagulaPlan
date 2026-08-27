@@ -10,6 +10,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
+import java.util.Map;
 import java.util.UUID;
 
 @RestController
@@ -63,6 +64,13 @@ public class GuestController {
         return ResponseEntity.ok(updateGuest);
     }
 
+    // 4.1 Update RSVP status only (PATCH)
+    @PatchMapping("/{guestId}/rsvp")
+    public ResponseEntity<GuestResponseDto> updateRsvpStatus(@PathVariable UUID guestId, @RequestBody Map<String, String> body) {
+        GuestResponseDto guest = guestService.updateRsvpStatus(guestId, body.get("rsvpStatus"));
+        return ResponseEntity.ok(guest);
+    }
+
 //    5. Delete a guest
     @DeleteMapping("/{guestId}")
     public ResponseEntity<Void> deleteGuest(@PathVariable UUID guestId){
@@ -78,4 +86,3 @@ public class GuestController {
         return ResponseEntity.ok(share);
     }
 }
-

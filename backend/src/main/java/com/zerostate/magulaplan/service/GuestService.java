@@ -14,4 +14,5 @@ public interface GuestService {
     GuestResponseDto updateGuest(UUID guestId, GuestRequestDto guestRequestDto);
     void deleteGuest(UUID guestId);
     ShareInvitationResponse getShareInvitation(UUID guestId);
+    GuestResponseDto updateRsvpStatus(UUID guestId, String rsvpStatus);
 }
