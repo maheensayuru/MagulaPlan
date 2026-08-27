@@ -6,6 +6,7 @@ import com.zerostate.magulaplan.entity.User;
 import com.zerostate.magulaplan.exception.ResourceNotFoundException;
 import com.zerostate.magulaplan.repo.UserRepository;
 import com.zerostate.magulaplan.service.impl.UserServiceImpl;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -29,6 +30,8 @@ class UserServiceImplTest {
 
     @Mock
     private UserRepository userRepository;
+    @Mock
+    private PasswordEncoder passwordEncoder;
 
     @InjectMocks
     private UserServiceImpl userService;
@@ -81,6 +84,17 @@ class UserServiceImplTest {
 
         userService.saveUser(req);
         verify(userRepository).save(argThat(u -> "USER".equals(u.getRole())));
+    }
+    @Test
+    @DisplayName("saveUser() hashes the password before persisting")
+    void saveUser_hashesPassword() {
+        when(passwordEncoder.encode("secret")).thenReturn("$2a$10$hashedvalue");
+        when(userRepository.save(any(User.class))).thenAnswer(inv -> inv.getArgument(0));
+
+        userService.saveUser(buildRequest());
+
+        verify(passwordEncoder).encode("secret");
+        verify(userRepository).save(argThat(u -> "$2a$10$hashedvalue".equals(u.getPasswordHash())));
     }
 
     @Test

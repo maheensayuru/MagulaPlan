@@ -7,6 +7,7 @@ import com.zerostate.magulaplan.exception.ResourceNotFoundException;
 import com.zerostate.magulaplan.repo.UserRepository;
 import com.zerostate.magulaplan.service.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
@@ -16,18 +17,20 @@ import java.util.stream.Collectors;
 @Service
 public class UserServiceImpl implements UserService {
 
-    private UserRepository userRepository;
+    private final UserRepository userRepository;
+    private final PasswordEncoder passwordEncoder;
 
     @Autowired
-    public UserServiceImpl(UserRepository userRepository) {
+    public UserServiceImpl(UserRepository userRepository, PasswordEncoder passwordEncoder) {
         this.userRepository = userRepository;
+        this.passwordEncoder = passwordEncoder;
     }
 
     @Override
     public UserResponseDto saveUser(UserRequestDto userRequestDto) {
 
         User user = User.builder().fullName(userRequestDto.getFullName()).partnerName(userRequestDto.getPartnerName())
-                .email(userRequestDto.getEmail()).passwordHash(userRequestDto.getPassword())
+                .email(userRequestDto.getEmail()).passwordHash(passwordEncoder.encode(userRequestDto.getPassword()))
                 .phoneNumber(userRequestDto.getPhoneNumber())
                 .role(userRequestDto.getRole() != null ? userRequestDto.getRole() : "USER").isActive(true)
                 .weddingDate(userRequestDto.getWeddingDate()).budget(userRequestDto.getTotalBudget())
@@ -63,7 +66,7 @@ public class UserServiceImpl implements UserService {
         }
 
         if (userRequestDto.getPassword() != null && !userRequestDto.getPassword().isEmpty()) {
-            existingUser.setPasswordHash(userRequestDto.getPassword());
+            existingUser.setPasswordHash(passwordEncoder.encode(userRequestDto.getPassword()));
         }
 
         existingUser.setPhoneNumber(userRequestDto.getPhoneNumber());
