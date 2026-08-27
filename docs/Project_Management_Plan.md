@@ -43,8 +43,8 @@ The five-member team is organized into three parallel development tracks, ensuri
 
 | Member | Student ID | Role | Primary Responsibilities |
 |---|---|---|---|
-| Amanda Lakmal | CIT-24-02-0007 | Backend Developer | Spring Boot REST API design and implementation, Spring Security with JWT authentication, service layer architecture, API documentation |
-| K.A.R.D. Sammani | CIT-24-02-0058 | Business Analyst & Database Engineer | MySQL ER diagram design, database schema authoring, SQL script management, cloud deployment configuration (Vercel/Render) |
+| Amanda Lakmal | CIT-24-02-0007 | Backend Developer | Spring Boot REST API design and implementation, Spring Security authentication (session-token + BCrypt), service layer architecture, API documentation |
+| K.A.R.D. Sammani | CIT-24-02-0058 | Business Analyst & Database Engineer | MySQL ER diagram design, database schema authoring, SQL script management, cloud deployment configuration (Netlify/Render) |
 
 ---
 
@@ -69,9 +69,9 @@ The first sprint establishes the architectural foundation of the platform. The d
 
 **Focus:** Building the functional MVP, connecting the database, and WhatsApp API integration.
 
-Sprint 2 transitions from design to implementation. The database engineer executes the finalized SQL schema script against the MySQL database, creating all tables, foreign key constraints, and default data seed scripts. The backend developer implements Spring Boot REST controllers and service-layer business logic for the Budget and Guest List modules, integrates Spring Security with JWT-based authentication, and wires repository interfaces to the MySQL database via JPA/Hibernate. The project manager implements the WhatsApp Business API integration, enabling couples to generate templated digital invitation messages and send them to guests via WhatsApp Cloud API webhooks. The frontend developer translates the Sprint 1 wireframes into functional React components styled with Tailwind CSS, implements the client-side routing structure using React Router, and builds mock service layers for development prior to backend availability. Integration work begins in the latter half of the sprint, connecting frontend HTTP requests to the locally running Spring Boot API. The QA engineer drafts the system test plan against the API specification and authors automated JUnit test cases.
+Sprint 2 transitions from design to implementation. The database engineer executes the finalized SQL schema script against the MySQL database, creating all tables, foreign key constraints, and default data seed scripts. The backend developer implements Spring Boot REST controllers and service-layer business logic for the Budget and Guest List modules, integrates Spring Security with token-based authentication, and wires repository interfaces to the MySQL database via JPA/Hibernate. The project manager implements the WhatsApp Business API integration, enabling couples to generate templated digital invitation messages and send them to guests via WhatsApp Cloud API webhooks. The frontend developer translates the Sprint 1 wireframes into functional React components styled with Tailwind CSS, implements the client-side routing structure using React Router, and builds mock service layers for development prior to backend availability. Integration work begins in the latter half of the sprint, connecting frontend HTTP requests to the locally running Spring Boot API. The QA engineer drafts the system test plan against the API specification and authors automated JUnit test cases.
 - Executable MySQL schema script (`schema.sql`)
-- Functional Spring Boot API with JWT authentication (Budget + Guest endpoints)
+- Functional Spring Boot API with token-based authentication (Budget + Guest endpoints)
 - WhatsApp invitation generation and delivery feature
 - React component library with routing (Vendor Directory, Budget Tracker, RSVP Dashboard)
 - Automated JUnit test suite
@@ -81,10 +81,10 @@ Sprint 2 transitions from design to implementation. The database engineer execut
 
 **Focus:** Unit testing, quality assurance, cloud deployment, and final documentation.
 
-The final sprint completes the MVP and prepares it for submission. Ruchira carries over MAG-10 (Automated JUnit Tests) from Sprint 2, writing unit and integration tests for the Guest, User, Budget, Vendor, and VendorCategory service layers using JUnit 5, Mockito, and an H2 in-memory database. In parallel, she executes the full system test plan (MAG-17), logging defects in a structured defect register with severity classifications and retesting resolved issues. Amanda implements Spring Security with JWT-based authentication (MAG-19), configuring the filter chain, building user registration and login endpoints, and adding a global exception handler. Dileepa completes the frontend: wiring all pages to the live backend API (MAG-20), building the Budget Tracker page (MAG-22), implementing authentication and protected routes (MAG-23), and building shared UI components with Guest List CRUD (MAG-24). Amanda and Dileepa jointly enrich the vendor model with image, rating, and verification fields (MAG-25). Sammani supports deployment verification (MAG-21), ensuring the MySQL schema on Render matches the development database. The project manager deploys the frontend to Vercel (MAG-15) and the backend with database to Render (MAG-16), then compiles the final project documentation and presentation (MAG-18).
+The final sprint completes the MVP and prepares it for submission. Ruchira carries over MAG-10 (Automated JUnit Tests) from Sprint 2, writing unit and integration tests for the Guest, User, Budget, Vendor, and VendorCategory service layers using JUnit 5, Mockito, and an H2 in-memory database. In parallel, she executes the full system test plan (MAG-17), logging defects in a structured defect register with severity classifications and retesting resolved issues. Amanda implements Spring Security with token-based authentication (MAG-19), configuring the filter chain, building user registration and login endpoints, and adding a global exception handler. Dileepa completes the frontend: wiring all pages to the live backend API (MAG-20), building the Budget Tracker page (MAG-22), implementing authentication and protected routes (MAG-23), and building shared UI components with Guest List CRUD (MAG-24). Amanda and Dileepa jointly enrich the vendor model with image, rating, and verification fields (MAG-25). Sammani supports deployment verification (MAG-21), ensuring the MySQL schema on Render matches the development database. The project manager deploys the frontend to Netlify (MAG-15) and the backend with database to Render (MAG-16), then compiles the final project documentation and presentation (MAG-18).
 - Automated JUnit test suite (Guest, User, Budget, Vendor, VendorCategory)
 - Completed system test execution report with defect log
-- Production deployment: Vercel (frontend) + Render (backend + database)
+- Production deployment: Netlify (frontend) + Render (backend) + Aiven (MySQL database)
 - Guest List page with share invitation links
 - End-of-semester presentation
 - Final project documentation package
@@ -167,13 +167,13 @@ The following Work Breakdown Structure decomposes the four core features into gr
 
 | Task ID | Task Description | Jira Story | Assigned To | Estimated Effort |
 |---|---|---|---|
-| CC-01 | Configure Spring Security with JWT authentication filter chain | MAG-9 | Amanda | 5 hours |
+| CC-01 | Configure Spring Security with session-token authentication filter | MAG-9 | Amanda | 5 hours |
 | CC-02 | Implement `User` registration and login endpoints (POST /auth/register, POST /auth/login) | MAG-9 | Amanda | 4 hours |
-| CC-03 | Implement JWT token generation, validation, and refresh logic | MAG-9 | Amanda | 4 hours |
+| CC-03 | Implement bearer session-token generation/validation and BCrypt password hashing | MAG-9 | Amanda | 4 hours |
 | CC-04 | Set up global exception handler (`@ControllerAdvice`) with standardized error response format | MAG-9 | Amanda | 3 hours |
-| CC-05 | Configure CORS policy for frontend origin (Vercel dev + production) | MAG-9 | Amanda | 2 hours |
-| CC-06 | Set up Vercel project and configure environment variables for deployment | MAG-4 | Sammani | 3 hours |
-| CC-07 | Set up Render service and configure MySQL database connection | MAG-4 | Sammani | 3 hours |
+| CC-05 | Configure CORS policy for frontend origin (Netlify dev + production) | MAG-9 | Amanda | 2 hours |
+| CC-06 | Set up Netlify project and configure environment variables for deployment | MAG-4 | Sammani | 3 hours |
+| CC-07 | Set up Render service (Docker) and Aiven MySQL database connection | MAG-4 | Sammani | 3 hours |
 | CC-08 | Write and execute system integration test plan across all four modules | MAG-10 | Ruchira | 8 hours |
 | CC-09 | Maintain defect register with severity classification, reproduction steps, and resolution tracking | MAG-10 | Ruchira | 4 hours |
 | CC-10 | Compile sprint review reports (Sprint 1, 2, 3) with burndown charts and velocity metrics | MAG-5 | Maheen | 6 hours |
@@ -196,19 +196,28 @@ The following table lists every Jira user story in the MagulaPlan backlog, mappe
 | MAG-9 | Budget and Guest List REST APIs | Backend | Sprint 2 |
 | MAG-10 | Automated JUnit Tests | QA | Sprint 3 |
 | MAG-11 | Share Invitations (Web Share API) | Backend | Sprint 2 |
-| MAG-15 | Deploy Frontend to Vercel | DevOps | Sprint 3 |
-| MAG-16 | Deploy Backend & Database to Render | DevOps | Sprint 3 |
+| MAG-15 | Deploy Frontend to Netlify | DevOps | Sprint 3 |
+| MAG-16 | Deploy Backend to Render + MySQL on Aiven | DevOps | Sprint 3 |
 | MAG-17 | System Testing & Defect Management | QA | Sprint 3 |
 | MAG-18 | Final Documentation & Presentation | Management | Sprint 3 |
-| MAG-19 | Spring Security & JWT Authentication | Backend | Sprint 3 |
+| MAG-19 | Spring Security & Token Authentication | Backend | Sprint 3 |
 | MAG-20 | Frontend-Backend API Integration | Frontend | Sprint 3 |
 | MAG-21 | Deployment Support & DB Verification | Database | Sprint 3 |
 | MAG-22 | Budget Tracker Page | Frontend | Sprint 3 |
 | MAG-23 | Authentication & Protected Routes | Frontend | Sprint 3 |
 | MAG-24 | Shared UI Components & Guest Management | Frontend | Sprint 3 |
 | MAG-25 | Vendor Data Model Enrichment | Backend & Frontend | Sprint 3 |
+| MAG-26 | Premium UI Redesign, Cart Drawer & Admin Dashboard | Frontend | Sprint 3 |
+| MAG-27 | Bearer session-token validation (auth filter) | Backend | Sprint 3 |
+| MAG-28 | Budget summary endpoint | Backend | Backlog |
+| MAG-29 | Vendor search, filter & pagination | Backend | Backlog |
+| MAG-30 | Cart checkout / booking finalization | Backend | Backlog |
+| MAG-31 | Guest RSVP PATCH endpoint | Backend | Backlog |
+| MAG-32 | BCrypt password hashing | Backend | Sprint 3 |
+| MAG-33 | Production seed data + real vendor images | Database | Backlog |
+| MAG-34 | E2E share-invitation test | QA | Sprint 3 |
 
-> **Note:** MAG-12 through MAG-14 are reserved and not used in the current backlog.
+> **Note:** MAG-12 through MAG-14 are reserved. WA-07 (E2E share test) is tracked as MAG-34 (the plan previously mapped it to MAG-13).
 
 ---
 
@@ -257,7 +266,7 @@ All project documentation — including this Project Management Plan, the system
 | Frontend-backend integration issues at sprint boundaries | Medium | Medium | Schedule a mid-sprint integration checkpoint in each sprint; define API contracts (request/response shapes) before implementation begins |
 | MySQL schema changes after backend development starts | Low | High | Freeze the schema at the end of Sprint 1; any post-freeze changes require a migration script and team-wide notification |
 | Team member unavailability due to academic workload | High | Low | All tasks have documented acceptance criteria; any member can pick up a partially completed task with minimal onboarding |
-| Deployment environment configuration drift | Low | Medium | Use Spring profiles (`application-local.properties`, `application-prod.properties`) and Vercel environment variables; document all config in README |
+| Deployment environment configuration drift | Low | Medium | Use Spring profiles (`application-local.properties`, `application-prod.properties`) and Netlify/Render environment variables; document all config in README |
 
 ---
 
