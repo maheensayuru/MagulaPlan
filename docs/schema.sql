@@ -19,7 +19,8 @@ CREATE TABLE IF NOT EXISTS users (
     is_active BOOLEAN DEFAULT TRUE,
     wedding_date DATE DEFAULT NULL,
     total_budget DECIMAL(12,2) DEFAULT 0.00,
-    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    session_token VARCHAR(64) DEFAULT NULL
 );
 
 -- 2. Vendor Categories Table (Lookup Table)
@@ -71,4 +72,15 @@ CREATE TABLE IF NOT EXISTS guests (
     plus_ones INT DEFAULT 0,
     meal_preference VARCHAR(50) DEFAULT NULL,
     FOREIGN KEY (user_id) REFERENCES users(user_id) ON DELETE CASCADE
+);
+
+-- 6. Bookings Table (Vendor cart checkout)
+CREATE TABLE IF NOT EXISTS bookings (
+    booking_id BIGINT AUTO_INCREMENT PRIMARY KEY,
+    user_id BIGINT NOT NULL,
+    vendor_id BIGINT NOT NULL,
+    status VARCHAR(50) DEFAULT 'PENDING',
+    booked_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    FOREIGN KEY (user_id) REFERENCES users(user_id) ON DELETE CASCADE,
+    FOREIGN KEY (vendor_id) REFERENCES vendors(vendor_id) ON DELETE CASCADE
 );
