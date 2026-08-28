@@ -15,6 +15,22 @@ export const clearToken = () => {
   sessionStorage.removeItem(TOKEN_KEY)
 }
 
+const USER_KEY = 'magulaplan_user'
+export const getUserId = () => {
+  const raw = localStorage.getItem(USER_KEY) || sessionStorage.getItem(USER_KEY)
+  return raw ? Number(raw) : null
+}
+export const setUserId = (id, remember = true) => {
+  const store = remember ? localStorage : sessionStorage
+  const other = remember ? sessionStorage : localStorage
+  store.setItem(USER_KEY, String(id))
+  other.removeItem(USER_KEY)
+}
+export const clearUserId = () => {
+  localStorage.removeItem(USER_KEY)
+  sessionStorage.removeItem(USER_KEY)
+}
+
 export async function apiFetch(path, { method = 'GET', body } = {}) {
   const headers = { 'Content-Type': 'application/json' }
   const token = getToken()
@@ -102,11 +118,10 @@ export const notificationsApi = {
   remove: (id) => apiFetch(`/api/v1/notifications/${id}`, { method: 'DELETE' }),
 }
 
-// Booking cart. The cart itself lives client-side (CartContext, localStorage)
-// since there's nothing to fetch yet — this is only for the eventual
-// "finalize booking" handoff to the backend once that endpoint exists.
+// Booking cart. The cart lives client-side (CartContext, localStorage);
+// checkout hands the selected vendorIds off to POST /api/v1/bookings/checkout.
 export const cartApi = {
-  checkout: (items) => apiFetch('/api/v1/bookings/checkout', { method: 'POST', body: { items } }),
+  checkout: (userId, vendorIds) => apiFetch('/api/v1/bookings/checkout', { method: 'POST', body: { userId, vendorIds } }),
 }
 
 // Admin. None of these endpoints exist yet on the backend — every admin page

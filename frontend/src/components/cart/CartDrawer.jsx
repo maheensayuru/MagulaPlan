@@ -3,12 +3,14 @@ import { Link } from 'react-router-dom'
 import { AnimatePresence, motion } from 'framer-motion'
 import { FaTimes, FaTrash, FaShoppingBag, FaStore } from 'react-icons/fa'
 import { useCart } from '../../context/CartContext'
+import { useAuth } from '../../context/AuthContext'
 import { useToast } from '../../context/ToastContext'
 import { cartApi } from '../../services/api'
 import EmptyState from '../ui/EmptyState'
 
 export default function CartDrawer() {
-  const { items, count, total, open, setOpen, removeItem } = useCart()
+  const { items, count, total, open, setOpen, removeItem, clear } = useCart()
+  const { userId } = useAuth()
   const { showToast } = useToast()
 
   useEffect(() => {
@@ -23,11 +25,17 @@ export default function CartDrawer() {
   }, [open, setOpen])
 
   const handleCheckout = async () => {
+    if (!userId) {
+      showToast('Please log in to request bookings.', 'error')
+      return
+    }
     try {
-      await cartApi.checkout(items)
-      showToast('Booking request sent!', 'success')
+      await cartApi.checkout(userId, items.map((i) => i.vendorId))
+      clear()
+      setOpen(false)
+      showToast('Bookings requested! Vendors will contact you.', 'success')
     } catch (err) {
-      showToast(err.message || 'Checkout isn\'t connected yet — your selections are saved for when it is', 'error')
+      showToast(err.message || 'Could not send booking request. Please try again.', 'error')
     }
   }
 
