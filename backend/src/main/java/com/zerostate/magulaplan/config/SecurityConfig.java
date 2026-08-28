@@ -37,6 +37,8 @@ public class SecurityConfig {
                 // Public vendor/category read endpoints (for browsing without login)
                 .requestMatchers(HttpMethod.GET, "/api/v1/vendors/**").permitAll()
                 .requestMatchers(HttpMethod.GET, "/api/v1/vendor-categories/**").permitAll()
+                // Admin endpoints are gated on the ADMIN role
+                .requestMatchers("/api/v1/admin/**").hasRole("ADMIN")
                 // Everything else requires authentication
                 .anyRequest().authenticated()
             )

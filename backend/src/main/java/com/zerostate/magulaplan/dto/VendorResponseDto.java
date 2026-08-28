@@ -24,4 +24,5 @@ public class VendorResponseDto {
     private Integer reviewCount;
     private Boolean verified;
     private Boolean featured;
+    private String status;
 }

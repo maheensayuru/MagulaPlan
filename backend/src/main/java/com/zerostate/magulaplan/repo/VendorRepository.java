@@ -10,4 +10,10 @@ import java.util.List;
 @Repository
 public interface VendorRepository extends JpaRepository<Vendor, Long>, JpaSpecificationExecutor<Vendor> {
     List<Vendor> findByCategory_CategoryId(Long categoryId);
+
+    List<Vendor> findByStatus(String status);
+
+    List<Vendor> findByCategory_CategoryIdAndStatus(Long categoryId, String status);
+
+    long countByStatus(String status);
 }

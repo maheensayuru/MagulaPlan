@@ -2,6 +2,7 @@ package com.zerostate.magulaplan.controller;
 
 import com.zerostate.magulaplan.entity.User;
 import com.zerostate.magulaplan.repo.UserRepository;
+import com.zerostate.magulaplan.repo.NotificationRepository;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -34,8 +35,12 @@ class UserControllerIntegrationTest {
     @Autowired
     private UserRepository userRepository;
 
+    @Autowired
+    private NotificationRepository notificationRepository;
+
     @BeforeEach
     void setUp() {
+        notificationRepository.deleteAll();
         userRepository.deleteAll();
         userRepository.save(User.builder()
                 .email("me@test.com")

@@ -100,7 +100,7 @@ class VendorServiceImplTest {
     @Test
     @DisplayName("getAllVendors() returns list of all vendors")
     void getAllVendors_returnsAllVendors() {
-        when(vendorRepository.findAll()).thenReturn(List.of(buildVendor(1L), buildVendor(2L)));
+        when(vendorRepository.findByStatus("APPROVED")).thenReturn(List.of(buildVendor(1L), buildVendor(2L)));
 
         List<VendorResponseDto> result = vendorService.getAllVendors();
 
@@ -110,7 +110,7 @@ class VendorServiceImplTest {
     @Test
     @DisplayName("getVendorsByCategoryId() returns vendors for matching category")
     void getVendorsByCategoryId_returnsVendorsForCategory() {
-        when(vendorRepository.findByCategory_CategoryId(1L))
+        when(vendorRepository.findByCategory_CategoryIdAndStatus(1L, "APPROVED"))
                 .thenReturn(List.of(buildVendor(1L), buildVendor(2L)));
 
         List<VendorResponseDto> result = vendorService.getVendorsByCategoryId(1L);
@@ -122,7 +122,7 @@ class VendorServiceImplTest {
     @Test
     @DisplayName("getVendorsByCategoryId() returns empty list for unknown category")
     void getVendorsByCategoryId_returnsEmptyForUnknownCategory() {
-        when(vendorRepository.findByCategory_CategoryId(99L)).thenReturn(List.of());
+        when(vendorRepository.findByCategory_CategoryIdAndStatus(99L, "APPROVED")).thenReturn(List.of());
 
         List<VendorResponseDto> result = vendorService.getVendorsByCategoryId(99L);
 
@@ -178,6 +178,41 @@ class VendorServiceImplTest {
     void deleteVendor_callsDeleteById() {
         vendorService.deleteVendor(1L);
         verify(vendorRepository).deleteById(1L);
+    }
+
+    @Test
+    @DisplayName("getPendingVendors() returns vendors with PENDING status")
+    void getPendingVendors_returnsPendingVendors() {
+        when(vendorRepository.findByStatus("PENDING")).thenReturn(List.of(buildVendor(1L)));
+
+        List<VendorResponseDto> result = vendorService.getPendingVendors();
+
+        assertThat(result).hasSize(1);
+    }
+
+    @Test
+    @DisplayName("approveVendor() sets status APPROVED and marks verified")
+    void approveVendor_setsApprovedAndVerified() {
+        Vendor vendor = buildVendor(1L);
+        when(vendorRepository.findById(1L)).thenReturn(Optional.of(vendor));
+        when(vendorRepository.save(any(Vendor.class))).thenReturn(vendor);
+
+        VendorResponseDto result = vendorService.approveVendor(1L);
+
+        assertThat(result.getStatus()).isEqualTo("APPROVED");
+        assertThat(result.getVerified()).isTrue();
+    }
+
+    @Test
+    @DisplayName("rejectVendor() sets status REJECTED")
+    void rejectVendor_setsRejected() {
+        Vendor vendor = buildVendor(1L);
+        when(vendorRepository.findById(1L)).thenReturn(Optional.of(vendor));
+        when(vendorRepository.save(any(Vendor.class))).thenReturn(vendor);
+
+        VendorResponseDto result = vendorService.rejectVendor(1L);
+
+        assertThat(result.getStatus()).isEqualTo("REJECTED");
     }
 
 

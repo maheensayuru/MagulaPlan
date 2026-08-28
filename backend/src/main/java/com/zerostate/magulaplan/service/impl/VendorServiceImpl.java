@@ -59,14 +59,14 @@ public class VendorServiceImpl implements VendorService {
 
     @Override
     public List<VendorResponseDto> getAllVendors() {
-        return vendorRepository.findAll().stream()
+        return vendorRepository.findByStatus("APPROVED").stream()
                 .map(this::mapToResponseDto)
                 .collect(Collectors.toList());
     }
 
     @Override
     public List<VendorResponseDto> getVendorsByCategoryId(Long categoryId) {
-        return vendorRepository.findByCategory_CategoryId(categoryId).stream()
+        return vendorRepository.findByCategory_CategoryIdAndStatus(categoryId, "APPROVED").stream()
                 .map(this::mapToResponseDto)
                 .collect(Collectors.toList());
     }
@@ -109,6 +109,30 @@ public class VendorServiceImpl implements VendorService {
     }
 
     @Override
+    public List<VendorResponseDto> getPendingVendors() {
+        return vendorRepository.findByStatus("PENDING").stream()
+                .map(this::mapToResponseDto)
+                .collect(Collectors.toList());
+    }
+
+    @Override
+    public VendorResponseDto approveVendor(Long vendorId) {
+        Vendor vendor = vendorRepository.findById(vendorId)
+                .orElseThrow(() -> new ResourceNotFoundException("Vendor not found with id: " + vendorId));
+        vendor.setStatus("APPROVED");
+        vendor.setVerified(true);
+        return mapToResponseDto(vendorRepository.save(vendor));
+    }
+
+    @Override
+    public VendorResponseDto rejectVendor(Long vendorId) {
+        Vendor vendor = vendorRepository.findById(vendorId)
+                .orElseThrow(() -> new ResourceNotFoundException("Vendor not found with id: " + vendorId));
+        vendor.setStatus("REJECTED");
+        return mapToResponseDto(vendorRepository.save(vendor));
+    }
+
+    @Override
     public Page<VendorResponseDto> searchVendors(String search, String district, BigDecimal minPrice,
                                                  BigDecimal maxPrice, int page, int size) {
         Specification<Vendor> spec = (root, query, cb) -> {
@@ -125,6 +149,7 @@ public class VendorServiceImpl implements VendorService {
             if (maxPrice != null) {
                 predicates.add(cb.lessThanOrEqualTo(root.get("startingPrice"), maxPrice));
             }
+            predicates.add(cb.equal(root.get("status"), "APPROVED"));
             return cb.and(predicates.toArray(new Predicate[0]));
         };
 
@@ -151,6 +176,7 @@ public class VendorServiceImpl implements VendorService {
         responseDto.setReviewCount(vendor.getReviewCount());
         responseDto.setVerified(vendor.getVerified());
         responseDto.setFeatured(vendor.getFeatured());
+        responseDto.setStatus(vendor.getStatus());
         return responseDto;
     }
 }

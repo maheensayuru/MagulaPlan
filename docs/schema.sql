@@ -44,6 +44,7 @@ CREATE TABLE IF NOT EXISTS vendors (
     review_count INT DEFAULT 0,
     verified BOOLEAN DEFAULT FALSE,
     featured BOOLEAN DEFAULT FALSE,
+    status VARCHAR(20) DEFAULT 'PENDING',
     FOREIGN KEY (category_id) REFERENCES vendor_categories(category_id) ON DELETE CASCADE
 );
 
@@ -83,4 +84,14 @@ CREATE TABLE IF NOT EXISTS bookings (
     booked_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
     FOREIGN KEY (user_id) REFERENCES users(user_id) ON DELETE CASCADE,
     FOREIGN KEY (vendor_id) REFERENCES vendors(vendor_id) ON DELETE CASCADE
+);
+
+-- 7. Notifications Table (User Notifications)
+CREATE TABLE IF NOT EXISTS notifications (
+    notification_id BIGINT AUTO_INCREMENT PRIMARY KEY,
+    user_id BIGINT NOT NULL,
+    message VARCHAR(255) NOT NULL,
+    is_read BOOLEAN DEFAULT FALSE,
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    FOREIGN KEY (user_id) REFERENCES users(user_id) ON DELETE CASCADE
 );

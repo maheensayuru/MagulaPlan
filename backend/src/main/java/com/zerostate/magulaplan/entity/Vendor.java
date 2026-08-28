@@ -59,4 +59,8 @@ public class Vendor {
     @Builder.Default
     @Column(name = "featured", columnDefinition = "BOOLEAN DEFAULT FALSE")
     private Boolean featured = false;
+
+    @Builder.Default
+    @Column(name = "status", length = 20)
+    private String status = "PENDING";
 }

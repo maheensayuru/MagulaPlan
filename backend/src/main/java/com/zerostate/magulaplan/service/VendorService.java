@@ -15,4 +15,9 @@ public interface VendorService {
     VendorResponseDto updateVendor(Long vendorId, VendorRequestDto requestDto);
     void deleteVendor(Long vendorId);
     Page<VendorResponseDto> searchVendors(String search, String district, BigDecimal minPrice, BigDecimal maxPrice, int page, int size);
+    List<VendorResponseDto> getPendingVendors();
+
+    VendorResponseDto approveVendor(Long vendorId);
+
+    VendorResponseDto rejectVendor(Long vendorId);
 }
