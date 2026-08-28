@@ -8,7 +8,8 @@ INSERT INTO vendor_categories (category_id, category_name) VALUES
 (6, 'Music & Entertainment'),
 (7, 'Attire & Jewelry'),
 (8, 'Transport')
-ON DUPLICATE KEY UPDATE category_name=VALUES(category_name);
+AS new
+ON DUPLICATE KEY UPDATE category_name = new.category_name;
 
 -- Real Vendor Data Seeding (13 Vendors with Real Unsplash Direct Image URLs)
 -- status: 'APPROVED' = live in the public directory; new vendor registrations
@@ -27,19 +28,20 @@ INSERT INTO vendors (vendor_id, category_id, business_name, district_location, c
 (11, 6, 'DJ Kapila Entertainment', 'Galle', '0733456789', 'djkapila@gmail.com', 30000, 'https://images.unsplash.com/photo-1470225620780-dba8ba36b745', 4.5, 45, 1, 0, 'APPROVED'),
 (12, 7, 'Vogue Jewellers', 'Colombo', '0743456789', 'info@voguejewellers.lk', 60000, 'https://images.unsplash.com/photo-1535632066927-ab7c9ab60908', 4.9, 290, 1, 1, 'APPROVED'),
 (13, 8, 'Sri Lanka Classic Cars', 'Colombo', '0753456789', 'rentals@classiccars.lk', 45000, 'https://images.unsplash.com/photo-1503376780353-7e6692767b70', 4.8, 80, 1, 0, 'APPROVED')
+AS new
 ON DUPLICATE KEY UPDATE
-category_id=VALUES(category_id),
-business_name=VALUES(business_name),
-district_location=VALUES(district_location),
-contact_phone=VALUES(contact_phone),
-contact_email=VALUES(contact_email),
-starting_price=VALUES(starting_price),
-image_url=VALUES(image_url),
-rating=VALUES(rating),
-review_count=VALUES(review_count),
-verified=VALUES(verified),
-featured=VALUES(featured),
-status=VALUES(status);
+category_id = new.category_id,
+business_name = new.business_name,
+district_location = new.district_location,
+contact_phone = new.contact_phone,
+contact_email = new.contact_email,
+starting_price = new.starting_price,
+image_url = new.image_url,
+rating = new.rating,
+review_count = new.review_count,
+verified = new.verified,
+featured = new.featured,
+status = new.status;
 
 -- Admin user (role=ADMIN) for the admin panel.
 -- NOTE: password_hash is seeded as plain-text for the first login only;
@@ -47,4 +49,5 @@ status=VALUES(status);
 -- Credentials: admin@magulaplan.lk / Admin@123
 INSERT INTO users (email, full_name, password_hash, phone_number, role, is_active) VALUES
 ('admin@magulaplan.lk', 'MagulaPlan Admin', 'Admin@123', '0770000000', 'ADMIN', 1)
-ON DUPLICATE KEY UPDATE full_name='MagulaPlan Admin', role='ADMIN', is_active=1;
+AS new
+ON DUPLICATE KEY UPDATE full_name = new.full_name, role = new.role, is_active = new.is_active;
