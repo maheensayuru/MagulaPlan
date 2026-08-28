@@ -1,92 +1,75 @@
 # Session Handover — MagulaPlan
 
-> Handover for continuing work in a new session. Last updated: Aug 2026.
+> Handover for continuing in a new session. Last updated: 28 Aug 2026.
 
 ## 1. Project Identity
 
 - **Repo:** `maheensayuru/MagulaPlan` (private, monorepo)
-- **Product:** MagulaPlan — wedding planning platform (scope: **wedding-only**, per the proposal PDF)
+- **Product:** MagulaPlan — wedding planning platform (scope: **wedding-only**)
 - **Stack:** React 19 + Vite 8 + Tailwind 3.4 (frontend) · Java 17 + Spring Boot 4.1 + Spring Security + MySQL (backend) · package `com.zerostate.magulaplan`
-- **Auth (actual):** UUID session tokens stored in `users.session_token`; bearer filter validates them. **No JWT. Passwords stored plain text** (see §5 debt).
-- **Team:** Maheen (PM/lead, MAG-11, deployment, docs) · Amanda (backend) · Dileepa (frontend) · Sammani/Ruhini (DB) · Ruchira (QA)
-- **Tools:** Jira (`magulaplan.atlassian.net`, project MAG), GitHub, Netlify (frontend), Render (backend), Aiven (MySQL)
+- **Auth (actual):** UUID session tokens in `users.session_token`, validated by `SessionTokenAuthenticationFilter`; passwords **BCrypt-hashed**. **Not JWT** (the PM plan says "JWT" — it's session tokens; be ready to explain that).
+- **Team:** Maheen (PM/deploy/docs) · Amanda (backend) · Dileepa (frontend) · Sammani/Ruhini (DB) · Ruchira (QA)
 
-## 2. Git State (as of handover)
+## 2. Live URLs & Credentials
 
-- **Branch:** `main`. All work merged via PRs (#23 MAG-25, #24/#25 deploy prep, #26 auth fix).
-- **main HEAD:** `de9678a` = merge of PR #25 (Dockerfile). Preceding: MAG-25 (`3f6eb63`), deploy prep (`a9371a3`), auth fix (`b23b4e7`).
-- Old merged branches still exist remotely (MAG-9, MAG-11, MAG-6, MAG-7, feature/MAG-25, chore/MAG-16, feat/MAG-27) — harmless, can delete.
+- **Frontend:** `https://gentle-cucurucho-a28226.netlify.app`
+- **Backend:** `https://magulaplan-api.onrender.com`
+- **Test login:** `deploytest@example.com` / `pw12345` (userId = 1)
+- **MySQL (Aiven):** host `mysql-219a3283-m4h33n.aivencloud.com`, port `27680`, user `avnadmin`, db **`defaultdb`** (NOT `magulaplan_db`), SSL required (CA cert from Aiven console). **Free tier powers off on inactivity — power it on before any demo, or the backend 500s.**
 
-## 3. What's DONE (merged to main + live)
+## 3. Git / PR State
 
-| Area | Status |
-|---|---|
-| Backend CRUD (User, Guest, Budget, Vendor, VendorCategory) | ✅ |
-| Auth: register/login + bearer session-token filter (MAG-27) | ✅ live |
-| Global exception handler (404/400/409/500) | ✅ |
-| Vendor `imageUrl`/`rating`/`reviewCount`/`verified`/`featured` fields (MAG-25) | ✅ |
-| JUnit tests — 115 tests, all pass | ✅ |
-| Frontend: auth, budget, guest CRUD, vendor pages, registration, dashboard, admin/cart/theme | ✅ |
-| Share invitations (Web Share API) | ✅ |
-| Netlify frontend deployed | ✅ (`gentle-cucurucho-a28226.netlify.app`) |
-| Backend deployed to Render (Docker, prod profile) | ✅ (`magulaplan-api.onrender.com`) |
-| MySQL on Aiven (free tier), schema auto-created via ddl-auto | ✅ |
-| Seed data: 8 categories, 13 vendors | ✅ |
+- **main HEAD:** `c661106` (post merges of PR #28 BCrypt, #29 features, #30 seed).
+- **OPEN PR — merge next:** **#31** `chore/cart-checkout-wiring` — wires the cart "Request Bookings" button to `POST /api/v1/bookings/checkout` (MAG-30 frontend).
+- ⚠️ **History was rewritten once** (stripped "Claude Sonnet 5" co-author trailers from 4 of Dileepa's commits; force-pushed main; deleted 6 stale branches). Everyone must re-sync: `git fetch && git reset --hard origin/main`.
 
-## 4. What's REMAINING (dependency order + owner)
+## 4. DONE (all live & verified)
 
-| # | Task | Owner | Depends on |
+- Backend CRUD: User, Guest, Budget, Vendor, VendorCategory
+- Auth: register/login + session-token filter (MAG-27) + BCrypt (MAG-32)
+- Vendor fields `imageUrl`/`rating`/`reviewCount`/`verified`/`featured` (MAG-25)
+- **MAG-28** `GET /api/v1/budget-items/summary/{userId}` — aggregates estimated/actual/deposit/remaining
+- **MAG-29** `GET /api/v1/vendors/search?search=&district=&minPrice=&maxPrice=&page=&size=` — search/filter/pagination
+- **MAG-30** `POST /api/v1/bookings/checkout` + `GET /api/v1/bookings/user/{userId}` — backend + frontend (PR #31)
+- **MAG-31** `PATCH /api/v1/guests/{guestId}/rsvp`
+- Frontend: all pages, auth, cart, admin (admin/cart/notifications UI-only — no backend)
+- Deploy: Netlify (VITE_API_URL set) + Render (Docker, prod profile) + Aiven
+- **126 backend tests pass**; frontend builds clean
+- docs: PM plan updated, `MagulaPlan_Test_Cases.md` (46 cases), `schema.sql` (6 tables incl. `session_token` + `bookings`), `data_seed.sql` (corrected, merged, **not yet applied**)
+
+## 5. REMAINING (deadline Aug 30, present Sep 6)
+
+| # | Task | Owner | Notes |
 |---|---|---|---|
-| 1 | Set `VITE_API_URL` on Netlify → rebuild (frontend wiring) | Maheen | backend live ✅ |
-| 2 | MAG-17: System testing + defect register | Ruchira | #1 |
-| 3 | MAG-21: Verify Render DB matches schema.sql | Sammani | backend live ✅ |
-| 4 | MAG-18: Final docs + presentation | Maheen | #2, #3 |
-| 5 | Hash passwords (BCrypt) + optionally move to JWT — security debt | Amanda | — |
+| 1 | **Merge PR #31** (cart checkout) | Maheen | Netlify auto-redeploys |
+| 2 | **Apply `docs/data_seed.sql`** to live Aiven DB | Ruhini | Query tool; replaces picsum seed with real Unsplash images + prices |
+| 3 | **MAG-21** DB verify | Ruhini | mostly done — just her live `SHOW CREATE TABLE` confirmation |
+| 4 | **MAG-17** system testing | Ruchira | 46-case doc ready at `docs/MagulaPlan_Test_Cases.md` |
+| 5 | **MAG-18** final docs + presentation | Maheen | docs largely done; **presentation pending** |
 
-**Critical path:** #1 → MAG-17 → MAG-18.
+## 6. Jira State
 
-## 5. Key Technical Facts the Next Session Needs
+- **34 tickets.** Done: all except **MAG-17, MAG-18, MAG-21, MAG-33** (To Do). MAG-28/29/30/31 are "In Review" (PR #29 merged → move them to **Done**).
+- Site `magulaplan.atlassian.net`, project `MAG`. API auth = Basic `maheen.sayuru21@gmail.com:<API token>`. Transitions: 11 To Do, 21 In Progress, 31 In Review, 41 Done.
 
-- **No JWT secret exists.** Auth = UUID session token in `users.session_token`; `SessionTokenAuthenticationFilter` reads `Authorization: Bearer <token>`. Frontend stores token in `localStorage` key `magulaplan_token`.
-- **Passwords are plain text** (`AuthController.java` registers `passwordHash` = raw password; login does `password.equals(...)`). Flagged debt — hash with BCrypt before production.
-- **CORS** is externalized: `app.cors.allowed-origins` (default localhost; prod = Netlify URL via `CORS_ALLOWED_ORIGINS`).
-- **Render deploy:** Docker (no Java runtime on Render). `backend/Dockerfile` (maven build → temurin-jre). Env vars on Render: `SPRING_PROFILES_ACTIVE=prod`, `DB_URL`, `DB_USER`, `DB_PASSWORD`. `server.port=${PORT:8080}`.
-- **MySQL:** Aiven free tier, host `mysql-219a3283-m4h33n.aivencloud.com:27680`, db `defaultdb`. **Free tier powers off on inactivity — power it back on (Aiven console) before demos; backend will fail to connect while off.**
-- **Render free web service sleeps** after ~15 min idle; first request after wake takes 30–60 s.
-- **Frontend API base:** `VITE_API_URL` (`services/api.js` falls back to `localhost:8080`). Must be set on Netlify to `https://magulaplan-api.onrender.com` (baked in at build time → requires a rebuild).
-- **Known gaps:** admin/cart/notifications pages are UI-only (no backend endpoints); bundle ~830 KB (recharts) — code-split later; vendor data uses picsum placeholder images.
+## 7. Gotchas for the Next Session
 
-## 6. Jira Ticket Map (verified via API)
-
-- MAG-1..11: Sprint 1-2 (ER, API, wireframes, repo, schema, UI, backend, share invites)
-- MAG-10: JUnit tests (✅ merged)
-- MAG-15..21: Sprint 3 (Netlify, Render, system testing, docs, security, API integration, DB verify)
-- MAG-22..25: Budget page, auth, shared UI/guest, vendor fields (MAG-25 ✅)
-- MAG-26: UI redesign (✅ merged)
-- MAG-27: bearer session-token auth filter (✅ merged, PR #26) — added this session
-- MAG-12/13/14: reserved/unused
-
-## 7. Open Decisions
-
-1. Admin/cart/notifications backend — in scope or UI-only? (would need new backend tickets)
-2. Netlify site rename (from `gentle-cucurucho-a28226`) — then CORS update
-3. Password hashing (BCrypt) vs full JWT — when?
-4. Multi-event support — decided NO (wedding-only per proposal)
+- **Aiven free tier powers off** on inactivity → power on before demo (backend 500s if off).
+- **Render free tier sleeps** ~15 min idle → first hit 30–60 s.
+- Auth = **session tokens, not JWT** (PM plan says JWT — flag if asked).
+- `data_seed.sql` **overwrites** the existing 13 vendors/8 categories via `ON DUPLICATE KEY UPDATE` (intended).
+- This repo's `edit` tool is unreliable on multi-line ops — prefer full-file `write` or Python string-replace for edits.
+- The `Sales_Target_App_Test_Cases(Sample).xlsx` in `docs/` is the lecturer's sample (untracked, not committed).
 
 ## 8. Useful Commands
 
 ```bash
 cd "D:/My projects/ZeroState projects/Wedding Planing Platform/Magula.lk"
-git checkout main && git pull   # sync
-cd frontend && npm run build     # verify frontend
-cd backend && cmd /c "mvnw.cmd test"   # 115 tests
+git checkout main && git pull   # sync (history was rewritten — use reset --hard if divergent)
+cd backend && cmd /c "mvnw.cmd test"   # 126 tests
+cd frontend && npm run build           # verify frontend
 
-# smoke test the live backend
-curl https://magulaplan-api.onrender.com/api/v1/vendors
+# live smoke tests
+curl https://magulaplan-api.onrender.com/api/v1/vendor-categories
+curl https://magulaplan-api.onrender.com/api/v1/vendors/search?search=Sunset
 ```
-
-## 9. Live URLs
-
-- Frontend: `https://gentle-cucurucho-a28226.netlify.app`
-- Backend: `https://magulaplan-api.onrender.com`
-- Test login: `deploytest@example.com` / `pw12345` (seeded user)
