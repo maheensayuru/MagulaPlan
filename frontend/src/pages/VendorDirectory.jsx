@@ -1,4 +1,4 @@
-import { useMemo, useState, useEffect } from 'react'
+import { useMemo, useState } from 'react'
 import { useSearchParams, Link } from 'react-router-dom'
 import { motion, AnimatePresence } from 'framer-motion'
 import { FaSearch, FaFilter, FaTimes, FaStore, FaPlus } from 'react-icons/fa'
@@ -10,41 +10,30 @@ import Dropdown from '../components/ui/Dropdown'
 import { useToast } from '../context/ToastContext'
 import { vendorsApi, categoriesApi } from '../services/api'
 import { DISTRICTS } from '../constants/districts'
+import { useAsyncData } from '../lib/useAsyncData'
 
 const PAGE_SIZE = 8
 
 export default function VendorDirectory() {
   const [searchParams, setSearchParams] = useSearchParams()
   const activeCategory = searchParams.get('category') || ''
-  const [vendors, setVendors] = useState([])
-  const [categories, setCategories] = useState([])
-  const [loading, setLoading] = useState(true)
-  const [error, setError] = useState('')
+  const { showToast } = useToast()
   const [query, setQuery] = useState(searchParams.get('search') || '')
   const [district, setDistrict] = useState('')
   const [sort, setSort] = useState('name')
   const [page, setPage] = useState(1)
   const [filtersOpen, setFiltersOpen] = useState(false)
-  const { showToast } = useToast()
 
-  const load = async () => {
-    setLoading(true)
-    setError('')
-    try {
+  const { data, loading, error, reload } = useAsyncData(
+    async () => {
       const [vendorData, categoryData] = await Promise.all([vendorsApi.list(), categoriesApi.list()])
-      setVendors(vendorData)
-      setCategories(categoryData)
-    } catch (e) {
-      setError(e.message || 'Failed to load vendors')
-      showToast('Failed to load vendors', 'error')
-    } finally {
-      setLoading(false)
-    }
-  }
+      return { vendors: vendorData, categories: categoryData }
+    },
+    { initialData: { vendors: [], categories: [] }, onError: () => showToast('Failed to load vendors', 'error') },
+  )
+  const vendors = data.vendors
+  const categories = data.categories
 
-  useEffect(() => {
-    load()
-  }, [])
 
   const filtered = useMemo(() => {
     let list = vendors.filter((v) => {
@@ -175,7 +164,7 @@ export default function VendorDirectory() {
         ) : error ? (
           <div className="card p-12 text-center">
             <p className="text-charcoal/70 font-medium">{error}</p>
-            <button onClick={load} className="btn-outline text-sm mt-4">Try again</button>
+            <button onClick={reload} className="btn-outline text-sm mt-4">Try again</button>
           </div>
         ) : pageItems.length === 0 ? (
           <EmptyState

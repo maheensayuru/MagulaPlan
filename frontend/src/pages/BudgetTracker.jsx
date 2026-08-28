@@ -1,4 +1,4 @@
-import { useState, useEffect, useMemo } from 'react'
+import { useState, useMemo } from 'react'
 import { motion } from 'framer-motion'
 import { FaWallet, FaPlus, FaEdit, FaTrash } from 'react-icons/fa'
 import { PieChart, Pie, Cell, Tooltip, ResponsiveContainer } from 'recharts'
@@ -11,6 +11,7 @@ import { SkeletonCard } from '../components/ui/Skeleton'
 import EmptyState from '../components/ui/EmptyState'
 import { useToast } from '../context/ToastContext'
 import { budgetApi } from '../services/api'
+import { useAsyncData } from '../lib/useAsyncData'
 
 const CHART_COLORS = ['#1B5744', '#C9A24B', '#4E9479', '#DFC069', '#78B29A', '#A9822F']
 
@@ -30,9 +31,7 @@ const emptyForm = {
 }
 
 export default function BudgetTracker() {
-  const [items, setItems] = useState([])
-  const [loading, setLoading] = useState(true)
-  const [error, setError] = useState('')
+  const { data: items = [], loading, error, reload } = useAsyncData(() => budgetApi.list(), { initialData: [] })
   const [modalOpen, setModalOpen] = useState(false)
   const [editing, setEditing] = useState(null)
   const [form, setForm] = useState(emptyForm)
@@ -42,22 +41,6 @@ export default function BudgetTracker() {
   const [categoryFilter, setCategoryFilter] = useState('')
   const { showToast } = useToast()
 
-  const load = async () => {
-    setLoading(true)
-    setError('')
-    try {
-      const data = await budgetApi.list()
-      setItems(data)
-    } catch (e) {
-      setError(e.message || 'Failed to load budget items')
-    } finally {
-      setLoading(false)
-    }
-  }
-
-  useEffect(() => {
-    load()
-  }, [])
 
   const totals = useMemo(() => {
     const sum = (f) => items.reduce((s, i) => s + (Number(i[f]) || 0), 0)
@@ -130,7 +113,7 @@ export default function BudgetTracker() {
         showToast('Budget item added', 'success')
       }
       setModalOpen(false)
-      load()
+      reload()
     } catch (err) {
       showToast(err.message || 'Failed to save', 'error')
     } finally {
@@ -145,7 +128,7 @@ export default function BudgetTracker() {
       await budgetApi.remove(deleting.budgetItemId)
       showToast('Budget item deleted', 'success')
       setDeleting(null)
-      load()
+      reload()
     } catch (err) {
       showToast(err.message || 'Failed to delete', 'error')
     } finally {
@@ -175,7 +158,7 @@ export default function BudgetTracker() {
       ) : error ? (
         <div className="card p-8 text-center">
           <p className="text-charcoal/70 font-medium">{error}</p>
-          <button onClick={load} className="btn-outline text-sm mt-4">Try again</button>
+          <button onClick={reload} className="btn-outline text-sm mt-4">Try again</button>
         </div>
       ) : (
         <>

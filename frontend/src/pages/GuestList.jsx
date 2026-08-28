@@ -1,4 +1,4 @@
-import { useState, useEffect, useMemo } from 'react'
+import { useState, useMemo } from 'react'
 import { FaShare, FaCheck, FaUsers, FaPlus, FaEdit, FaTrash, FaSearch } from 'react-icons/fa'
 import Modal from '../components/ui/Modal'
 import ConfirmDialog from '../components/ui/ConfirmDialog'
@@ -11,6 +11,7 @@ import { SkeletonCard } from '../components/ui/Skeleton'
 import EmptyState from '../components/ui/EmptyState'
 import { useToast } from '../context/ToastContext'
 import { guestsApi } from '../services/api'
+import { useAsyncData } from '../lib/useAsyncData'
 
 const FILTER_TABS = [
   { id: 'all', label: 'All' },
@@ -33,9 +34,7 @@ const emptyForm = {
 }
 
 export default function GuestList() {
-  const [guests, setGuests] = useState([])
-  const [loading, setLoading] = useState(true)
-  const [error, setError] = useState('')
+  const { data: guests = [], loading, error, reload } = useAsyncData(() => guestsApi.list(), { initialData: [] })
   const [modalOpen, setModalOpen] = useState(false)
   const [editing, setEditing] = useState(null)
   const [form, setForm] = useState(emptyForm)
@@ -47,22 +46,6 @@ export default function GuestList() {
   const [statusFilter, setStatusFilter] = useState('all')
   const { showToast } = useToast()
 
-  const load = async () => {
-    setLoading(true)
-    setError('')
-    try {
-      const data = await guestsApi.list()
-      setGuests(data)
-    } catch (e) {
-      setError(e.message || 'Failed to load guests')
-    } finally {
-      setLoading(false)
-    }
-  }
-
-  useEffect(() => {
-    load()
-  }, [])
 
   const openAdd = () => {
     setEditing(null)
@@ -106,7 +89,7 @@ export default function GuestList() {
         showToast('Guest added', 'success')
       }
       setModalOpen(false)
-      load()
+      reload()
     } catch (err) {
       showToast(err.message || 'Failed to save', 'error')
     } finally {
@@ -121,7 +104,7 @@ export default function GuestList() {
       await guestsApi.remove(deleting.guestId)
       showToast('Guest removed', 'success')
       setDeleting(null)
-      load()
+      reload()
     } catch (err) {
       showToast(err.message || 'Failed to delete', 'error')
     } finally {
@@ -188,7 +171,7 @@ export default function GuestList() {
       ) : error ? (
         <div className="card p-8 text-center">
           <p className="text-charcoal/70 font-medium">{error}</p>
-          <button onClick={load} className="btn-outline text-sm mt-4">Try again</button>
+          <button onClick={reload} className="btn-outline text-sm mt-4">Try again</button>
         </div>
       ) : (
         <>

@@ -20,11 +20,7 @@ export default function AdminRoute({ children }) {
   const [isAdmin, setIsAdmin] = useState(DEV_PREVIEW)
 
   useEffect(() => {
-    if (DEV_PREVIEW) return
-    if (!isAuthenticated) {
-      setChecking(false)
-      return
-    }
+    if (DEV_PREVIEW || !isAuthenticated) return
     let cancelled = false
     usersApi
       .me()

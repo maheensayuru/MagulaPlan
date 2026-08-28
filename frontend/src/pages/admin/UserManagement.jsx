@@ -1,34 +1,24 @@
-import { useEffect, useMemo, useState } from 'react'
+import { useMemo, useState } from 'react'
 import { FaUsers, FaSearch, FaBan, FaCheckCircle } from 'react-icons/fa'
 import EmptyState from '../../components/ui/EmptyState'
 import Badge from '../../components/ui/Badge'
 import { SkeletonCard } from '../../components/ui/Skeleton'
 import { useToast } from '../../context/ToastContext'
 import { adminApi } from '../../services/api'
+import { useAsyncData } from '../../lib/useAsyncData'
 
 export default function UserManagement() {
-  const [loading, setLoading] = useState(true)
-  const [users, setUsers] = useState([])
+  const { data: users = [], setData: setUsers, loading } = useAsyncData(
+    async () => {
+      const data = await adminApi.users()
+      return Array.isArray(data) ? data : []
+    },
+    { initialData: [] },
+  )
   const [search, setSearch] = useState('')
   const [busyId, setBusyId] = useState(null)
   const { showToast } = useToast()
 
-  const load = async () => {
-    setLoading(true)
-    try {
-      const data = await adminApi.users()
-      setUsers(Array.isArray(data) ? data : [])
-    } catch {
-      // no admin endpoint yet — empty state below covers it
-      setUsers([])
-    } finally {
-      setLoading(false)
-    }
-  }
-
-  useEffect(() => {
-    load()
-  }, [])
 
   const toggleStatus = async (user) => {
     const id = user.userId ?? user.id

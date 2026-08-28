@@ -1,40 +1,24 @@
-import { useState, useEffect } from 'react'
 import { Link } from 'react-router-dom'
 import { motion } from 'framer-motion'
 import { FaWallet, FaUsers, FaStore, FaPlus, FaSearch } from 'react-icons/fa'
 import StatCard from '../components/ui/StatCard'
 import { SkeletonCard } from '../components/ui/Skeleton'
-import { useToast } from '../context/ToastContext'
+import { useAsyncData } from '../lib/useAsyncData'
 import { budgetApi, guestsApi, vendorsApi } from '../services/api'
 
 export default function Dashboard() {
-  const [loading, setLoading] = useState(true)
-  const [error, setError] = useState('')
-  const [stats, setStats] = useState({ budget: 0, guests: 0, vendors: 0, estimated: 0 })
-  const { showToast } = useToast()
-
-  const load = async () => {
-    setLoading(true)
-    setError('')
-    try {
+  const { data: stats, loading, error } = useAsyncData(
+    async () => {
       const [budgetItems, guests, vendors] = await Promise.all([
         budgetApi.list().catch(() => []),
         guestsApi.list().catch(() => []),
         vendorsApi.list().catch(() => []),
       ])
       const estimated = budgetItems.reduce((s, i) => s + (Number(i.estimatedCost) || 0), 0)
-      setStats({ budget: budgetItems.length, guests: guests.length, vendors: vendors.length, estimated })
-    } catch (e) {
-      setError(e.message || 'Failed to load dashboard')
-      showToast('Failed to load dashboard data', 'error')
-    } finally {
-      setLoading(false)
-    }
-  }
-
-  useEffect(() => {
-    load()
-  }, [])
+      return { budget: budgetItems.length, guests: guests.length, vendors: vendors.length, estimated }
+    },
+    { initialData: { budget: 0, guests: 0, vendors: 0, estimated: 0 } },
+  )
 
   if (loading) {
     return (

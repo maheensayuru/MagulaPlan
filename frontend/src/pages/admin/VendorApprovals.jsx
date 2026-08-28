@@ -1,34 +1,24 @@
-import { useEffect, useState } from 'react'
+import { useState } from 'react'
 import { FaCheck, FaTimes, FaClipboardCheck, FaMapMarkerAlt } from 'react-icons/fa'
 import EmptyState from '../../components/ui/EmptyState'
 import { SkeletonCard } from '../../components/ui/Skeleton'
 import ConfirmDialog from '../../components/ui/ConfirmDialog'
 import { useToast } from '../../context/ToastContext'
 import { adminApi } from '../../services/api'
+import { useAsyncData } from '../../lib/useAsyncData'
 
 export default function VendorApprovals() {
-  const [loading, setLoading] = useState(true)
-  const [vendors, setVendors] = useState([])
+  const { data: vendors = [], setData: setVendors, loading } = useAsyncData(
+    async () => {
+      const data = await adminApi.pendingVendors()
+      return Array.isArray(data) ? data : []
+    },
+    { initialData: [] },
+  )
   const [rejecting, setRejecting] = useState(null)
   const [busyId, setBusyId] = useState(null)
   const { showToast } = useToast()
 
-  const load = async () => {
-    setLoading(true)
-    try {
-      const data = await adminApi.pendingVendors()
-      setVendors(Array.isArray(data) ? data : [])
-    } catch {
-      // no admin endpoint yet — empty state below covers it
-      setVendors([])
-    } finally {
-      setLoading(false)
-    }
-  }
-
-  useEffect(() => {
-    load()
-  }, [])
 
   const handleApprove = async (vendor) => {
     const id = vendor.vendorId ?? vendor.id
