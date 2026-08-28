@@ -108,6 +108,15 @@ public class GuestServiceImpl implements GuestService {
                 guest.getWhatsappStatus());
     }
 
+    @Override
+    public GuestResponseDto updateRsvpStatus(UUID guestId, String rsvpStatus) {
+        Guest guest = guestRepository.findById(guestId)
+                .orElseThrow(() -> new ResourceNotFoundException("Guest Not Found with ID: " + guestId));
+
+        guest.setRsvpStatus(rsvpStatus);
+        return mapToResponseDto(guestRepository.save(guest));
+    }
+
     private GuestResponseDto mapToResponseDto(Guest guest) {
         return new GuestResponseDto(
                 guest.getGuestId(),

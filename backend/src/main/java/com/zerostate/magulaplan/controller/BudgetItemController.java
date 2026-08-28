@@ -2,6 +2,7 @@ package com.zerostate.magulaplan.controller;
 
 import com.zerostate.magulaplan.dto.BudgetItemRequestDto;
 import com.zerostate.magulaplan.dto.BudgetItemResponseDto;
+import com.zerostate.magulaplan.dto.BudgetSummaryResponseDto;
 import com.zerostate.magulaplan.service.BudgetItemService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -43,6 +44,13 @@ public class BudgetItemController {
         List<BudgetItemResponseDto> budgetItems = budgetItemService.getBudgetItemsByUserId(userId);
         return new ResponseEntity<>(budgetItems, HttpStatus.OK);
 //        200 ok
+    }
+
+    // 3.1 Get budget summary for a user
+    @GetMapping("/summary/{userId}")
+    public ResponseEntity<BudgetSummaryResponseDto> getBudgetSummary(@PathVariable Long userId) {
+        BudgetSummaryResponseDto summary = budgetItemService.getBudgetSummary(userId);
+        return new ResponseEntity<>(summary, HttpStatus.OK);
     }
 
     // 4. Get Budget Item by ID

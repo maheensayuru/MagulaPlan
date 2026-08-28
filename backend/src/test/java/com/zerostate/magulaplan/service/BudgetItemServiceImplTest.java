@@ -2,6 +2,7 @@ package com.zerostate.magulaplan.service;
 
 import com.zerostate.magulaplan.dto.BudgetItemRequestDto;
 import com.zerostate.magulaplan.dto.BudgetItemResponseDto;
+import com.zerostate.magulaplan.dto.BudgetSummaryResponseDto;
 import com.zerostate.magulaplan.entity.BudgetItem;
 import com.zerostate.magulaplan.entity.User;
 import com.zerostate.magulaplan.exception.ResourceNotFoundException;
@@ -179,5 +180,20 @@ class BudgetItemServiceImplTest {
     void deleteBudgetItem_callsDeleteById() {
         budgetItemService.deleteBudgetItem(1L);
         verify(budgetItemRepository).deleteById(1L);
+    }
+
+
+    @Test
+    @DisplayName("getBudgetSummary() aggregates estimated, actual, deposit, and remaining")
+    void getBudgetSummary_aggregatesTotals() {
+        when(budgetItemRepository.findByUser_UserId(1L))
+                .thenReturn(List.of(buildBudgetItem(1L), buildBudgetItem(2L)));
+
+        BudgetSummaryResponseDto summary = budgetItemService.getBudgetSummary(1L);
+
+        assertThat(summary.getTotalEstimated()).isEqualByComparingTo("100000.00");
+        assertThat(summary.getTotalActual()).isEqualByComparingTo("96000.00");
+        assertThat(summary.getTotalDepositPaid()).isEqualByComparingTo("20000.00");
+        assertThat(summary.getRemaining()).isEqualByComparingTo("4000.00");
     }
 }

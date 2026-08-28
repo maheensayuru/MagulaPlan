@@ -18,6 +18,10 @@ import org.mockito.junit.jupiter.MockitoExtension;
 import java.math.BigDecimal;
 import java.util.List;
 import java.util.Optional;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageImpl;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.jpa.domain.Specification;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
@@ -174,5 +178,19 @@ class VendorServiceImplTest {
     void deleteVendor_callsDeleteById() {
         vendorService.deleteVendor(1L);
         verify(vendorRepository).deleteById(1L);
+    }
+
+
+    @Test
+    @DisplayName("searchVendors() returns paged results via repository")
+    void searchVendors_returnsPagedResults() {
+        Vendor vendor = buildVendor(1L);
+        Page<Vendor> page = new PageImpl<>(List.of(vendor));
+        when(vendorRepository.findAll(any(Specification.class), any(Pageable.class))).thenReturn(page);
+
+        Page<VendorResponseDto> result = vendorService.searchVendors("Sunset", "Colombo", null, null, 0, 10);
+
+        assertThat(result.getContent()).hasSize(1);
+        assertThat(result.getContent().get(0).getBusinessName()).isEqualTo("Sunset Studios");
     }
 }

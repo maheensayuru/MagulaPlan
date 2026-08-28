@@ -8,9 +8,16 @@ import com.zerostate.magulaplan.exception.ResourceNotFoundException;
 import com.zerostate.magulaplan.repo.VendorCategoryRepository;
 import com.zerostate.magulaplan.repo.VendorRepository;
 import com.zerostate.magulaplan.service.VendorService;
+import jakarta.persistence.criteria.Predicate;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Sort;
+import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
 
+import java.math.BigDecimal;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -99,6 +106,31 @@ public class VendorServiceImpl implements VendorService {
     @Override
     public void deleteVendor(Long vendorId) {
         vendorRepository.deleteById(vendorId);
+    }
+
+    @Override
+    public Page<VendorResponseDto> searchVendors(String search, String district, BigDecimal minPrice,
+                                                 BigDecimal maxPrice, int page, int size) {
+        Specification<Vendor> spec = (root, query, cb) -> {
+            List<Predicate> predicates = new ArrayList<>();
+            if (search != null && !search.isBlank()) {
+                predicates.add(cb.like(cb.lower(root.get("businessName")), "%" + search.toLowerCase() + "%"));
+            }
+            if (district != null && !district.isBlank()) {
+                predicates.add(cb.equal(cb.lower(root.get("districtLocation")), district.toLowerCase()));
+            }
+            if (minPrice != null) {
+                predicates.add(cb.greaterThanOrEqualTo(root.get("startingPrice"), minPrice));
+            }
+            if (maxPrice != null) {
+                predicates.add(cb.lessThanOrEqualTo(root.get("startingPrice"), maxPrice));
+            }
+            return cb.and(predicates.toArray(new Predicate[0]));
+        };
+
+        Page<Vendor> vendorPage = vendorRepository.findAll(spec,
+                PageRequest.of(page, size, Sort.by(Sort.Direction.ASC, "businessName")));
+        return vendorPage.map(this::mapToResponseDto);
     }
 
     private VendorResponseDto mapToResponseDto(Vendor vendor) {

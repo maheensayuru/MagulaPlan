@@ -2,6 +2,7 @@ package com.zerostate.magulaplan.service.impl;
 
 import com.zerostate.magulaplan.dto.BudgetItemRequestDto;
 import com.zerostate.magulaplan.dto.BudgetItemResponseDto;
+import com.zerostate.magulaplan.dto.BudgetSummaryResponseDto;
 import com.zerostate.magulaplan.entity.BudgetItem;
 import com.zerostate.magulaplan.entity.User;
 import com.zerostate.magulaplan.exception.ResourceNotFoundException;
@@ -11,7 +12,9 @@ import com.zerostate.magulaplan.service.BudgetItemService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.math.BigDecimal;
 import java.util.List;
+import java.util.Objects;
 import java.util.stream.Collectors;
 
 @Service
@@ -86,6 +89,22 @@ public class BudgetItemServiceImpl implements BudgetItemService {
     @Override
     public void deleteBudgetItem(Long budgetItemId) {
         budgetItemRepository.deleteById(budgetItemId);
+    }
+
+    @Override
+    public BudgetSummaryResponseDto getBudgetSummary(Long userId) {
+        List<BudgetItem> items = budgetItemRepository.findByUser_UserId(userId);
+
+        BigDecimal totalEstimated = sum(items.stream().map(BudgetItem::getEstimatedCost));
+        BigDecimal totalActual = sum(items.stream().map(BudgetItem::getActualCost));
+        BigDecimal totalDepositPaid = sum(items.stream().map(BudgetItem::getDepositPaid));
+        BigDecimal remaining = totalEstimated.subtract(totalActual);
+
+        return new BudgetSummaryResponseDto(totalEstimated, totalActual, totalDepositPaid, remaining);
+    }
+
+    private BigDecimal sum(java.util.stream.Stream<BigDecimal> values) {
+        return values.filter(Objects::nonNull).reduce(BigDecimal.ZERO, BigDecimal::add);
     }
 
     private BudgetItemResponseDto mapToResponseDto(BudgetItem budgetItem) {
