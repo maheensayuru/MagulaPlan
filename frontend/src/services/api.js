@@ -51,12 +51,19 @@ export async function apiFetch(path, { method = 'GET', body } = {}) {
   }
 
   if (!response.ok) {
+    // Only surface the backend's own message for client errors (validation,
+    // not-found, conflict). Server errors are genericized so internals never
+    // leak to the UI.
     let message = `Request failed (${response.status})`
-    try {
-      const data = await response.json()
-      message = data.message || data.error || message
-    } catch {
-      // non-JSON error body; keep default message
+    if (response.status >= 500) {
+      message = 'Something went wrong on our end. Please try again.'
+    } else {
+      try {
+        const data = await response.json()
+        message = data.message || data.error || message
+      } catch {
+        // non-JSON error body; keep default message
+      }
     }
     throw new Error(message)
   }

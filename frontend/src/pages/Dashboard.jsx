@@ -56,7 +56,7 @@ export default function Dashboard() {
         className="card p-6 sm:p-8 bg-ink-gradient text-white border-none"
       >
         <h1 className="text-2xl sm:text-3xl font-display font-medium text-[#c29629]">Welcome back</h1>
-        <p className="text-[#705309] mt-2 max-w-md">
+        <p className="text-ivory-100/70 mt-2 max-w-md">
           Here's an overview of your wedding planning progress.
         </p>
         {error && <p className="text-ivory-100/80 mt-3 text-sm">{error}</p>}

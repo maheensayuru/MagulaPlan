@@ -301,7 +301,7 @@ export default function Landing() {
       <section className="py-20 sm:py-28  bg-ink-gradient relative overflow-hidden">
         <div className="container-app relative grid lg:grid-cols-2 gap-12 items-center">
           <motion.div initial="hidden" whileInView="show" viewport={viewportOnce} variants={riseIn}>
-            <EditorialEyebrow tone="dark" className="mb-5">Rooted In Tradition</EditorialEyebrow>
+            <EditorialEyebrow tone="light" className="mb-5">Rooted In Tradition</EditorialEyebrow>
             <h2 className="text-3xl sm:text-4xl font-display font-medium text-[#c29629] mb-6">Built For Sri Lankan Wedding Traditions</h2>
             <ul className="space-y-4">
               {[
@@ -310,7 +310,7 @@ export default function Landing() {
                 'Kandyan, Low Country & Western theme planning tools',
                 'Bride-side & groom-side guest and timeline management',
               ].map((item) => (
-                <li key={item} className="flex items-start gap-3 text-[#4b390b] ">
+                <li key={item} className="flex items-start gap-3 text-ivory-100/80">
                   <span className="h-6 w-6 rounded-full bg-gold-500 flex items-center justify-center shrink-0 mt-0.5 text-charcoal text-xs font-bold">✓</span>
                   {item}
                 </li>
@@ -378,7 +378,7 @@ export default function Landing() {
           >
             <Badge variant="gold" className="mb-5">Free to get started</Badge>
             <h2 className="text-3xl sm:text-4xl font-display font-medium text-[#c29629] mb-4">Your Perfect Wedding Starts Here</h2>
-            <p className="text-[#5f460b] max-w-lg mx-auto mb-8">
+            <p className="text-ivory-100/70 max-w-lg mx-auto mb-8">
               Join Sri Lankan couples planning smarter, less stressful weddings with MagulaPlan.
             </p>
             <Link to="/register" className="btn-gold">

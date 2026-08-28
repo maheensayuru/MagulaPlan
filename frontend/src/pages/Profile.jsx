@@ -62,7 +62,7 @@ export default function Profile() {
                 <FaCalendarAlt size={13} /> {new Date(profile.weddingDate).toLocaleDateString('en-LK', { year: 'numeric', month: 'long', day: 'numeric' })}
               </p>
             ) : (
-              <p className="text-[#805e09] text-sm mt-2">
+              <p className="text-ivory-100/70 text-sm mt-2">
                 No wedding date set yet — <Link to="/settings" className="underline hover:text-gold-200">add one in Settings</Link>
               </p>
             )}
