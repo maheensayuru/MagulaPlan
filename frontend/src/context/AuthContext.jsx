@@ -1,7 +1,7 @@
 import { createContext, useContext, useState } from 'react'
 import { authApi, getToken, setToken, clearToken, getUserId, setUserId, clearUserId } from '../services/api'
 
-const AuthContext = createContext(null)
+export const AuthContext = createContext(null)
 
 export function AuthProvider({ children }) {
   const [token, setTokenState] = useState(getToken())
@@ -39,4 +39,19 @@ export function AuthProvider({ children }) {
   )
 }
 
-export const useAuth = () => useContext(AuthContext)
+export function useAuth() {
+  const context = useContext(AuthContext)
+  if (!context) {
+    return {
+      token: null,
+      userId: null,
+      isAuthenticated: false,
+      login: async () => {},
+      register: async () => {},
+      logout: () => {},
+    }
+  }
+  return context
+}
+
+export default AuthContext

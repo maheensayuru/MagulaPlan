@@ -59,9 +59,9 @@ export default function CartDrawer() {
             aria-modal="true"
             aria-label="Your cart"
           >
-            <div className="flex items-center justify-between px-6 py-5 border-b border-charcoal/8 bg-white">
-              <h2 className="text-lg font-display font-medium text-charcoal flex items-center gap-2">
-                <FaShoppingBag className="text-gold-700" size={16} /> Your Selections
+            <div className="flex items-center justify-between px-6 py-5 border-b border-blush-100 bg-white">
+              <h2 className="text-lg font-display font-semibold text-charcoal flex items-center gap-2">
+                <FaShoppingBag className="text-maroon-700" size={16} /> Your Selections
               </h2>
               <button onClick={() => setOpen(false)} aria-label="Close cart" className="h-9 w-9 flex items-center justify-center rounded-full text-charcoal/50 hover:bg-charcoal/5 transition-colors">
                 <FaTimes size={16} />
@@ -91,11 +91,11 @@ export default function CartDrawer() {
                       exit={{ opacity: 0, x: 40 }}
                       className="card p-4 flex items-center gap-3"
                     >
-                      <div className="h-14 w-14 rounded-xl2 overflow-hidden bg-gold-50 flex items-center justify-center shrink-0">
+                      <div className="h-14 w-14 rounded-xl overflow-hidden bg-blush-100 flex items-center justify-center shrink-0 border border-blush-200">
                         {item.imageUrl ? (
                           <img src={item.imageUrl} alt="" className="h-full w-full object-cover" />
                         ) : (
-                          <FaStore className="text-gold-400" size={18} />
+                          <FaStore className="text-maroon-600" size={18} />
                         )}
                       </div>
                       <div className="flex-1 min-w-0">
@@ -104,7 +104,7 @@ export default function CartDrawer() {
                           {[item.categoryName, item.districtLocation].filter(Boolean).join(' · ') || 'Vendor'}
                         </p>
                         {item.startingPrice > 0 && (
-                          <p className="text-xs text-gold-800 font-semibold mt-0.5">Rs. {Number(item.startingPrice).toLocaleString()}</p>
+                          <p className="text-xs text-maroon-800 font-semibold mt-0.5">Rs. {Number(item.startingPrice).toLocaleString()}</p>
                         )}
                       </div>
                       <button
@@ -121,7 +121,7 @@ export default function CartDrawer() {
             </div>
 
             {items.length > 0 && (
-              <div className="border-t border-charcoal/8 bg-white px-6 py-5 space-y-4">
+              <div className="border-t border-blush-100 bg-white px-6 py-5 space-y-4">
                 <div className="flex items-center justify-between text-sm">
                   <span className="text-charcoal/60">{count} vendor{count === 1 ? '' : 's'} selected</span>
                   {total > 0 && <span className="font-semibold text-charcoal">From Rs. {total.toLocaleString()}</span>}

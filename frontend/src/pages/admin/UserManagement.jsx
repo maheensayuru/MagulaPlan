@@ -31,7 +31,7 @@ export default function UserManagement() {
         list.map((u) => ((u.userId ?? u.id) === id ? { ...u, status: suspended ? 'ACTIVE' : 'SUSPENDED' } : u))
       )
     } catch (err) {
-      showToast(err.message || 'Could not update yet — admin service is not connected', 'error')
+      showToast(err.message || 'Could not update yet: admin service is not connected', 'error')
     } finally {
       setBusyId(null)
     }
@@ -88,8 +88,8 @@ export default function UserManagement() {
                   const suspended = user.status === 'SUSPENDED'
                   return (
                     <tr key={id} className="border-b border-charcoal/5 last:border-0 hover:bg-charcoal/[0.02] transition-colors">
-                      <td className="px-5 py-3.5 font-medium text-charcoal">{user.name || '—'}</td>
-                      <td className="px-5 py-3.5 text-charcoal/50 hidden sm:table-cell">{user.email || '—'}</td>
+                      <td className="px-5 py-3.5 font-medium text-charcoal">{user.name || 'N/A'}</td>
+                      <td className="px-5 py-3.5 text-charcoal/50 hidden sm:table-cell">{user.email || 'N/A'}</td>
                       <td className="px-5 py-3.5 text-center">
                         <Badge variant={suspended ? 'error' : 'success'}>{suspended ? 'Suspended' : 'Active'}</Badge>
                       </td>

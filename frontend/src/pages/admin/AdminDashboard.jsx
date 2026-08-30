@@ -17,7 +17,7 @@ export default function AdminDashboard() {
         if (!cancelled) setStats(data)
       })
       .catch(() => {
-        // no admin stats endpoint yet — cards below fall back to placeholders
+        // no admin stats endpoint yet
       })
       .finally(() => {
         if (!cancelled) setLoading(false)
@@ -40,21 +40,21 @@ export default function AdminDashboard() {
 
   return (
     <div className="space-y-6">
-      <div className="card p-6 sm:p-8 bg-ink-gradient text-white border-none">
-        <h1 className="text-2xl sm:text-3xl font-display font-medium text-white">Platform Overview</h1>
-        <p className="text-ivory-100/70 mt-2 max-w-md">A snapshot of MagulaPlan's vendors, couples, and pending work.</p>
+      <div className="card p-6 sm:p-8 bg-gradient-to-r from-blush-100 via-blush-50 to-ivory-50 border border-blush-200 shadow-xs">
+        <h1 className="text-2xl sm:text-3xl font-display font-semibold text-charcoal">Platform Overview</h1>
+        <p className="text-charcoal/60 mt-1 max-w-md">A snapshot of MagulaPlan's vendors, couples, and pending approvals.</p>
       </div>
 
       <div className="grid sm:grid-cols-2 lg:grid-cols-4 gap-4">
-        <StatCard icon={FaStore} label="Total Vendors" value={stats?.totalVendors} display={stats?.totalVendors == null ? '—' : undefined} color="gold" />
-        <StatCard icon={FaUsers} label="Total Users" value={stats?.totalUsers} display={stats?.totalUsers == null ? '—' : undefined} color="ink" />
-        <StatCard icon={FaClipboardCheck} label="Pending Approvals" value={stats?.pendingApprovals} display={stats?.pendingApprovals == null ? '—' : undefined} color="gold" />
-        <StatCard icon={FaCalendarCheck} label="Total Bookings" value={stats?.totalBookings} display={stats?.totalBookings == null ? '—' : undefined} color="ink" />
+        <StatCard icon={FaStore} label="Total Vendors" value={stats?.totalVendors} display={stats?.totalVendors == null ? 'N/A' : undefined} color="sage" />
+        <StatCard icon={FaUsers} label="Total Users" value={stats?.totalUsers} display={stats?.totalUsers == null ? 'N/A' : undefined} color="maroon" />
+        <StatCard icon={FaClipboardCheck} label="Pending Approvals" value={stats?.pendingApprovals} display={stats?.pendingApprovals == null ? 'N/A' : undefined} color="sage" />
+        <StatCard icon={FaCalendarCheck} label="Total Bookings" value={stats?.totalBookings} display={stats?.totalBookings == null ? 'N/A' : undefined} color="maroon" />
       </div>
 
       <div className="grid sm:grid-cols-2 gap-4">
-        <Link to="/admin/vendors" className="card card-hover p-6 flex items-center gap-4">
-          <div className="h-12 w-12 rounded-xl2 bg-gold-50 flex items-center justify-center text-gold-700 shrink-0">
+        <Link to="/admin/vendors" className="card card-hover p-6 flex items-center gap-4 border-blush-200/50">
+          <div className="h-12 w-12 rounded-xl2 bg-blush-100 flex items-center justify-center text-maroon-700 shrink-0 border border-blush-200">
             <FaClipboardCheck size={20} />
           </div>
           <div>
@@ -62,8 +62,8 @@ export default function AdminDashboard() {
             <p className="text-sm text-charcoal/50">Approve or reject newly listed vendors.</p>
           </div>
         </Link>
-        <Link to="/admin/users" className="card card-hover p-6 flex items-center gap-4">
-          <div className="h-12 w-12 rounded-xl2 bg-gold-50 flex items-center justify-center text-gold-700 shrink-0">
+        <Link to="/admin/users" className="card card-hover p-6 flex items-center gap-4 border-sage-200/50">
+          <div className="h-12 w-12 rounded-xl2 bg-sage-100 flex items-center justify-center text-sage-700 shrink-0 border border-sage-200">
             <FaUsers size={20} />
           </div>
           <div>

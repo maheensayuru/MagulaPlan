@@ -109,14 +109,14 @@ export const categoriesApi = {
   list: () => apiFetch('/api/v1/vendor-categories'),
 }
 
-// Current user's profile. Endpoint may not exist yet on the backend — callers
+// Current user's profile. Endpoint may not exist yet on the backend; callers
 // should treat a failed call as "no profile data yet" rather than an error.
 export const usersApi = {
   me: () => apiFetch('/api/v1/users/me'),
   update: (payload) => apiFetch('/api/v1/users/me', { method: 'PUT', body: payload }),
 }
 
-// Notifications. Endpoint may not exist yet on the backend — callers should
+// Notifications. Endpoint may not exist yet on the backend; callers should
 // treat a failed call as "no notifications yet" rather than an error.
 export const notificationsApi = {
   list: () => apiFetch('/api/v1/notifications'),
@@ -131,7 +131,7 @@ export const cartApi = {
   checkout: (userId, vendorIds) => apiFetch('/api/v1/bookings/checkout', { method: 'POST', body: { userId, vendorIds } }),
 }
 
-// Admin. None of these endpoints exist yet on the backend — every admin page
+// Admin. None of these endpoints exist yet on the backend: every admin page
 // treats a failed call as "no data yet" and renders an empty state, never a
 // fabricated stat or list.
 export const adminApi = {

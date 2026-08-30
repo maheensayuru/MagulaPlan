@@ -43,7 +43,7 @@ export default function Tabs({ tabs, defaultTab, onChange }) {
           {active === tab.id && (
             <motion.span
               layoutId="tab-pill"
-              className="absolute inset-0 bg-gold-700 rounded-full -z-10"
+              className="absolute inset-0 bg-maroon-700 rounded-full -z-10 shadow-sm"
               transition={{ type: 'spring', stiffness: 400, damping: 30 }}
             />
           )}

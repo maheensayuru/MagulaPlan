@@ -28,7 +28,7 @@ export default function VendorApprovals() {
       showToast(`${vendor.businessName} approved`, 'success')
       setVendors((list) => list.filter((v) => (v.vendorId ?? v.id) !== id))
     } catch (err) {
-      showToast(err.message || 'Could not approve yet — admin service is not connected', 'error')
+      showToast(err.message || 'Could not approve yet: admin service is not connected', 'error')
     } finally {
       setBusyId(null)
     }
@@ -44,7 +44,7 @@ export default function VendorApprovals() {
       setVendors((list) => list.filter((v) => (v.vendorId ?? v.id) !== id))
       setRejecting(null)
     } catch (err) {
-      showToast(err.message || 'Could not reject yet — admin service is not connected', 'error')
+      showToast(err.message || 'Could not reject yet: admin service is not connected', 'error')
     } finally {
       setBusyId(null)
     }

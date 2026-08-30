@@ -8,19 +8,26 @@
   }
 
   body {
-    @apply bg-ivory text-charcoal font-sans antialiased;
+    background-color: #FAFAF8;
+    color: #241E20;
+    font-family: Inter, system-ui, sans-serif;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
   }
 
   h1, h2, h3, h4 {
-    @apply font-display font-medium text-charcoal;
+    font-family: "Playfair Display", serif;
+    font-weight: 500;
+    color: #241E20;
   }
 
   ::selection {
-    @apply bg-gold-200 text-gold-900;
+    background-color: #F9E3E7;
+    color: #390B1B;
   }
 
   :focus-visible {
-    outline: 2px solid #A9822F;
+    outline: 2px solid #721F3A;
     outline-offset: 2px;
   }
 }
@@ -30,45 +37,64 @@
     @apply max-w-7xl mx-auto px-4 sm:px-6 lg:px-8;
   }
 
-  /* Editorial button language, matched to the Eterna reference: sharp/minimal
-     radius (not rounded pills or soft-radius cards), small tracked uppercase
-     labels rather than sentence-case, muted bronze-gold as the primary fill. */
   .btn-primary {
-    @apply inline-flex items-center justify-center gap-2.5 rounded-sm bg-gold-700 text-ivory-50 text-xs font-semibold tracking-[0.14em] uppercase px-7 py-3.5 transition-all duration-300 hover:bg-gold-800 active:translate-y-px disabled:opacity-50 disabled:pointer-events-none;
+    @apply inline-flex items-center justify-center gap-2 rounded-md bg-maroon text-white text-sm font-semibold tracking-wide px-6 py-3 transition-all duration-200 shadow-sm disabled:opacity-50 disabled:pointer-events-none;
+  }
+  .btn-primary:hover {
+    background-color: #551429;
+    box-shadow: 0 4px 6px -1px rgba(114, 31, 58, 0.2);
+  }
+  .btn-primary:active {
+    transform: translateY(1px);
   }
 
   .btn-gold {
-    @apply inline-flex items-center justify-center gap-2.5 rounded-sm bg-gold-gradient text-charcoal text-xs font-semibold tracking-[0.14em] uppercase px-7 py-3.5 shadow-gold transition-all duration-300 hover:-translate-y-0.5 hover:shadow-lg active:translate-y-0;
+    @apply inline-flex items-center justify-center gap-2 rounded-md bg-maroon text-white text-sm font-semibold tracking-wide px-6 py-3 transition-all duration-200 shadow-sm;
+  }
+  .btn-gold:hover {
+    background-color: #551429;
+  }
+  .btn-gold:active {
+    transform: translateY(1px);
   }
 
   .btn-outline {
-    @apply inline-flex items-center justify-center gap-2.5 rounded-sm border border-charcoal/20 bg-white text-charcoal text-xs font-semibold tracking-[0.14em] uppercase px-7 py-3.5 transition-all duration-300 hover:border-gold-700 hover:text-gold-800;
+    @apply inline-flex items-center justify-center gap-2 rounded-md border border-charcoal/15 bg-white text-charcoal text-sm font-medium tracking-wide px-6 py-3 transition-all duration-200;
+  }
+  .btn-outline:hover {
+    border-color: #CF7B97;
+    color: #721F3A;
   }
 
   .btn-ghost {
-    @apply inline-flex items-center justify-center gap-2 text-charcoal/70 text-xs font-medium tracking-[0.12em] uppercase px-4 py-2 transition-all duration-300 hover:text-gold-800;
+    @apply inline-flex items-center justify-center gap-2 text-sm font-medium text-charcoal/60 px-4 py-2 transition-colors duration-200;
+  }
+  .btn-ghost:hover {
+    color: #721F3A;
   }
 
   .card {
-    @apply bg-white rounded-xl2 shadow-card border border-charcoal/5 transition-all duration-300;
+    @apply bg-white rounded-xl border border-charcoal/5 shadow-sm transition-all duration-200;
   }
 
   .card-hover {
-    @apply hover:-translate-y-1 hover:shadow-soft;
+    @apply transition-all duration-200;
+  }
+  .card-hover:hover {
+    border-color: #F2CDD5;
+    box-shadow: 0 4px 12px -2px rgba(114, 31, 58, 0.08);
   }
 
   .input-field {
-    @apply w-full rounded-xl border border-charcoal/15 bg-white px-4 py-3 text-charcoal placeholder:text-charcoal/40 transition-all duration-200 focus:border-gold-500 focus:ring-2 focus:ring-gold-100 outline-none;
+    @apply w-full rounded-lg border border-charcoal/15 bg-white px-4 py-3 text-charcoal placeholder:text-charcoal/40 transition-all duration-200 outline-none;
+  }
+  .input-field:focus {
+    border-color: #8E2E4E;
+    box-shadow: 0 0 0 3px rgba(249, 227, 231, 0.6);
   }
 
-  /* Lighter, tracked small-caps label used before section headings —
-     replaces the previous bold-uppercase-gold badge treatment. */
   .section-eyebrow {
-    @apply inline-flex items-center gap-2 text-[11px] font-medium tracking-[0.28em] uppercase text-gold-700/90;
-  }
-
-  .divider-ornament {
-    @apply flex items-center justify-center gap-3 text-gold-500;
+    @apply inline-flex items-center gap-2 text-xs font-semibold tracking-widest uppercase text-maroon;
   }
 
   .skeleton {
@@ -78,29 +104,10 @@
   .skeleton::after {
     content: '';
     @apply absolute inset-0;
-    background: linear-gradient(90deg, transparent, rgba(201,162,75,0.15), transparent);
+    background: linear-gradient(90deg, transparent, rgba(180, 79, 112, 0.12), transparent);
     background-size: 1000px 100%;
     animation: shimmer 1.6s infinite linear;
   }
-}
-
-/* subtle Kandyan-inspired repeating border pattern, used sparingly */
-.pattern-border {
-  background-image: repeating-linear-gradient(
-    45deg,
-    rgba(201, 162, 75, 0.35) 0px,
-    rgba(201, 162, 75, 0.35) 2px,
-    transparent 2px,
-    transparent 10px
-  );
-  height: 4px;
-}
-
-.text-gradient-gold {
-  background: linear-gradient(135deg, #E9CE87 0%, #C9A24B 50%, #A9822F 100%);
-  -webkit-background-clip: text;
-  background-clip: text;
-  color: transparent;
 }
 
 ::-webkit-scrollbar {
@@ -108,9 +115,12 @@
   height: 10px;
 }
 ::-webkit-scrollbar-track {
-  background: #F6EBDA;
+  background: #FDF2F4;
 }
 ::-webkit-scrollbar-thumb {
-  background: #C9A24B;
+  background: #CF7B97;
   border-radius: 999px;
+}
+::-webkit-scrollbar-thumb:hover {
+  background: #8E2E4E;
 }

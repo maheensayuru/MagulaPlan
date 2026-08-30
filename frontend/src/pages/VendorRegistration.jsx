@@ -8,7 +8,6 @@ import Select from '../components/ui/Select'
 import { useToast } from '../context/ToastContext'
 import { vendorsApi, categoriesApi } from '../services/api'
 import { DISTRICTS } from '../constants/districts'
-import { EditorialEyebrow } from '../components/ui/Ornament'
 
 const districts = [...DISTRICTS, 'Other']
 
@@ -34,7 +33,7 @@ export default function VendorRegistration() {
     categoriesApi.list()
       .then((data) => setCategories(data.map((c) => ({ value: String(c.categoryId), label: c.categoryName }))))
       .catch(() => showToast('Failed to load categories', 'error'))
-  }, [])
+  }, [showToast])
 
   const handleChange = (e) => {
     const { name, value } = e.target
@@ -44,10 +43,10 @@ export default function VendorRegistration() {
   const validate = () => {
     const errs = {}
     if (!form.businessName.trim()) errs.businessName = 'Business name is required'
-    if (!form.categoryId) errs.categoryId = 'Category is required'
-    if (!form.districtLocation) errs.districtLocation = 'District is required'
+    if (!form.categoryId) errs.categoryId = 'Please select a category'
+    if (!form.districtLocation) errs.districtLocation = 'Please select a district'
     if (!form.contactPhone.trim()) errs.contactPhone = 'Contact phone is required'
-    if (form.contactEmail && !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(form.contactEmail)) errs.contactEmail = 'Enter a valid email'
+    if (form.contactEmail && !/\S+@\S+\.\S+/.test(form.contactEmail)) errs.contactEmail = 'Invalid email address'
     setErrors(errs)
     return Object.keys(errs).length === 0
   }
@@ -57,28 +56,23 @@ export default function VendorRegistration() {
     if (!validate()) return
     setSaving(true)
     try {
-      await vendorsApi.create({
-        categoryId: Number(form.categoryId),
-        businessName: form.businessName,
-        description: form.description,
-        districtLocation: form.districtLocation,
-        contactPhone: form.contactPhone,
-        contactEmail: form.contactEmail,
-        startingPrice: form.startingPrice === '' ? 0 : Number(form.startingPrice),
+      await vendorsApi.register({
+        ...form,
+        startingPrice: form.startingPrice ? Number(form.startingPrice) : undefined,
       })
-      showToast('Your business has been listed!', 'success')
+      showToast('Registration submitted! We will review your listing shortly.', 'success')
       navigate('/vendors')
     } catch (err) {
-      showToast(err.message || 'Failed to submit', 'error')
+      showToast(err.message || 'Registration failed. Please try again.', 'error')
     } finally {
       setSaving(false)
     }
   }
 
   return (
-    <div className="min-h-screen bg-ivory-radial py-8 px-4 sm:px-6">
+    <div className="min-h-screen bg-ivory-100 py-8 px-4 sm:px-6">
       <div className="max-w-2xl mx-auto">
-        <Link to="/" className="inline-flex items-center gap-2 text-sm text-charcoal/60 hover:text-gold-700 mb-6">
+        <Link to="/" className="inline-flex items-center gap-2 text-sm text-charcoal/60 hover:text-maroon-700 mb-6">
           <FaArrowLeft size={13} /> Back to home
         </Link>
 
@@ -86,19 +80,17 @@ export default function VendorRegistration() {
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.4 }}
-          className="card p-8 sm:p-10"
+          className="card p-8 sm:p-10 border-blush-200/60 shadow-md"
         >
-          <div className="flex items-center gap-3 mb-2">
-            <div className="h-11 w-11 rounded-full bg-gold-50 flex items-center justify-center">
-              <FaStore size={18} className="text-gold-600" />
+          <div className="flex items-center gap-3 mb-4">
+            <div className="h-11 w-11 rounded-lg bg-blush-100 flex items-center justify-center border border-blush-200">
+              <FaStore size={18} className="text-maroon-700" />
             </div>
             <Logo />
           </div>
-          <div className="mt-5 mb-1">
-            <EditorialEyebrow>Join The Directory</EditorialEyebrow>
-          </div>
-          <h1 className="text-2xl font-display font-medium text-charcoal">List your business</h1>
-          <p className="text-charcoal/50 text-sm mt-1 mb-8">Join the MagulaPlan vendor directory and reach engaged couples.</p>
+          <span className="section-eyebrow mb-2">Join The Directory</span>
+          <h1 className="text-2xl font-display font-semibold text-charcoal">List your business</h1>
+          <p className="text-charcoal/50 text-sm mt-1 mb-8">Join the MagulaPlan boutique vendor directory and connect with couples across Sri Lanka.</p>
 
           <form onSubmit={handleSubmit} className="space-y-4">
             <FormField label="Business name" htmlFor="businessName" error={errors.businessName}>
@@ -137,10 +129,10 @@ export default function VendorRegistration() {
             </FormField>
 
             <FormField label="Description" htmlFor="description">
-              <textarea id="description" name="description" value={form.description} onChange={handleChange} rows={4} placeholder="Tell couples about your services..." className="input-field resize-none" />
+              <textarea id="description" name="description" value={form.description} onChange={handleChange} rows={4} placeholder="Tell couples about your services, packages, and wedding portfolio..." className="input-field resize-none" />
             </FormField>
 
-            <button type="submit" disabled={saving} className="btn-primary w-full">
+            <button type="submit" disabled={saving} className="btn-primary w-full shadow-md">
               {saving ? 'Submitting...' : 'List my business'}
             </button>
           </form>

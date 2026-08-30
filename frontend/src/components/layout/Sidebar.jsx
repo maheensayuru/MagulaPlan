@@ -26,8 +26,8 @@ export default function Sidebar() {
   }
 
   return (
-    <aside className="hidden lg:flex flex-col w-64 shrink-0 border-r border-charcoal/8 bg-white h-screen sticky top-0">
-      <div className="h-18 flex items-center px-6 border-b border-charcoal/8">
+    <aside className="hidden lg:flex flex-col w-64 shrink-0 border-r border-gray-100 bg-white h-screen sticky top-0">
+      <div className="h-16 flex items-center px-6 border-b border-gray-100">
         <Logo />
       </div>
       <nav className="flex-1 px-3 py-6 space-y-1">
@@ -37,8 +37,8 @@ export default function Sidebar() {
             to={item.to}
             end={item.end}
             className={({ isActive }) =>
-              `flex items-center gap-3 px-4 py-3 rounded-xl text-sm font-medium transition-colors relative ${
-                isActive ? 'bg-gold-50 text-gold-800' : 'text-charcoal/60 hover:bg-charcoal/5 hover:text-charcoal'
+              `flex items-center gap-3 px-3.5 py-2.5 rounded-lg text-sm font-medium transition-colors ${
+                isActive ? 'bg-blush-100 text-maroon-700 font-semibold shadow-xs' : 'text-charcoal/65 hover:bg-blush-50/60 hover:text-maroon-700'
               }`
             }
           >
@@ -46,14 +46,14 @@ export default function Sidebar() {
             {item.label}
           </NavLink>
         ))}
-        <div className="pt-4 mt-4 border-t border-charcoal/8 space-y-1">
+        <div className="pt-4 mt-4 border-t border-gray-100 space-y-1">
           {accountItems.map((item) => (
             <NavLink
               key={item.to}
               to={item.to}
               className={({ isActive }) =>
-                `flex items-center gap-3 px-4 py-3 rounded-xl text-sm font-medium transition-colors relative ${
-                  isActive ? 'bg-gold-50 text-gold-800' : 'text-charcoal/60 hover:bg-charcoal/5 hover:text-charcoal'
+                `flex items-center gap-3 px-3.5 py-2.5 rounded-lg text-sm font-medium transition-colors ${
+                  isActive ? 'bg-blush-100 text-maroon-700 font-semibold shadow-xs' : 'text-charcoal/65 hover:bg-blush-50/60 hover:text-maroon-700'
                 }`
               }
             >
@@ -63,10 +63,10 @@ export default function Sidebar() {
           ))}
         </div>
       </nav>
-      <div className="p-4 border-t border-charcoal/8">
+      <div className="p-4 border-t border-gray-100">
         <button
           onClick={handleLogout}
-          className="flex items-center gap-3 px-4 py-3 rounded-xl text-sm font-medium text-charcoal/50 hover:bg-charcoal/5 w-full transition-colors"
+          className="flex items-center gap-3 px-3.5 py-2.5 rounded-lg text-sm font-medium text-charcoal/50 hover:bg-gray-50 hover:text-charcoal w-full transition-colors"
         >
           <FaSignOutAlt size={16} /> Log out
         </button>

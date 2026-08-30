@@ -148,7 +148,7 @@ export default function GuestList() {
     })
   }, [guests, statusFilter, search])
 
-  const rsvpVariant = (s) => (s === 'Attending' ? 'success' : s === 'Declined' ? 'error' : 'gold')
+  const rsvpVariant = (s) => (s === 'Attending' ? 'success' : s === 'Declined' ? 'error' : 'blush')
 
   return (
     <div className="space-y-6">
@@ -176,9 +176,9 @@ export default function GuestList() {
       ) : (
         <>
           <div className="grid grid-cols-2 lg:grid-cols-4 gap-4">
-            <StatCard icon={FaUsers} label="Total Guests" value={guests.length} color="ink" />
-            <StatCard icon={FaCheck} label="Attending" value={confirmed.length} color="gold" />
-            <StatCard icon={FaUsers} label="Pending" value={pending.length} color="ink" />
+            <StatCard icon={FaUsers} label="Total Guests" value={guests.length} color="sage" />
+            <StatCard icon={FaCheck} label="Attending" value={confirmed.length} color="maroon" />
+            <StatCard icon={FaUsers} label="Pending" value={pending.length} color="sage" />
             <StatCard icon={FaUsers} label="Declined" value={declined.length} color="maroon" />
           </div>
 
@@ -231,7 +231,7 @@ export default function GuestList() {
                         <td className="px-5 py-3.5 text-center">
                           <button
                             onClick={() => handleShare(guest)}
-                            className="inline-flex items-center gap-1.5 text-xs font-semibold px-3 py-1.5 rounded-full bg-gold-50 text-gold-700 hover:bg-gold-100 transition-colors"
+                            className="inline-flex items-center gap-1.5 text-xs font-semibold px-3 py-1.5 rounded-full bg-blush-100 text-maroon-700 hover:bg-blush-200 border border-blush-200 transition-colors"
                           >
                             {copiedId === guest.guestId ? <><FaCheck size={11} /> Copied</> : <><FaShare size={11} /> Share</>}
                           </button>

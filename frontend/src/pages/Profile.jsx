@@ -1,8 +1,7 @@
 import { useEffect, useState } from 'react'
 import { Link } from 'react-router-dom'
 import { motion } from 'framer-motion'
-import { FaUser, FaCalendarAlt, FaEdit, FaCheckCircle, FaClock } from 'react-icons/fa'
-import { LotusMark } from '../components/ui/Ornament'
+import { FaUser, FaCalendarAlt, FaEdit, FaCheckCircle, FaClock, FaCheck } from 'react-icons/fa'
 import EmptyState from '../components/ui/EmptyState'
 import { riseIn, staggerContainer } from '../lib/motion'
 import { usersApi } from '../services/api'
@@ -10,13 +9,13 @@ import Loading from './Loading'
 
 const PORUWA_CHECKLIST = [
   'Confirm Nekath (auspicious time) with the astrologer',
-  'Book the Poruwa structure and decorator',
-  'Arrange betel leaves, oil lamp and traditional items',
+  'Book the Poruwa structure and floral decorator',
+  'Arrange betel leaves, brass oil lamp and ceremonial items',
   'Confirm the Poruwa officiant / Kapuwa',
-  'Prepare coconut, milk rice and ceremonial items',
-  'Arrange traditional Kandyan drummers and dancers',
-  'Confirm ceremony attire for both families',
-  'Brief the photographer on key ceremony moments',
+  'Prepare traditional coconut, milk rice and sweets',
+  'Arrange traditional Kandyan drummers and dancers (Geta Bera)',
+  'Confirm ceremony attire & jewelry for both families',
+  'Brief the photographer on key ceremony and Poruwa moments',
 ]
 
 export default function Profile() {
@@ -32,7 +31,7 @@ export default function Profile() {
         if (!cancelled) setProfile(data || null)
       })
       .catch(() => {
-        // no profile endpoint yet — render the prompt/empty state below
+        // no profile endpoint yet. Render the prompt/empty state below
       })
       .finally(() => {
         if (!cancelled) setLoading(false)
@@ -48,26 +47,26 @@ export default function Profile() {
 
   return (
     <div className="space-y-6 max-w-4xl">
-      <motion.div initial="hidden" animate="show" variants={riseIn} className="card p-6 sm:p-8 bg-ink-gradient text-white border-none">
+      <motion.div initial="hidden" animate="show" variants={riseIn} className="card p-6 sm:p-8 bg-gradient-to-r from-blush-100 via-blush-50 to-ivory-50 border border-blush-200 shadow-xs">
         <div className="flex flex-col sm:flex-row sm:items-center gap-5">
-          <div className="h-16 w-16 rounded-xl2 bg-white/10 flex items-center justify-center shrink-0">
+          <div className="h-16 w-16 rounded-xl bg-blush-200/80 text-maroon-700 flex items-center justify-center shrink-0 border border-blush-300">
             <FaUser size={24} />
           </div>
           <div className="flex-1">
-            <h1 className="text-2xl font-display font-medium text-[#c29629]">
+            <h1 className="text-2xl font-display font-semibold text-charcoal">
               {profile?.coupleNames || profile?.name || 'Your wedding profile'}
             </h1>
             {profile?.weddingDate ? (
-              <p className="flex items-center gap-2 text-white/75 text-sm mt-2">
-                <FaCalendarAlt size={13} /> {new Date(profile.weddingDate).toLocaleDateString('en-LK', { year: 'numeric', month: 'long', day: 'numeric' })}
+              <p className="flex items-center gap-2 text-charcoal/70 text-sm mt-2">
+                <FaCalendarAlt size={13} className="text-maroon-600" /> {new Date(profile.weddingDate).toLocaleDateString('en-LK', { year: 'numeric', month: 'long', day: 'numeric' })}
               </p>
             ) : (
-              <p className="text-ivory-100/70 text-sm mt-2">
-                No wedding date set yet — <Link to="/settings" className="underline hover:text-gold-200">add one in Settings</Link>
+              <p className="text-charcoal/60 text-sm mt-2">
+                No wedding date set yet. <Link to="/settings" className="text-maroon-700 font-medium underline hover:text-maroon-800">Add one in Settings</Link>
               </p>
             )}
           </div>
-          <Link to="/settings" className="btn-gold text-sm self-start">
+          <Link to="/settings" className="btn-outline text-sm self-start">
             <FaEdit size={13} /> Edit Profile
           </Link>
         </div>
@@ -75,15 +74,15 @@ export default function Profile() {
 
       <motion.div initial="hidden" whileInView="show" variants={staggerContainer(0.06)} viewport={{ once: true, margin: '-40px' }} className="card p-6 sm:p-8">
         <div className="flex items-center gap-2 mb-1">
-          <FaClock className="text-gold-500" size={16} />
+          <FaClock className="text-sage-600" size={16} />
           <h2 className="font-display font-semibold text-lg text-charcoal">Wedding Day Timeline</h2>
         </div>
-        <p className="text-charcoal/50 text-sm mb-5">Your personal run-of-show for the day.</p>
+        <p className="text-charcoal/50 text-sm mb-5">Your personal run-of-show for the ceremony and celebration.</p>
         {profile?.timeline?.length ? (
           <ul className="space-y-3">
             {profile.timeline.map((entry, i) => (
               <li key={i} className="flex items-start gap-3 text-sm">
-                <span className="font-semibold text-gold-800 w-20 shrink-0">{entry.time}</span>
+                <span className="font-semibold text-maroon-700 w-20 shrink-0">{entry.time}</span>
                 <span className="text-charcoal/80">{entry.label}</span>
               </li>
             ))}
@@ -99,23 +98,23 @@ export default function Profile() {
 
       <motion.div initial="hidden" whileInView="show" variants={staggerContainer(0.06)} viewport={{ once: true, margin: '-40px' }} className="card p-6 sm:p-8">
         <div className="flex items-center gap-2 mb-1">
-          <LotusMark className="h-5 w-5 text-gold-500" />
+          <FaCheck className="text-maroon-700" size={16} />
           <h2 className="font-display font-semibold text-lg text-charcoal">Poruwa Ceremony Checklist</h2>
         </div>
-        <p className="text-charcoal/50 text-sm mb-5">A general reference checklist for a traditional Poruwa ceremony — check items off as you go.</p>
-        <ul className="space-y-2">
+        <p className="text-charcoal/50 text-sm mb-5">A curated checklist for a traditional Poruwa ceremony: check items off as you plan.</p>
+        <ul className="space-y-2.5">
           {PORUWA_CHECKLIST.map((item) => (
             <motion.li key={item} variants={riseIn} className="flex items-start gap-3">
               <button
                 onClick={() => toggleCheck(item)}
                 aria-pressed={!!checked[item]}
-                className={`h-6 w-6 rounded-lg border-2 flex items-center justify-center shrink-0 mt-0.5 transition-colors ${
-                  checked[item] ? 'bg-gold-700 border-gold-700 text-white' : 'border-charcoal/20 text-transparent hover:border-gold-400'
+                className={`h-6 w-6 rounded-md border-2 flex items-center justify-center shrink-0 mt-0.5 transition-colors ${
+                  checked[item] ? 'bg-maroon-700 border-maroon-700 text-white' : 'border-charcoal/20 text-transparent hover:border-maroon-400'
                 }`}
               >
                 <FaCheckCircle size={13} />
               </button>
-              <span className={`text-sm ${checked[item] ? 'text-charcoal/40 line-through' : 'text-charcoal/80'}`}>{item}</span>
+              <span className={`text-sm leading-relaxed ${checked[item] ? 'text-charcoal/40 line-through' : 'text-charcoal/85'}`}>{item}</span>
             </motion.li>
           ))}
         </ul>

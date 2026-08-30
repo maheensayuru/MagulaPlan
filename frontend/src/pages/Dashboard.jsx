@@ -37,39 +37,39 @@ export default function Dashboard() {
       <motion.div
         initial={{ opacity: 0, y: 12 }}
         animate={{ opacity: 1, y: 0 }}
-        className="card p-6 sm:p-8 bg-ink-gradient text-white border-none"
+        className="rounded-xl p-6 sm:p-8 bg-gradient-to-r from-blush-100 via-blush-50 to-ivory-50 border border-blush-200 shadow-xs"
       >
-        <h1 className="text-2xl sm:text-3xl font-display font-medium text-[#c29629]">Welcome back</h1>
-        <p className="text-ivory-100/70 mt-2 max-w-md">
-          Here's an overview of your wedding planning progress.
+        <h1 className="text-2xl font-display font-semibold text-charcoal">Welcome back</h1>
+        <p className="text-charcoal/65 mt-1 text-sm sm:text-base">
+          Here's an overview of your wedding planning journey and tasks.
         </p>
-        {error && <p className="text-ivory-100/80 mt-3 text-sm">{error}</p>}
+        {error && <p className="text-maroon-700/80 mt-3 text-sm">{error}</p>}
       </motion.div>
 
       {/* Stat cards */}
       <div className="grid sm:grid-cols-2 lg:grid-cols-4 gap-4">
-        <StatCard icon={FaWallet} label="Budget items" value={stats.budget} color="ink" />
-        <StatCard icon={FaUsers} label="Guests" value={stats.guests} color="gold" />
-        <StatCard icon={FaStore} label="Vendors" value={stats.vendors} color="ink" />
-        <StatCard icon={FaWallet} label="Total estimated (LKR)" value={stats.estimated} color="gold" />
+        <StatCard icon={FaWallet} label="Budget items" value={stats.budget} color="sage" />
+        <StatCard icon={FaUsers} label="Guests" value={stats.guests} color="maroon" />
+        <StatCard icon={FaStore} label="Vendors" value={stats.vendors} color="sage" />
+        <StatCard icon={FaWallet} label="Total estimated (LKR)" value={stats.estimated} color="maroon" />
       </div>
 
       {/* Quick actions */}
       <div>
-        <h2 className="font-semibold text-charcoal mb-3">Quick actions</h2>
+        <h2 className="text-lg font-semibold text-charcoal mb-4">Quick actions</h2>
         <div className="grid sm:grid-cols-2 lg:grid-cols-4 gap-4">
           {[
-            { label: 'Find Vendors', icon: FaSearch, to: '/vendors' },
-            { label: 'Add Guest', icon: FaUsers, to: '/guests' },
-            { label: 'Add Budget Item', icon: FaWallet, to: '/budget' },
-            { label: 'List Business', icon: FaPlus, to: '/vendors/new' },
+            { label: 'Find Vendors', icon: FaSearch, to: '/vendors', bg: 'bg-blush-100 text-maroon-700' },
+            { label: 'Add Guest', icon: FaUsers, to: '/guests', bg: 'bg-sage-100 text-sage-700' },
+            { label: 'Add Budget Item', icon: FaWallet, to: '/budget', bg: 'bg-blush-100 text-maroon-700' },
+            { label: 'List Business', icon: FaPlus, to: '/vendors/new', bg: 'bg-sage-100 text-sage-700' },
           ].map((a, i) => (
             <motion.div key={a.to} initial={{ opacity: 0, y: 12 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: i * 0.05 }}>
-              <Link to={a.to} className="card card-hover p-5 flex items-center gap-3 text-charcoal hover:text-gold-800">
-                <div className="h-10 w-10 rounded-xl2 bg-gold-50 flex items-center justify-center">
-                  <a.icon size={16} className="text-gold-700" />
+              <Link to={a.to} className="card card-hover p-5 flex items-center gap-3.5 text-charcoal block">
+                <div className={`h-10 w-10 rounded-lg flex items-center justify-center shrink-0 ${a.bg}`}>
+                  <a.icon size={16} />
                 </div>
-                <span className="font-medium text-sm">{a.label}</span>
+                <span className="text-sm font-medium text-charcoal">{a.label}</span>
               </Link>
             </motion.div>
           ))}
