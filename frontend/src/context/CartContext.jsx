@@ -1,6 +1,6 @@
 import { createContext, useContext, useEffect, useState } from 'react'
 
-const CartContext = createContext(null)
+export const CartContext = createContext(null)
 const STORAGE_KEY = 'magulaplan_cart'
 
 function readStoredCart() {
@@ -13,9 +13,6 @@ function readStoredCart() {
   }
 }
 
-// The cart is real user state (vendors they actually selected), just not yet
-// synced to a backend — it lives in localStorage until a "finalize booking"
-// endpoint exists to hand it off to (see cartApi.checkout in services/api.js).
 export function CartProvider({ children }) {
   const [items, setItems] = useState(readStoredCart)
   const [open, setOpen] = useState(false)
@@ -57,4 +54,22 @@ export function CartProvider({ children }) {
   )
 }
 
-export const useCart = () => useContext(CartContext)
+export function useCart() {
+  const context = useContext(CartContext)
+  if (!context) {
+    return {
+      items: [],
+      count: 0,
+      total: 0,
+      open: false,
+      setOpen: () => {},
+      addItem: () => {},
+      removeItem: () => {},
+      clear: () => {},
+      isInCart: () => false,
+    }
+  }
+  return context
+}
+
+export default CartContext

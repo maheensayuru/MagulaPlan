@@ -2,12 +2,12 @@ import { createContext, useCallback, useContext, useState } from 'react'
 import { AnimatePresence, motion } from 'framer-motion'
 import { FaCheckCircle, FaExclamationCircle, FaInfoCircle, FaTimes } from 'react-icons/fa'
 
-const ToastContext = createContext(null)
+export const ToastContext = createContext(null)
 
 const icons = {
   success: <FaCheckCircle className="text-emerald-500" size={18} />,
   error: <FaExclamationCircle className="text-red-500" size={18} />,
-  info: <FaInfoCircle className="text-gold-600" size={18} />,
+  info: <FaInfoCircle className="text-maroon-600" size={18} />,
 }
 
 export function ToastProvider({ children }) {
@@ -34,7 +34,7 @@ export function ToastProvider({ children }) {
               initial={{ opacity: 0, y: 20, scale: 0.9 }}
               animate={{ opacity: 1, y: 0, scale: 1 }}
               exit={{ opacity: 0, x: 60 }}
-              className="flex items-center gap-3 bg-white rounded-xl2 shadow-soft border border-charcoal/5 px-4 py-3"
+              className="flex items-center gap-3 bg-white rounded-xl shadow-md border border-blush-200/80 px-4 py-3"
               role="status"
             >
               {icons[toast.type]}
@@ -50,4 +50,14 @@ export function ToastProvider({ children }) {
   )
 }
 
-export const useToast = () => useContext(ToastContext)
+export function useToast() {
+  const context = useContext(ToastContext)
+  if (!context) {
+    return {
+      showToast: () => {},
+    }
+  }
+  return context
+}
+
+export default ToastContext
