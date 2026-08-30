@@ -6,13 +6,11 @@ import Logo from './Logo'
 import { useCart } from '../../context/CartContext'
 
 const links = [
+  { href: '/vendors', label: 'Vendors', isRoute: true },
   { href: '#features', label: 'Features' },
   { href: '#testimonials', label: 'Stories' },
 ]
 
-// Matches the mobile drawer's exit animation duration so the page has
-// finished collapsing before we scroll — otherwise the shifting layout
-// throws off the landing position mid-scroll.
 const DRAWER_CLOSE_MS = 300
 
 export default function Navbar() {
@@ -37,42 +35,64 @@ export default function Navbar() {
   return (
     <header
       className={`fixed top-0 inset-x-0 z-50 transition-all duration-300 ${
-        scrolled ? 'bg-white/90 backdrop-blur-md shadow-card' : 'bg-transparent'
+        scrolled ? 'bg-white/95 backdrop-blur-md shadow-sm border-b border-blush-100' : 'bg-transparent'
       }`}
     >
-      <nav className="container-app flex items-center justify-between h-20 py-3">
-        <Logo tagline />
-        <div className="hidden md:flex items-center gap-9">
-          {links.map((l) => (
-            <a key={l.href} href={l.href} className="text-[11px] font-medium tracking-[0.16em] uppercase text-charcoal/70 transition-colors hover:text-gold-800">
-              {l.label}
-            </a>
-          ))}
+      <nav className="container-app flex items-center justify-between h-16">
+        <Logo />
+
+        <div className="hidden md:flex items-center gap-8">
+          {links.map((l) =>
+            l.isRoute ? (
+              <Link
+                key={l.href}
+                to={l.href}
+                className="text-sm font-medium text-charcoal/70 transition-colors hover:text-maroon-700"
+              >
+                {l.label}
+              </Link>
+            ) : (
+              <a
+                key={l.href}
+                href={l.href}
+                className="text-sm font-medium text-charcoal/70 transition-colors hover:text-maroon-700"
+              >
+                {l.label}
+              </a>
+            ),
+          )}
         </div>
-        <div className="hidden md:flex items-center gap-5">
-          <Link to="/vendors/new" className="btn-ghost">
-            List your business
-          </Link>
+
+        <div className="hidden md:flex items-center gap-4">
           <Link to="/login" className="btn-ghost">
             Log in
           </Link>
-          <button onClick={() => setCartOpen(true)} aria-label="Open cart" className="relative h-10 w-10 flex items-center justify-center rounded-full text-charcoal/70 hover:bg-charcoal/5 transition-colors">
+          <button
+            onClick={() => setCartOpen(true)}
+            aria-label="Open cart"
+            className="relative h-10 w-10 flex items-center justify-center rounded-full text-charcoal/70 hover:bg-blush-50 hover:text-maroon-700 transition-colors"
+          >
             <FaShoppingBag size={16} />
             {count > 0 && (
-              <span className="absolute -top-0.5 -right-0.5 h-4 w-4 rounded-full bg-gold-700 text-white text-[9px] font-bold flex items-center justify-center">
+              <span className="absolute -top-0.5 -right-0.5 h-4 w-4 rounded-full bg-maroon-700 text-white text-[9px] font-bold flex items-center justify-center">
                 {count}
               </span>
             )}
           </button>
-          <Link to="/register" className="btn-outline py-3">
-            Get Started
+          <Link to="/register" className="btn-primary">
+            Get started
           </Link>
         </div>
+
         <div className="md:hidden flex items-center gap-1">
-          <button onClick={() => setCartOpen(true)} aria-label="Open cart" className="relative h-10 w-10 flex items-center justify-center rounded-full text-charcoal">
+          <button
+            onClick={() => setCartOpen(true)}
+            aria-label="Open cart"
+            className="relative h-10 w-10 flex items-center justify-center rounded-full text-charcoal"
+          >
             <FaShoppingBag size={17} />
             {count > 0 && (
-              <span className="absolute top-0.5 right-0.5 h-4 w-4 rounded-full bg-gold-700 text-white text-[9px] font-bold flex items-center justify-center">
+              <span className="absolute top-0.5 right-0.5 h-4 w-4 rounded-full bg-maroon-700 text-white text-[9px] font-bold flex items-center justify-center">
                 {count}
               </span>
             )}
@@ -87,6 +107,7 @@ export default function Navbar() {
           </button>
         </div>
       </nav>
+
       <AnimatePresence>
         {open && (
           <motion.div
@@ -94,23 +115,36 @@ export default function Navbar() {
             animate={{ height: 'auto', opacity: 1 }}
             exit={{ height: 0, opacity: 0 }}
             transition={{ duration: DRAWER_CLOSE_MS / 1000 }}
-            className="md:hidden overflow-hidden bg-white border-t border-charcoal/5"
+            className="md:hidden overflow-hidden bg-white border-t border-blush-100 shadow-md"
           >
-            <div className="container-app py-4 flex flex-col gap-3">
-              {links.map((l) => (
-                <a key={l.href} href={l.href} onClick={(e) => handleMobileNavClick(e, l.href)} className="py-2 text-charcoal/80 text-xs font-medium tracking-[0.16em] uppercase">
-                  {l.label}
-                </a>
-              ))}
-              <Link to="/vendors/new" onClick={() => setOpen(false)} className="py-2 text-charcoal/80 text-xs font-medium tracking-[0.16em] uppercase">
-                List your business
-              </Link>
-              <div className="flex gap-3 pt-2">
-                <Link to="/login" onClick={() => setOpen(false)} className="btn-outline flex-1 text-sm py-2.5">
+            <div className="container-app py-5 flex flex-col gap-3">
+              {links.map((l) =>
+                l.isRoute ? (
+                  <Link
+                    key={l.href}
+                    to={l.href}
+                    onClick={() => setOpen(false)}
+                    className="py-2 text-charcoal/80 text-sm font-medium hover:text-maroon-700"
+                  >
+                    {l.label}
+                  </Link>
+                ) : (
+                  <a
+                    key={l.href}
+                    href={l.href}
+                    onClick={(e) => handleMobileNavClick(e, l.href)}
+                    className="py-2 text-charcoal/80 text-sm font-medium hover:text-maroon-700"
+                  >
+                    {l.label}
+                  </a>
+                ),
+              )}
+              <div className="flex gap-3 pt-3 border-t border-gray-100">
+                <Link to="/login" onClick={() => setOpen(false)} className="btn-outline flex-1 text-center text-sm py-2.5">
                   Log in
                 </Link>
-                <Link to="/register" onClick={() => setOpen(false)} className="btn-primary flex-1 text-sm py-2.5">
-                  Get Started
+                <Link to="/register" onClick={() => setOpen(false)} className="btn-primary flex-1 text-center text-sm py-2.5">
+                  Get started
                 </Link>
               </div>
             </div>
