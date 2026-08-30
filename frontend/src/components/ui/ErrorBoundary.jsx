@@ -3,7 +3,7 @@ import { FaExclamationTriangle } from 'react-icons/fa'
 
 // Catches unexpected render/lifecycle errors in its subtree and shows a
 // recovery screen instead of a blank page. Error details are logged to the
-// console for developers only — never rendered to the user.
+// console for developers only, never rendered to the user.
 export default class ErrorBoundary extends Component {
   state = { hasError: false }
 
@@ -30,7 +30,7 @@ export default class ErrorBoundary extends Component {
             </div>
             <h1 className="text-2xl font-display font-medium text-charcoal mb-3">Something went wrong</h1>
             <p className="text-charcoal/60 mb-8">
-              An unexpected error occurred. Reload the page to continue — your data is safe.
+              An unexpected error occurred. Reload the page to continue. Your data is safe.
             </p>
             <button onClick={this.handleReset} className="btn-primary">Reload page</button>
           </div>

@@ -8,7 +8,7 @@ const sizes = {
   lg: 'sm:max-w-2xl',
 }
 
-// Elements that can receive keyboard focus — used to keep Tab inside the dialog.
+// Elements that can receive keyboard focus (used to keep Tab inside the dialog).
 const FOCUSABLE =
   'a[href], button:not([disabled]), textarea:not([disabled]), input:not([disabled]), select:not([disabled]), [tabindex]:not([tabindex="-1"])'
 
