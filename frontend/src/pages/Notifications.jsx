@@ -19,7 +19,7 @@ export default function Notifications() {
         if (!cancelled && Array.isArray(data)) setNotifications(data)
       })
       .catch(() => {
-        // no notifications endpoint yet — empty state below covers it
+        // no notifications endpoint yet. Empty state below covers it
       })
       .finally(() => {
         if (!cancelled) setLoading(false)
@@ -66,7 +66,7 @@ export default function Notifications() {
       </div>
 
       {notifications.length === 0 ? (
-        <EmptyState icon={FaBell} title="No notifications yet" subtitle="You're all caught up — new updates will show up here." />
+        <EmptyState icon={FaBell} title="No notifications yet" subtitle="You're all caught up! New updates will show up here." />
       ) : (
         <div className="card divide-y divide-charcoal/5 overflow-hidden">
           <AnimatePresence initial={false}>

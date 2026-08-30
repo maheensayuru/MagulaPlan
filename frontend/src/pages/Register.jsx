@@ -6,7 +6,6 @@ import Logo from '../components/layout/Logo'
 import { useToast } from '../context/ToastContext'
 import { useAuth } from '../context/AuthContext'
 import { riseIn } from '../lib/motion'
-import { EditorialEyebrow } from '../components/ui/Ornament'
 
 const steps = ['Your Details', 'Wedding Info', 'Confirm']
 
@@ -37,14 +36,14 @@ export default function Register() {
     try {
       await register({
         fullName,
-        partnerName,
         email,
         password,
+        partnerName,
+        weddingDate,
         phoneNumber,
-        weddingDate: weddingDate || null,
-        totalBudget: totalBudget === '' ? null : Number(totalBudget),
+        totalBudget: totalBudget ? Number(totalBudget) : undefined,
       })
-      showToast('Account created! Welcome to MagulaPlan.', 'success')
+      showToast('Account created successfully!', 'success')
       navigate('/dashboard')
     } catch (err) {
       showToast(err.message || 'Registration failed', 'error')
@@ -54,128 +53,127 @@ export default function Register() {
   }
 
   return (
-    <div className="min-h-screen flex items-center justify-center bg-ivory-radial p-4 sm:p-8">
-      <motion.div initial="hidden" animate="show" variants={riseIn} className="w-full max-w-lg card p-8 sm:p-10">
+    <div className="min-h-screen flex items-center justify-center bg-ivory-100 p-4 sm:p-8">
+      <motion.div initial="hidden" animate="show" variants={riseIn} className="w-full max-w-lg bg-white rounded-xl border border-charcoal/5 shadow-sm p-8 sm:p-10">
         <div className="flex justify-center mb-6">
           <Logo />
         </div>
 
-        <div className="flex items-center justify-center gap-2 mb-8">
-          {steps.map((s, i) => (
-            <div key={s} className="flex items-center gap-2">
-              <div
-                className={`h-8 w-8 rounded-full flex items-center justify-center text-xs font-bold transition-colors ${
-                  i < step ? 'bg-gold-600 text-white' : i === step ? 'bg-gold-500 text-charcoal' : 'bg-charcoal/10 text-charcoal/40'
-                }`}
-              >
-                {i < step ? <FaCheck size={10} /> : i + 1}
+        {/* Step indicator */}
+        <div className="flex items-center justify-between mb-8">
+          {steps.map((label, i) => (
+            <div key={label} className="flex items-center flex-1 last:flex-none">
+              <div className="flex flex-col items-center">
+                <div
+                  className={`h-8 w-8 rounded-full flex items-center justify-center text-xs font-semibold transition-colors ${
+                    i < step
+                      ? 'bg-sage-600 text-white'
+                      : i === step
+                      ? 'bg-maroon-700 text-white shadow-xs'
+                      : 'bg-blush-50 text-charcoal/40 border border-blush-200'
+                  }`}
+                >
+                  {i < step ? <FaCheck size={10} /> : i + 1}
+                </div>
+                <span className={`text-[11px] mt-1 hidden sm:block ${i === step ? 'font-semibold text-charcoal' : 'text-charcoal/40'}`}>{label}</span>
               </div>
-              {i < steps.length - 1 && <div className={`h-0.5 w-8 sm:w-12 ${i < step ? 'bg-gold-600' : 'bg-charcoal/10'}`} />}
+              {i < steps.length - 1 && (
+                <div className={`h-px flex-1 mx-2 ${i < step ? 'bg-sage-500' : 'bg-gray-200'}`} />
+              )}
             </div>
           ))}
         </div>
 
-        <div className="flex justify-center mb-3">
-          <EditorialEyebrow>Create Your Account</EditorialEyebrow>
-        </div>
-        <h1 className="text-2xl font-display font-medium text-charcoal text-center mb-1">{steps[step]}</h1>
-        <p className="text-charcoal/50 text-sm text-center mb-8">
-          {step === 0 && "Let's create your MagulaPlan account"}
-          {step === 1 && 'Tell us a little about your big day'}
-          {step === 2 && 'Review and confirm your details'}
-        </p>
-
         <form onSubmit={next} className="space-y-4">
           {step === 0 && (
-            <motion.div initial={{ opacity: 0, x: 20 }} animate={{ opacity: 1, x: 0 }} className="space-y-4">
-              <div className="grid grid-cols-2 gap-3">
+            <>
+              <div className="grid sm:grid-cols-2 gap-4">
                 <div>
-                  <label className="text-sm font-medium text-charcoal/70 mb-1.5 block">First name</label>
+                  <label htmlFor="firstName" className="text-sm font-medium text-charcoal/70 mb-1.5 block">First name</label>
                   <div className="relative">
                     <FaUser className="absolute left-4 top-1/2 -translate-y-1/2 text-charcoal/30" size={13} />
-                    <input required value={firstName} onChange={(e) => setFirstName(e.target.value)} placeholder="Sanduni" className="input-field pl-11" />
+                    <input id="firstName" required value={firstName} onChange={(e) => setFirstName(e.target.value)} placeholder="Kasun" className="input-field pl-11" />
                   </div>
                 </div>
                 <div>
-                  <label className="text-sm font-medium text-charcoal/70 mb-1.5 block">Last name</label>
-                  <input required value={lastName} onChange={(e) => setLastName(e.target.value)} placeholder="Perera" className="input-field" />
+                  <label htmlFor="lastName" className="text-sm font-medium text-charcoal/70 mb-1.5 block">Last name</label>
+                  <input id="lastName" required value={lastName} onChange={(e) => setLastName(e.target.value)} placeholder="Perera" className="input-field" />
                 </div>
               </div>
               <div>
-                <label className="text-sm font-medium text-charcoal/70 mb-1.5 block">Email address</label>
+                <label htmlFor="email" className="text-sm font-medium text-charcoal/70 mb-1.5 block">Email address</label>
                 <div className="relative">
                   <FaEnvelope className="absolute left-4 top-1/2 -translate-y-1/2 text-charcoal/30" size={13} />
-                  <input type="email" required value={email} onChange={(e) => setEmail(e.target.value)} placeholder="you@example.com" className="input-field pl-11" />
+                  <input id="email" type="email" required value={email} onChange={(e) => setEmail(e.target.value)} placeholder="kasun@example.com" className="input-field pl-11" />
                 </div>
               </div>
               <div>
-                <label className="text-sm font-medium text-charcoal/70 mb-1.5 block">Password</label>
+                <label htmlFor="password" className="text-sm font-medium text-charcoal/70 mb-1.5 block">Password</label>
                 <div className="relative">
                   <FaLock className="absolute left-4 top-1/2 -translate-y-1/2 text-charcoal/30" size={13} />
-                  <input type="password" required minLength={6} value={password} onChange={(e) => setPassword(e.target.value)} placeholder="Create a strong password" className="input-field pl-11" />
+                  <input id="password" type="password" required value={password} onChange={(e) => setPassword(e.target.value)} placeholder="At least 6 characters" className="input-field pl-11" />
                 </div>
               </div>
-            </motion.div>
+            </>
           )}
 
           {step === 1 && (
-            <motion.div initial={{ opacity: 0, x: 20 }} animate={{ opacity: 1, x: 0 }} className="space-y-4">
+            <>
               <div>
-                <label className="text-sm font-medium text-charcoal/70 mb-1.5 block">Partner's name (optional)</label>
-                <input value={partnerName} onChange={(e) => setPartnerName(e.target.value)} placeholder="Chamath Fernando" className="input-field" />
+                <label htmlFor="partnerName" className="text-sm font-medium text-charcoal/70 mb-1.5 block">Partner's name</label>
+                <div className="relative">
+                  <FaUser className="absolute left-4 top-1/2 -translate-y-1/2 text-charcoal/30" size={13} />
+                  <input id="partnerName" value={partnerName} onChange={(e) => setPartnerName(e.target.value)} placeholder="Nimmi Fernando" className="input-field pl-11" />
+                </div>
               </div>
               <div>
-                <label className="text-sm font-medium text-charcoal/70 mb-1.5 block">Wedding date (or estimate)</label>
+                <label htmlFor="weddingDate" className="text-sm font-medium text-charcoal/70 mb-1.5 block">Wedding date (optional)</label>
                 <div className="relative">
                   <FaCalendarAlt className="absolute left-4 top-1/2 -translate-y-1/2 text-charcoal/30" size={13} />
-                  <input type="date" value={weddingDate} onChange={(e) => setWeddingDate(e.target.value)} className="input-field pl-11" />
+                  <input id="weddingDate" type="date" value={weddingDate} onChange={(e) => setWeddingDate(e.target.value)} className="input-field pl-11" />
                 </div>
               </div>
               <div>
-                <label className="text-sm font-medium text-charcoal/70 mb-1.5 block">Phone number</label>
+                <label htmlFor="phoneNumber" className="text-sm font-medium text-charcoal/70 mb-1.5 block">Phone number (optional)</label>
                 <div className="relative">
                   <FaPhone className="absolute left-4 top-1/2 -translate-y-1/2 text-charcoal/30" size={13} />
-                  <input value={phoneNumber} onChange={(e) => setPhoneNumber(e.target.value)} placeholder="0771234567" className="input-field pl-11" />
+                  <input id="phoneNumber" value={phoneNumber} onChange={(e) => setPhoneNumber(e.target.value)} placeholder="0771234567" className="input-field pl-11" />
                 </div>
               </div>
               <div>
-                <label className="text-sm font-medium text-charcoal/70 mb-1.5 block">Total budget (LKR, optional)</label>
+                <label htmlFor="totalBudget" className="text-sm font-medium text-charcoal/70 mb-1.5 block">Estimated budget in LKR (optional)</label>
                 <div className="relative">
                   <FaWallet className="absolute left-4 top-1/2 -translate-y-1/2 text-charcoal/30" size={13} />
-                  <input type="number" min="0" value={totalBudget} onChange={(e) => setTotalBudget(e.target.value)} placeholder="2000000" className="input-field pl-11" />
+                  <input id="totalBudget" type="number" min="0" value={totalBudget} onChange={(e) => setTotalBudget(e.target.value)} placeholder="3500000" className="input-field pl-11" />
                 </div>
               </div>
-            </motion.div>
+            </>
           )}
 
           {step === 2 && (
-            <motion.div initial={{ opacity: 0, x: 20 }} animate={{ opacity: 1, x: 0 }} className="space-y-3">
-              <div className="bg-ivory-100 rounded-xl p-5 space-y-2 text-sm">
-                <p className="flex justify-between"><span className="text-charcoal/50">Name</span><span className="font-medium text-charcoal">{fullName || '—'}</span></p>
-                <p className="flex justify-between"><span className="text-charcoal/50">Email</span><span className="font-medium text-charcoal">{email || '—'}</span></p>
-                <p className="flex justify-between"><span className="text-charcoal/50">Wedding date</span><span className="font-medium text-charcoal">{weddingDate || 'Not set'}</span></p>
-              </div>
-              <label className="flex items-start gap-2 text-sm text-charcoal/60">
-                <input type="checkbox" required className="mt-1 rounded border-charcoal/20 text-gold-700" />
-                I agree to the Terms of Service and Privacy Policy.
-              </label>
-            </motion.div>
+            <div className="space-y-3 bg-blush-50/40 p-4 rounded-xl border border-blush-200/70 text-sm">
+              <div className="flex justify-between py-1 border-b border-blush-100"><span className="text-charcoal/60">Name:</span> <span className="font-semibold text-charcoal">{fullName}</span></div>
+              <div className="flex justify-between py-1 border-b border-blush-100"><span className="text-charcoal/60">Email:</span> <span className="font-semibold text-charcoal">{email}</span></div>
+              {partnerName && <div className="flex justify-between py-1 border-b border-blush-100"><span className="text-charcoal/60">Partner:</span> <span className="font-semibold text-charcoal">{partnerName}</span></div>}
+              {weddingDate && <div className="flex justify-between py-1 border-b border-blush-100"><span className="text-charcoal/60">Date:</span> <span className="font-semibold text-charcoal">{weddingDate}</span></div>}
+              {totalBudget && <div className="flex justify-between py-1"><span className="text-charcoal/60">Budget:</span> <span className="font-semibold text-maroon-800">Rs. {Number(totalBudget).toLocaleString()}</span></div>}
+            </div>
           )}
 
-          <div className="flex gap-3 pt-2">
+          <div className="flex gap-3 pt-4">
             {step > 0 && (
               <button type="button" onClick={() => setStep(step - 1)} className="btn-outline flex-1">
                 Back
               </button>
             )}
             <button type="submit" disabled={loading} className="btn-primary flex-1">
-              {loading ? 'Creating account...' : step === 2 ? 'Create Account' : 'Continue'}
+              {step === 2 ? (loading ? 'Creating...' : 'Create Account') : 'Continue'}
             </button>
           </div>
         </form>
 
-        <p className="text-center text-sm text-charcoal/60 mt-8">
-          Already have an account? <Link to="/login" className="text-gold-800 font-semibold hover:underline">Log in</Link>
+        <p className="text-center text-sm text-charcoal/60 mt-6">
+          Already have an account? <Link to="/login" className="text-sm font-semibold text-maroon-700 hover:text-maroon-800">Log in</Link>
         </p>
       </motion.div>
     </div>

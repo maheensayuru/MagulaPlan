@@ -42,7 +42,7 @@ export default function Settings() {
         if (data.notificationPreferences) setNotifyPrefs(data.notificationPreferences)
       })
       .catch(() => {
-        // no profile endpoint yet — forms simply start blank
+        // no profile endpoint yet: forms simply start blank
       })
       .finally(() => {
         if (!cancelled) setLoading(false)
@@ -59,7 +59,7 @@ export default function Settings() {
       await usersApi.update(account)
       showToast('Account details saved', 'success')
     } catch (err) {
-      showToast(err.message || 'Could not save yet — account service is not connected', 'error')
+      showToast(err.message || 'Could not save yet: account service is not connected', 'error')
     } finally {
       setSaving(false)
     }
@@ -71,7 +71,7 @@ export default function Settings() {
       await usersApi.update({ notificationPreferences: notifyPrefs })
       showToast('Notification preferences saved', 'success')
     } catch (err) {
-      showToast(err.message || 'Could not save yet — account service is not connected', 'error')
+      showToast(err.message || 'Could not save yet: account service is not connected', 'error')
     } finally {
       setSaving(false)
     }

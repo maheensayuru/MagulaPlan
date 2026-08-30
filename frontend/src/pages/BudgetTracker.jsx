@@ -13,7 +13,7 @@ import { useToast } from '../context/ToastContext'
 import { budgetApi } from '../services/api'
 import { useAsyncData } from '../lib/useAsyncData'
 
-const CHART_COLORS = ['#1B5744', '#C9A24B', '#4E9479', '#DFC069', '#78B29A', '#A9822F']
+const CHART_COLORS = ['#721F3A', '#CF7B97', '#5F856D', '#E5A8B5', '#81A38D', '#B44F70', '#A7C0B0']
 
 const STATUS_OPTIONS = [
   { value: 'Planned', label: 'Planned' },
@@ -137,7 +137,7 @@ export default function BudgetTracker() {
   }
 
   const money = (v) => `Rs. ${(Number(v) || 0).toLocaleString()}`
-  const statusVariant = (s) => (s === 'Fully Paid' ? 'success' : s === 'Deposit Paid' ? 'gold' : 'neutral')
+  const statusVariant = (s) => (s === 'Fully Paid' ? 'success' : s === 'Deposit Paid' ? 'blush' : 'neutral')
 
   return (
     <div className="space-y-6">
@@ -166,8 +166,8 @@ export default function BudgetTracker() {
             {[
               { label: 'Total Estimated', value: money(totals.estimated), tone: 'text-charcoal' },
               { label: 'Total Actual', value: money(totals.actual), tone: 'text-charcoal' },
-              { label: 'Deposit Paid', value: money(totals.deposit), tone: 'text-gold-600' },
-              { label: 'Remaining', value: money(totals.estimated - totals.actual), tone: 'text-gold-800' },
+              { label: 'Deposit Paid', value: money(totals.deposit), tone: 'text-sage-700' },
+              { label: 'Remaining', value: money(totals.estimated - totals.actual), tone: 'text-maroon-700' },
             ].map((c, i) => (
               <motion.div
                 key={c.label}
@@ -221,7 +221,7 @@ export default function BudgetTracker() {
             <div className="flex items-center gap-2 flex-wrap">
               <button
                 onClick={() => setCategoryFilter('')}
-                className={`px-3 py-1.5 rounded-full text-xs font-semibold transition-colors ${!categoryFilter ? 'bg-gold-700 text-white' : 'bg-charcoal/5 text-charcoal/60 hover:bg-charcoal/10'}`}
+                className={`px-3 py-1.5 rounded-full text-xs font-medium transition-colors ${!categoryFilter ? 'bg-maroon-700 text-white shadow-xs' : 'bg-blush-50 text-charcoal/70 hover:bg-blush-100 hover:text-maroon-800'}`}
               >
                 All
               </button>
@@ -229,7 +229,7 @@ export default function BudgetTracker() {
                 <button
                   key={c}
                   onClick={() => setCategoryFilter(c)}
-                  className={`px-3 py-1.5 rounded-full text-xs font-semibold transition-colors ${categoryFilter === c ? 'bg-gold-700 text-white' : 'bg-charcoal/5 text-charcoal/60 hover:bg-charcoal/10'}`}
+                  className={`px-3 py-1.5 rounded-full text-xs font-medium transition-colors ${categoryFilter === c ? 'bg-maroon-700 text-white shadow-xs' : 'bg-blush-50 text-charcoal/70 hover:bg-blush-100 hover:text-maroon-800'}`}
                 >
                   {c}
                 </button>
