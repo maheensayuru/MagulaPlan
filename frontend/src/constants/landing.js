@@ -3,22 +3,7 @@ import {
   FaSeedling, FaCut, FaTshirt, FaCar, FaUtensils, FaBirthdayCake,
   FaMusic, FaHeadphones, FaPrint, FaOm, FaLandmark, FaStore,
   FaSearch, FaWallet, FaUsers, FaWhatsapp, FaCalendarCheck, FaMapMarkerAlt,
-  FaFacebookF, FaInstagram,
 } from 'react-icons/fa'
-
-export const heroWords = ['Plan', 'Your', 'Dream', 'Sri', 'Lankan', 'Wedding,', 'All', 'In', 'One', 'Place']
-
-export const heroSocials = [
-  { icon: FaFacebookF, href: '#', label: 'Facebook' },
-  { icon: FaInstagram, href: '#', label: 'Instagram' },
-  { icon: FaWhatsapp, href: '#', label: 'WhatsApp' },
-]
-
-export const placeholderTestimonials = [
-  { id: 1, name: 'Couple Name', location: 'District, Sri Lanka' },
-  { id: 2, name: 'Couple Name', location: 'District, Sri Lanka' },
-  { id: 3, name: 'Couple Name', location: 'District, Sri Lanka' },
-]
 
 const categoryIconRules = [
   [/photo/i, FaCamera], [/video/i, FaVideo], [/hotel/i, FaHotel],
@@ -38,7 +23,7 @@ export const features = [
   {
     icon: FaSearch,
     title: 'Discover Trusted Vendors',
-    desc: 'Browse verified photographers, venues, caterers and more — filtered by district, budget and style.',
+    desc: 'Browse verified photographers, venues, caterers and more, filtered by district, budget and style.',
   },
   {
     icon: FaWallet,
@@ -78,10 +63,23 @@ export const faqs = [
   },
   {
     question: 'Can I plan a traditional Kandyan or Poruwa wedding?',
-    answer: 'Absolutely — MagulaPlan includes dedicated Nekath tracking, Poruwa checklists, and traditional vendor categories.',
+    answer: 'Absolutely. MagulaPlan includes dedicated Nekath tracking, Poruwa checklists, and traditional vendor categories.',
   },
   {
     question: 'Does MagulaPlan work well on mobile?',
     answer: 'MagulaPlan is built mobile-first, since most Sri Lankan couples plan their wedding from their phones.',
   },
+]
+
+export const testimonials = [
+  { id: 1, name: 'Couple Name', location: 'District, Sri Lanka', quote: 'Your story could be here.' },
+  { id: 2, name: 'Couple Name', location: 'District, Sri Lanka', quote: 'Your story could be here.' },
+  { id: 3, name: 'Couple Name', location: 'District, Sri Lanka', quote: 'Your story could be here.' },
+]
+
+export const howItWorks = [
+  { step: 1, title: 'Create Your Account', desc: 'Sign up free and set up your wedding profile with your date, budget, and partner details.' },
+  { step: 2, title: 'Discover Vendors', desc: 'Browse verified photographers, venues, caterers and more, filtered by district, budget and category.' },
+  { step: 3, title: 'Plan Every Detail', desc: 'Track your budget, manage guests, coordinate with vendors, and plan Poruwa ceremonies from one dashboard.' },
+  { step: 4, title: 'Celebrate Your Day', desc: 'Walk down the aisle with confidence knowing every detail is handled, from Nekath timing to seating arrangements.' },
 ]
