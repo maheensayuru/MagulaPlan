@@ -26,65 +26,75 @@ export default function VendorDirectory() {
 
   const { data, loading, error, reload } = useAsyncData(
     async () => {
-      const [vendorData, categoryData] = await Promise.all([vendorsApi.list(), categoriesApi.list()])
-      return { vendors: vendorData, categories: categoryData }
+      const [vendors, categories] = await Promise.all([
+        vendorsApi.list(),
+        categoriesApi.list(),
+      ])
+      return { vendors, categories }
     },
     { initialData: { vendors: [], categories: [] }, onError: () => showToast('Failed to load vendors', 'error') },
   )
   const vendors = data.vendors
   const categories = data.categories
 
-
   const filtered = useMemo(() => {
-    let list = vendors.filter((v) => {
-      const name = (v.businessName || '').toLowerCase()
-      const matchesQuery = !query || name.includes(query.toLowerCase())
-      const matchesCategory = !activeCategory || String(v.categoryId) === activeCategory
-      const matchesDistrict = !district || v.districtLocation === district
-      return matchesQuery && matchesCategory && matchesDistrict
-    })
-    if (sort === 'name') list = [...list].sort((a, b) => (a.businessName || '').localeCompare(b.businessName || ''))
-    if (sort === 'price-low') list = [...list].sort((a, b) => (Number(a.startingPrice) || 0) - (Number(b.startingPrice) || 0))
-    if (sort === 'price-high') list = [...list].sort((a, b) => (Number(b.startingPrice) || 0) - (Number(a.startingPrice) || 0))
-    return list
+    return vendors
+      .filter((v) => {
+        const matchesCat = !activeCategory || String(v.categoryId) === String(activeCategory)
+        const matchesDistrict = !district || v.districtLocation === district
+        const matchesQuery =
+          !query ||
+          (v.businessName || '').toLowerCase().includes(query.toLowerCase()) ||
+          (v.categoryName || '').toLowerCase().includes(query.toLowerCase())
+        return matchesCat && matchesDistrict && matchesQuery
+      })
+      .sort((a, b) => {
+        if (sort === 'price-low') return (a.startingPrice || 0) - (b.startingPrice || 0)
+        if (sort === 'price-high') return (b.startingPrice || 0) - (a.startingPrice || 0)
+        if (sort === 'rating') return (b.rating || 0) - (a.rating || 0)
+        return (a.businessName || '').localeCompare(b.businessName || '')
+      })
   }, [vendors, query, activeCategory, district, sort])
 
   const totalPages = Math.max(1, Math.ceil(filtered.length / PAGE_SIZE))
   const pageItems = filtered.slice((page - 1) * PAGE_SIZE, page * PAGE_SIZE)
 
   const setCategory = (id) => {
+    const next = new URLSearchParams(searchParams)
+    if (id) next.set('category', id)
+    else next.delete('category')
+    setSearchParams(next)
     setPage(1)
-    if (id) setSearchParams({ category: String(id) })
-    else setSearchParams({})
   }
 
   const sortOptions = [
     { value: 'name', label: 'Name (A-Z)' },
     { value: 'price-low', label: 'Price: Low to High' },
     { value: 'price-high', label: 'Price: High to Low' },
+    { value: 'rating', label: 'Top Rated' },
   ]
 
   return (
-    <div className="bg-ivory-100 min-h-screen">
-      <div className="container-app py-8">
+    <div className="bg-white min-h-screen">
+      <div className="container-app py-10">
         <div className="flex items-center justify-between mb-6">
           <div>
-            <h1 className="text-3xl font-display font-medium text-charcoal">Vendor Directory</h1>
-            <p className="text-charcoal/50 text-sm mt-1">Find trusted wedding vendors across Sri Lanka.</p>
+            <h1 className="text-3xl font-display font-semibold text-charcoal">Find Wedding Vendors</h1>
+            <p className="text-charcoal/50 text-sm mt-1">Discover trusted vendors curated for your dream wedding across Sri Lanka.</p>
           </div>
-          <Link to="/vendors/new" className="btn-gold text-sm">
-            <FaPlus size={13} /> List your business
+          <Link to="/vendors/new" className="btn-outline text-sm">
+            <FaPlus size={12} /> List your business
           </Link>
         </div>
 
         {/* Search bar */}
         <div className="relative mb-6">
-          <FaSearch className="absolute left-4 top-1/2 -translate-y-1/2 text-charcoal/30" size={16} />
+          <FaSearch className="absolute left-4 top-1/2 -translate-y-1/2 text-charcoal/35" size={16} />
           <input
             value={query}
             onChange={(e) => { setQuery(e.target.value); setPage(1) }}
-            placeholder="Search vendors by name..."
-            className="input-field pl-11 py-3.5"
+            placeholder="Search vendors by name, service or style..."
+            className="input-field pl-11 py-3.5 text-base"
           />
         </div>
 
@@ -92,7 +102,9 @@ export default function VendorDirectory() {
         <div className="flex items-center gap-2 overflow-x-auto pb-4 mb-2">
           <button
             onClick={() => setCategory('')}
-            className={`shrink-0 px-4 py-2 rounded-full text-sm font-medium transition-colors ${!activeCategory ? 'bg-gold-700 text-white' : 'bg-white text-charcoal/60 border border-charcoal/10 hover:bg-charcoal/5'}`}
+            className={`shrink-0 px-4 py-2 rounded-full text-sm font-medium transition-colors ${
+              !activeCategory ? 'bg-maroon-700 text-white shadow-xs' : 'bg-blush-50 text-charcoal/70 hover:bg-blush-100 hover:text-maroon-800'
+            }`}
           >
             All
           </button>
@@ -100,7 +112,11 @@ export default function VendorDirectory() {
             <button
               key={c.categoryId}
               onClick={() => setCategory(c.categoryId)}
-              className={`shrink-0 px-4 py-2 rounded-full text-sm font-medium transition-colors ${String(activeCategory) === String(c.categoryId) ? 'bg-gold-700 text-white' : 'bg-white text-charcoal/60 border border-charcoal/10 hover:bg-charcoal/5'}`}
+              className={`shrink-0 px-4 py-2 rounded-full text-sm font-medium transition-colors ${
+                String(activeCategory) === String(c.categoryId)
+                  ? 'bg-maroon-700 text-white shadow-xs'
+                  : 'bg-blush-50 text-charcoal/70 hover:bg-blush-100 hover:text-maroon-800'
+              }`}
             >
               {c.categoryName}
             </button>
@@ -111,9 +127,9 @@ export default function VendorDirectory() {
         <div className="flex items-center gap-3 mb-6">
           <button
             onClick={() => setFiltersOpen((o) => !o)}
-            className="btn-outline text-sm py-2.5"
+            className={`btn-outline text-sm py-2 px-4 ${filtersOpen ? 'border-maroon-600 text-maroon-700 bg-blush-50/50' : ''}`}
           >
-            <FaFilter size={13} /> Filters
+            <FaFilter size={12} className="text-sage-600" /> Filter by district
           </button>
           <div className="w-48">
             <Dropdown
@@ -133,10 +149,10 @@ export default function VendorDirectory() {
               exit={{ opacity: 0, height: 0 }}
               className="overflow-hidden mb-6"
             >
-              <div className="card p-5 space-y-4">
+              <div className="card p-5 space-y-4 bg-blush-50/30 border-blush-200">
                 <div className="flex items-center justify-between">
-                  <h3 className="font-semibold text-charcoal">Filters</h3>
-                  <button onClick={() => { setDistrict(''); setFiltersOpen(false) }} className="text-charcoal/40 hover:text-charcoal flex items-center gap-1 text-xs">
+                  <h3 className="font-semibold text-sm text-charcoal">Filter by district</h3>
+                  <button onClick={() => { setDistrict(''); setFiltersOpen(false) }} className="text-charcoal/40 hover:text-maroon-700 flex items-center gap-1 text-xs">
                     <FaTimes size={11} /> Clear
                   </button>
                 </div>
@@ -145,7 +161,9 @@ export default function VendorDirectory() {
                     <button
                       key={d}
                       onClick={() => { setDistrict(d === district ? '' : d); setPage(1) }}
-                      className={`px-3 py-1.5 rounded-full text-xs font-semibold transition-colors ${district === d ? 'bg-gold-700 text-white' : 'bg-charcoal/5 text-charcoal/60 hover:bg-charcoal/10'}`}
+                      className={`px-3 py-1.5 rounded-full text-xs font-medium transition-colors ${
+                        district === d ? 'bg-maroon-700 text-white shadow-xs' : 'bg-white border border-charcoal/10 text-charcoal/70 hover:border-blush-300 hover:text-maroon-700'
+                      }`}
                     >
                       {d}
                     </button>
