@@ -1,4 +1,5 @@
-const BASE_URL = import.meta.env.VITE_API_URL || 'http://localhost:8080'
+import { SEED_VENDORS, SEED_CATEGORIES } from '../data/seedVendors'
+const BASE_URL = (typeof import.meta !== 'undefined' && import.meta.env?.VITE_API_URL) || 'http://localhost:8080'
 const TOKEN_KEY = 'magulaplan_token'
 
 // "Remember me" controls which storage the token lives in: localStorage
@@ -98,15 +99,56 @@ export const budgetApi = {
 
 // Vendors
 export const vendorsApi = {
-  list: () => apiFetch('/api/v1/vendors'),
-  byCategory: (categoryId) => apiFetch(`/api/v1/vendors/category/${categoryId}`),
-  byId: (id) => apiFetch(`/api/v1/vendors/${id}`),
+  list: async () => {
+    try {
+      const data = await apiFetch('/api/v1/vendors')
+      if (Array.isArray(data) && data.length > 0) return data
+      return SEED_VENDORS
+    } catch {
+      return SEED_VENDORS
+    }
+  },
+  byCategory: async (categoryId) => {
+    try {
+      const data = await apiFetch(`/api/v1/vendors/category/${categoryId}`)
+      if (Array.isArray(data) && data.length > 0) return data
+      return SEED_VENDORS.filter((v) => String(v.categoryId) === String(categoryId))
+    } catch {
+      return SEED_VENDORS.filter((v) => String(v.categoryId) === String(categoryId))
+    }
+  },
+  byId: async (id) => {
+    try {
+      const data = await apiFetch(`/api/v1/vendors/${id}`)
+      if (data) return data
+      return SEED_VENDORS.find((v) => String(v.vendorId) === String(id)) || null
+    } catch {
+      return SEED_VENDORS.find((v) => String(v.vendorId) === String(id)) || null
+    }
+  },
+  get: async (id) => {
+    try {
+      const data = await apiFetch(`/api/v1/vendors/${id}`)
+      if (data) return data
+      return SEED_VENDORS.find((v) => String(v.vendorId) === String(id)) || null
+    } catch {
+      return SEED_VENDORS.find((v) => String(v.vendorId) === String(id)) || null
+    }
+  },
   create: (payload) => apiFetch('/api/v1/vendors', { method: 'POST', body: payload }),
 }
 
 // Vendor categories
 export const categoriesApi = {
-  list: () => apiFetch('/api/v1/vendor-categories'),
+  list: async () => {
+    try {
+      const data = await apiFetch('/api/v1/vendor-categories')
+      if (Array.isArray(data) && data.length > 0) return data
+      return SEED_CATEGORIES
+    } catch {
+      return SEED_CATEGORIES
+    }
+  },
 }
 
 // Current user's profile. Endpoint may not exist yet on the backend; callers
