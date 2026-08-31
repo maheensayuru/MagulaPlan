@@ -20,7 +20,7 @@ public class TestAccountInitializer {
                         .email(testEmail)
                         .passwordHash(passwordEncoder.encode("password123"))
                         .fullName("Test User")
-                        .role("ROLE_USER")
+                        .role("USER")
                         .isActive(true)
                         .createdAt(LocalDateTime.now())
                         .build();
