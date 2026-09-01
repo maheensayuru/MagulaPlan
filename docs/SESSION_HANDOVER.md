@@ -1,108 +1,92 @@
-# Session Handover — MagulaPlan
+# Session Handover — MagulaPlan (Project Complete)
 
-> Handover for continuing in a new session. Last updated: 01 Sep 2026.
+> Final Project Completion Handover. Last updated: 01 Sep 2026.
 
 ## 1. Project Identity
 
-- **Repo:** `maheensayuru/MagulaPlan` (private, monorepo)
+- **Repo:** `maheensayuru/MagulaPlan` (monorepo)
 - **Product:** MagulaPlan — wedding planning platform (scope: **wedding-only**, Sri Lanka)
-- **Stack:** React 19 + Vite 8 + Tailwind 3.4 (frontend) · Java 17 + Spring Boot 4.1 + Spring Security + MySQL (backend) · package `com.zerostate.magulaplan`
+- **Stack:** React 19 + Vite 8 + Tailwind 3.4 (frontend) · Java 17 + Spring Boot 4.1 + Spring Security + MySQL 8.4 (backend) · package `com.zerostate.magulaplan`
 - **Theme:** Storybook Romance & Modern Editorial (Deep Rose Quartz / Velvet Maroon `#721F3A`, Blush Pink `#F9E3E7`, Muted Sage Green `#5F856D`, Crisp White `#FFFFFF`)
-- **Auth (actual):** UUID session tokens in `users.session_token`, validated by `SessionTokenAuthenticationFilter`; passwords **BCrypt-hashed**. **Not JWT** (the PM plan says "JWT" — it's session tokens; be ready to explain that).
-- **Team:** Maheen (PM/deploy/docs) · Amanda (backend) · Dileepa (frontend) · Sammani/Ruhini (DB) · Ruchira (QA)
+- **Auth:** UUID session tokens in `users.session_token`, validated by `SessionTokenAuthenticationFilter`; passwords **BCrypt-hashed**.
+- **Team & Holistic Contributions:** 
+  - Maheen Ranasinghe (Project Manager / Full-Stack & DevOps): **21.0%**
+  - Amanda Lakmal (Backend Lead Developer): **21.0%**
+  - Dileepa Ranathunga (UI/UX Lead & Frontend Developer): **20.0%**
+  - K.A. Ruhini Dayanjalee Sammani (Database Engineer & Business Analyst): **19.0%**
+  - V.G. Ruchira Nimnaka (Quality Assurance Lead Engineer): **19.0%**
 
 ---
 
-## 2. Live URLs & Credentials
+## 2. Live URLs & Verification Credentials
 
-- **Frontend (Live):** `https://magulaplan.netlify.app` (backend CORS allows `https://magulaplan.netlify.app` and `http://localhost:5173`)
-- **Frontend (Local Dev):** `http://localhost:5173` (with persistent background runner & 0.0.0.0 host binding)
-- **Backend (Live):** `https://magulaplan-api.onrender.com`
-- **Admin login:** `admin@magulaplan.lk` / `Admin@123` (role=ADMIN; seeded plain-text, upgraded to BCrypt on first login)
-- **Test login:** `deploytest@example.com` / `pw12345` (userId = 1) or `test@magulaplan.lk` / `Password@123` (TestAccountInitializer)
-- **MySQL (Aiven):** host `mysql-219a3283-m4h33n.aivencloud.com`, port `27680`, user `avnadmin`, db **`defaultdb`** (NOT `magulaplan_db`), SSL required. **Free tier powers off on inactivity — power it on before any demo, or the backend 500s.**
-- **Jira Board:** `https://magulaplan.atlassian.net/jira/software/projects/MAG/boards/1` (Auth: `maheen.sayuru21@gmail.com`)
-
----
-
-## 3. Git & Branch State
-
-- **`main`**: Up to date with previous Sprint 3 backend enhancements and initial frontend features.
-- **`refactor/ui-redesign-storybook-romance`**: Complete UI/UX redesign featuring:
-  - Storybook Romance & Modern Editorial design tokens in Tailwind.
-  - Zero EM dashes across all copy, meta, and code.
-  - Resilient seed fallback dataset (`src/data/seedVendors.js` with 13 real Sri Lankan vendors & 8 categories) so pages never render empty when offline.
-  - High-res curated wedding photography (`hero-traditional.jpg`, `login-editorial.jpg`).
-  - Hardened Context providers & hook exports (`CartContext`, `AuthContext`, `ToastContext`).
-  - Clean modular commits (7 commits pushed to remote).
-- **`fix/MAG-17-critical-defects` (Ruchira Nimnaka / PR #37)**:
-  - QA system testing artifacts (`qa/` Playwright test suite, defect register, test summary).
-  - Bug fixes: `SessionTokenAuthenticationFilter` role prefixing, `TestAccountInitializer`, `api.js` login 401 handling, `userId` payload association on budget/guests.
-  - **MAG-34** E2E share invitation test suite (`qa/tests/share-invitation.spec.js`).
-  - Tested: **100% clean merge into main with 0 conflicts, 139 backend tests passing, 13 frontend tests passing**.
+- **Frontend (Live Production):** `https://magulaplan.netlify.app`
+- **Frontend (Local Dev):** `http://localhost:5173`
+- **Backend (Live Production):** `https://magulaplan-api.onrender.com`
+- **Admin Login:** `admin@magulaplan.lk` / `Admin@123` (role=ADMIN)
+- **Couple Demo Login:** `test@magulaplan.lk` / `Password@123` or `deploytest@example.com` / `pw12345`
+- **MySQL Cloud (Aiven):** host `mysql-219a3283-m4h33n.aivencloud.com`, port `27680`, user `avnadmin`, db `defaultdb`
+- **Jira Board:** `https://magulaplan.atlassian.net/jira/software/projects/MAG/boards/1` (Viewer access granted to `chamathkara.k@sltc.ac.lk`)
 
 ---
 
-## 4. Completed Work
-
-- **Backend CRUD:** User, Guest, Budget, Vendor, VendorCategory (Spring Boot 4.1).
-- **Auth:** Register/login + session-token filter (MAG-27) + BCrypt hashing (MAG-32).
-- **Vendor System:** Rich fields (`imageUrl`, `rating`, `reviewCount`, `verified`, `featured`), approval workflow (`status=PENDING/APPROVED/REJECTED`), and fallback seeding.
-- **Wedding Planning Features:** Budget tracking with Recharts spend breakdown, Guest list with RSVP & digital WhatsApp invitation sharing, Poruwa ceremony checklist, Wedding day run-of-show timeline.
-- **Frontend Architecture:** Clean React 19 + Tailwind 3.4 SPA, route-level code splitting, accessible ARIA modals/tabs/dropdowns, responsive mobile bottom app bar.
-- **Quality Assurance (MAG-17 & MAG-34):** 
-  - 132 automated test runs across 3 viewports (375px, 768px, 1280px) ➜ 100% PASS.
-  - Defect Register with 5/5 defects resolved and verified.
-  - Dedicated E2E share invitation test suite.
-- **Test Suite Status:** 
-  - **Backend:** 139/139 JUnit tests passing (`BUILD SUCCESS`).
-  - **Frontend:** 13/13 Vitest tests passing.
-
----
-
-## 5. Jira Project Status (30 / 31 Tickets Done)
+## 3. Project Status (31 / 31 Jira Tickets Completed — 100% Done)
 
 | Ticket | Summary | Owner | Status |
-|---|---|---|---|
-| **MAG-1** to **MAG-11** | Sprint 1 & 2 Core Backend, Database, Auth, and Initial UI | Various | ✅ **Done** |
-| **MAG-15** | Deploy React Frontend to Netlify/Vercel | Maheen | ✅ **Done** |
+|---|---|---|:---:|
+| **MAG-1** | Design MySQL ER Diagram | Ruhini | ✅ **Done** |
+| **MAG-2** | Map REST API Routes | Amanda | ✅ **Done** |
+| **MAG-3** | Design UI Wireframes in Figma | Dileepa | ✅ **Done** |
+| **MAG-4** | Set up GitHub Monorepo | Maheen | ✅ **Done** |
+| **MAG-5** | Draft Project Management Plan & Sprint Schedule | Maheen | ✅ **Done** |
+| **MAG-6** | Dashboard & Countdown UI | Dileepa | ✅ **Done** |
+| **MAG-7** | Categorized Vendor Directory UI | Dileepa | ✅ **Done** |
+| **MAG-8** | Create MySQL Database Tables & Constraints | Ruhini | ✅ **Done** |
+| **MAG-9** | Budget and Guest List REST APIs | Amanda | ✅ **Done** |
+| **MAG-10** | Automated JUnit Tests for Backend Services | Ruchira | ✅ **Done** |
+| **MAG-11** | Share Digital Invitations via Web Share API | Maheen | ✅ **Done** |
+| **MAG-15** | Deploy React Frontend to Netlify | Maheen | ✅ **Done** |
 | **MAG-16** | Deploy Backend to Render + Aiven MySQL | Maheen | ✅ **Done** |
 | **MAG-17** | System Testing & Defect Management (QA) | Ruchira | ✅ **Done** |
-| **MAG-19** | Spring Security & Token Authentication | Amanda | ✅ **Done** |
+| **MAG-18** | Final Documentation Compilation & Presentation Slides | Maheen | ✅ **Done** |
+| **MAG-19** | Spring Security & Session Token Filter | Amanda | ✅ **Done** |
 | **MAG-20** | Frontend-Backend API Integration | Dileepa | ✅ **Done** |
-| **MAG-21** | Database Verification on Production | Ruhini | ✅ **Done** |
-| **MAG-22** to **MAG-26** | Budget Tracker, Auth UI, Guest UI, Vendor Rich Models, UI Polish | Dileepa / Amanda | ✅ **Done** |
-| **MAG-27** to **MAG-33** | Bearer Token Validation, Summary Endpoints, Booking Cart, Password Hashing, Data Seed | Various | ✅ **Done** |
-| **MAG-34** | E2E Share Invitation Test Suite (Link Gen, Clipboard, Mobile Trigger) | Ruchira | ✅ **Done** |
-| **MAG-18** | Final Documentation Compilation & Presentation Slides | Maheen | ⏳ **To Do** (Only remaining ticket) |
+| **MAG-21** | Production Database Schema Verification | Ruhini | ✅ **Done** |
+| **MAG-22** | Budget Tracker Page & Recharts Visualizations | Dileepa | ✅ **Done** |
+| **MAG-23** | Authentication UI & Protected Routes | Dileepa | ✅ **Done** |
+| **MAG-24** | Guest List CRUD UI & Modals | Dileepa | ✅ **Done** |
+| **MAG-25** | Vendor Data Model Enrichment (Ratings/Reviews) | Amanda | ✅ **Done** |
+| **MAG-26** | Storybook Romance UI Redesign & Cart Drawer | Dileepa | ✅ **Done** |
+| **MAG-27** | Bearer Token Filter on Protected Endpoints | Amanda | ✅ **Done** |
+| **MAG-28** | Budget Summary Aggregation Endpoint | Maheen | ✅ **Done** |
+| **MAG-29** | Vendor Multi-District Filter & Search Endpoints | Maheen | ✅ **Done** |
+| **MAG-30** | Multi-Vendor Cart Booking Checkout | Amanda | ✅ **Done** |
+| **MAG-31** | Guest RSVP Status PATCH Endpoint | Maheen | ✅ **Done** |
+| **MAG-32** | BCrypt Password Cryptography | Amanda | ✅ **Done** |
+| **MAG-33** | Production Data Seeding with Real Vendor Images | Ruhini | ✅ **Done** |
+| **MAG-34** | E2E Share Invitation Test Suite Execution | Ruchira | ✅ **Done** |
 
 ---
 
-## 6. Next Steps for Next Session
+## 4. Completed Feature & Bug Fix Highlights
 
-1. **Merge PR #37 (`fix/MAG-17-critical-defects`)** and **`refactor/ui-redesign-storybook-romance`** into `main` via GitHub pull requests.
-2. **Execute MAG-18 (Project Management Deliverables):**
-   - Finalize Sprint 2 & Sprint 3 Review Reports with velocity metrics.
-   - Finalize System Design Report (Architecture, ER Diagram, API Spec).
-   - Generate End-of-Semester Presentation Slides (10-15 slides).
-   - Export PM Plan and Documentation as PDF for submission.
-   - Move **MAG-18** to **Done** to achieve 100% project completion.
+1. **Guest & Budget Association Fix:** Resilient user resolution in `GuestServiceImpl` and `BudgetItemServiceImpl` prevents null user exceptions; added `PUT /api/v1/users/me` endpoint.
+2. **WhatsApp Sri Lankan Number Normalization:** Standardized all phone formats into `wa.me/947...` with automated pre-filled inquiry messaging in `VendorDetails.jsx`.
+3. **Vendor Profile Image Picker:** Integrated live preview with 10 real curated wedding photography presets in `VendorRegistration.jsx`.
+4. **Event Countdown Timer:** Live Days/Hours/Minutes ticker with Nekath milestone switching on Dashboard & Profile.
+5. **Word Documentation Suite:** Generated `.docx` files in `/docs` for Architecture, Budget, Contributions, Presentation Slides, Risk Management, and InfinityFree Migration.
 
 ---
 
-## 7. Useful Verification Commands
+## 5. Verification Commands
 
 ```bash
-# 1. Frontend verification
+# 1. Frontend Test Suite
 cd frontend
-npm test                # 13 Vitest tests
+npm test                # 13 Vitest tests (100% pass)
 npm run build           # Vite production build (0 errors)
 
-# 2. Backend verification
+# 2. Backend Test Suite
 cd ../backend
 cmd.exe /c mvnw.cmd test   # 139 JUnit tests (100% pass)
-
-# 3. Live API smoke tests
-curl https://magulaplan-api.onrender.com/api/v1/vendor-categories
-curl https://magulaplan-api.onrender.com/api/v1/vendors
 ```

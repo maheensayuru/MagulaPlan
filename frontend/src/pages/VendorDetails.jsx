@@ -35,11 +35,23 @@ export default function VendorDetails() {
     load()
   }, [id])
 
-  const toWhatsApp = (phone) => {
+  const toWhatsApp = (phone, name = '') => {
     if (!phone) return '#'
     const digits = phone.replace(/\D/g, '')
-    const normalized = digits.startsWith('0') ? `94${digits.slice(1)}` : digits
-    return `https://wa.me/${normalized}`
+    let normalized = digits
+    if (digits.startsWith('0094')) {
+      normalized = `94${digits.slice(4)}`
+    } else if (digits.startsWith('0')) {
+      normalized = `94${digits.slice(1)}`
+    } else if (digits.length === 9) {
+      normalized = `94${digits}`
+    } else if (!digits.startsWith('94') && digits.length === 10 && digits.startsWith('7')) {
+      normalized = `94${digits.slice(1)}`
+    }
+    const message = encodeURIComponent(
+      `Hello ${name || 'Team'}! I found your wedding services on MagulaPlan and would like to inquire about package details, availability, and pricing.`
+    )
+    return `https://wa.me/${normalized}?text=${message}`
   }
 
   const handleShare = async () => {
@@ -165,7 +177,7 @@ export default function VendorDetails() {
                     <FaPhone size={13} className="text-sage-600" /> Call Vendor
                   </a>
                   <a
-                    href={toWhatsApp(vendor.contactPhone)}
+                    href={toWhatsApp(vendor.contactPhone, vendor.businessName)}
                     target="_blank"
                     rel="noreferrer"
                     className="inline-flex items-center gap-2 rounded-md bg-[#25D366] text-white text-sm font-medium px-5 py-2.5 hover:bg-[#1EBE5A] transition-colors shadow-xs"

@@ -3,6 +3,7 @@ import { Link } from 'react-router-dom'
 import { motion } from 'framer-motion'
 import { FaUser, FaCalendarAlt, FaEdit, FaCheckCircle, FaClock, FaCheck } from 'react-icons/fa'
 import EmptyState from '../components/ui/EmptyState'
+import CountdownTimer from '../components/ui/CountdownTimer'
 import { riseIn, staggerContainer } from '../lib/motion'
 import { usersApi } from '../services/api'
 import Loading from './Loading'
@@ -71,6 +72,12 @@ export default function Profile() {
           </Link>
         </div>
       </motion.div>
+
+      {/* Event Countdown Timer */}
+      <CountdownTimer
+        initialDate={profile?.weddingDate}
+        title="Wedding Day Countdown"
+      />
 
       <motion.div initial="hidden" whileInView="show" variants={staggerContainer(0.06)} viewport={{ once: true, margin: '-40px' }} className="card p-6 sm:p-8">
         <div className="flex items-center gap-2 mb-1">

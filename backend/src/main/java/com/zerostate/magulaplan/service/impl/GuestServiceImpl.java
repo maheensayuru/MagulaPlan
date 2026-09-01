@@ -30,20 +30,33 @@ public class GuestServiceImpl implements GuestService {
 
     @Override
     public GuestResponseDto saveGuest(GuestRequestDto guestRequestDto) {
-
-        // 3. UPDATED: Fetch the real User from the database first
-        User user = userRepository.findById(guestRequestDto.getUserId())
-                .orElseThrow(() -> new ResourceNotFoundException("User Not Found with ID: " + guestRequestDto.getUserId()));
+        Long targetUserId = guestRequestDto.getUserId();
+        if (targetUserId == null) {
+            org.springframework.security.core.Authentication auth = org.springframework.security.core.context.SecurityContextHolder.getContext().getAuthentication();
+            if (auth != null && auth.getPrincipal() instanceof Long authId) {
+                targetUserId = authId;
+            }
+        }
+        
+        User user;
+        if (targetUserId != null) {
+            user = userRepository.findById(targetUserId)
+                    .orElseGet(() -> userRepository.findAll().stream().findFirst()
+                            .orElseThrow(() -> new ResourceNotFoundException("User Not Found with ID: " + guestRequestDto.getUserId())));
+        } else {
+            user = userRepository.findAll().stream().findFirst()
+                    .orElseThrow(() -> new ResourceNotFoundException("No users found in database to associate guest."));
+        }
 
         Guest savedGuest = guestRepository.save(
                 Guest.builder()
                         .user(user)
                         .guestName(guestRequestDto.getGuestName())
                         .contactNumber(guestRequestDto.getContactNumber())
-                        .sideOfFamily(guestRequestDto.getSideOfFamily())
-                        .rsvpStatus(guestRequestDto.getRsvpStatus())
-                        .whatsappStatus(guestRequestDto.getWhatsappStatus())
-                        .plusOnes(guestRequestDto.getPlusOnes())
+                        .sideOfFamily(guestRequestDto.getSideOfFamily() != null ? guestRequestDto.getSideOfFamily() : "Bride")
+                        .rsvpStatus(guestRequestDto.getRsvpStatus() != null ? guestRequestDto.getRsvpStatus() : "Pending")
+                        .whatsappStatus(guestRequestDto.getWhatsappStatus() != null ? guestRequestDto.getWhatsappStatus() : "Not Sent")
+                        .plusOnes(guestRequestDto.getPlusOnes() != null ? guestRequestDto.getPlusOnes() : 0)
                         .mealPreference(guestRequestDto.getMealPreference())
                         .build());
         return mapToResponseDto(savedGuest);

@@ -10,9 +10,9 @@ import Tabs from '../components/ui/Tabs'
 import { SkeletonCard } from '../components/ui/Skeleton'
 import EmptyState from '../components/ui/EmptyState'
 import { useToast } from '../context/ToastContext'
+import { useAuth } from '../context/AuthContext'
 import { guestsApi } from '../services/api'
 import { useAsyncData } from '../lib/useAsyncData'
-
 const FILTER_TABS = [
   { id: 'all', label: 'All' },
   { id: 'Attending', label: 'Attending' },
@@ -25,15 +25,22 @@ const SIDE_OPTIONS = [
   { value: 'Groom', label: 'Groom' },
 ]
 
+const RSVP_OPTIONS = [
+  { value: 'Pending', label: 'Pending' },
+  { value: 'Attending', label: 'Attending' },
+  { value: 'Declined', label: 'Declined' },
+]
+
 const emptyForm = {
   guestName: '',
   contactNumber: '',
   sideOfFamily: 'Bride',
   plusOnes: '',
   mealPreference: '',
+  rsvpStatus: 'Pending',
 }
-
 export default function GuestList() {
+  const { userId } = useAuth()
   const { data: guests = [], loading, error, reload } = useAsyncData(() => guestsApi.list(), { initialData: [] })
   const [modalOpen, setModalOpen] = useState(false)
   const [editing, setEditing] = useState(null)
@@ -45,7 +52,6 @@ export default function GuestList() {
   const [search, setSearch] = useState('')
   const [statusFilter, setStatusFilter] = useState('all')
   const { showToast } = useToast()
-
 
   const openAdd = () => {
     setEditing(null)
@@ -61,6 +67,7 @@ export default function GuestList() {
       sideOfFamily: guest.sideOfFamily || 'Bride',
       plusOnes: guest.plusOnes ?? '',
       mealPreference: guest.mealPreference || '',
+      rsvpStatus: guest.rsvpStatus || 'Pending',
     })
     setModalOpen(true)
   }
@@ -74,11 +81,13 @@ export default function GuestList() {
     e.preventDefault()
     setSaving(true)
     const payload = {
-      guestName: form.guestName,
-      contactNumber: form.contactNumber,
+      userId: userId ? Number(userId) : undefined,
+      guestName: form.guestName.trim(),
+      contactNumber: form.contactNumber.trim(),
       sideOfFamily: form.sideOfFamily,
+      rsvpStatus: form.rsvpStatus || 'Pending',
       plusOnes: form.plusOnes === '' ? 0 : Number(form.plusOnes),
-      mealPreference: form.mealPreference,
+      mealPreference: form.mealPreference.trim(),
     }
     try {
       if (editing) {
@@ -266,19 +275,21 @@ export default function GuestList() {
           </FormField>
           <div className="grid grid-cols-2 gap-4">
             <Select label="Side of family" id="sideOfFamily" value={form.sideOfFamily} onChange={handleChange} options={SIDE_OPTIONS} />
+            <Select label="RSVP status" id="rsvpStatus" value={form.rsvpStatus} onChange={handleChange} options={RSVP_OPTIONS} />
+          </div>
+          <div className="grid grid-cols-2 gap-4">
             <FormField label="Plus ones" htmlFor="plusOnes">
               <input id="plusOnes" name="plusOnes" type="number" min="0" value={form.plusOnes} onChange={handleChange} placeholder="0" className="input-field" />
             </FormField>
+            <FormField label="Meal preference" htmlFor="mealPreference">
+              <input id="mealPreference" name="mealPreference" value={form.mealPreference} onChange={handleChange} placeholder="Veg, Non-veg..." className="input-field" />
+            </FormField>
           </div>
-          <FormField label="Meal preference" htmlFor="mealPreference">
-            <input id="mealPreference" name="mealPreference" value={form.mealPreference} onChange={handleChange} placeholder="Veg, Non-veg..." className="input-field" />
-          </FormField>
           <button type="submit" disabled={saving} className="btn-primary w-full">
             {saving ? 'Saving...' : editing ? 'Update Guest' : 'Add Guest'}
           </button>
         </form>
       </Modal>
-
       <ConfirmDialog
         open={!!deleting}
         onClose={() => setDeleting(null)}
