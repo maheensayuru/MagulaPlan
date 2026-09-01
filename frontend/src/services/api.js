@@ -86,6 +86,7 @@ export const guestsApi = {
   update: (id, payload) => apiFetch(`/api/v1/guests/${id}`, { method: 'PUT', body: { userId: payload?.userId || getUserId(), ...payload } }),
   remove: (id) => apiFetch(`/api/v1/guests/${id}`, { method: 'DELETE' }),
   share: (id) => apiFetch(`/api/v1/guests/${id}/share`),
+  patchRsvp: (id, rsvpStatus) => apiFetch(`/api/v1/guests/${id}/rsvp`, { method: 'PATCH', body: { rsvpStatus } }),
 }
 
 // Budget items
@@ -136,6 +137,7 @@ export const vendorsApi = {
     }
   },
   create: (payload) => apiFetch('/api/v1/vendors', { method: 'POST', body: payload }),
+  register: (payload) => apiFetch('/api/v1/vendors', { method: 'POST', body: payload }),
 }
 
 // Vendor categories

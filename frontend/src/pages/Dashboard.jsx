@@ -1,24 +1,33 @@
 import { Link } from 'react-router-dom'
 import { motion } from 'framer-motion'
-import { FaWallet, FaUsers, FaStore, FaPlus, FaSearch } from 'react-icons/fa'
+import { FaWallet, FaUsers, FaStore, FaPlus, FaSearch, FaHeart } from 'react-icons/fa'
 import StatCard from '../components/ui/StatCard'
 import { SkeletonCard } from '../components/ui/Skeleton'
+import CountdownTimer from '../components/ui/CountdownTimer'
 import { useAsyncData } from '../lib/useAsyncData'
-import { budgetApi, guestsApi, vendorsApi } from '../services/api'
-
+import { budgetApi, guestsApi, vendorsApi, usersApi } from '../services/api'
 export default function Dashboard() {
-  const { data: stats, loading, error } = useAsyncData(
+  const { data: dashboardData, loading, error } = useAsyncData(
     async () => {
-      const [budgetItems, guests, vendors] = await Promise.all([
+      const [budgetItems, guests, vendors, profile] = await Promise.all([
         budgetApi.list().catch(() => []),
         guestsApi.list().catch(() => []),
         vendorsApi.list().catch(() => []),
+        usersApi.me().catch(() => null),
       ])
       const estimated = budgetItems.reduce((s, i) => s + (Number(i.estimatedCost) || 0), 0)
-      return { budget: budgetItems.length, guests: guests.length, vendors: vendors.length, estimated }
+      return {
+        budget: budgetItems.length,
+        guests: guests.length,
+        vendors: vendors.length,
+        estimated,
+        profile,
+      }
     },
-    { initialData: { budget: 0, guests: 0, vendors: 0, estimated: 0 } },
+    { initialData: { budget: 0, guests: 0, vendors: 0, estimated: 0, profile: null } },
   )
+
+  const stats = dashboardData
 
   if (loading) {
     return (
@@ -45,6 +54,12 @@ export default function Dashboard() {
         </p>
         {error && <p className="text-maroon-700/80 mt-3 text-sm">{error}</p>}
       </motion.div>
+
+      {/* Event Countdown Timer */}
+      <CountdownTimer
+        initialDate={stats.profile?.weddingDate}
+        title={stats.profile?.partnerName ? `Countdown with ${stats.profile.partnerName}` : 'Wedding Event Countdown'}
+      />
 
       {/* Stat cards */}
       <div className="grid sm:grid-cols-2 lg:grid-cols-4 gap-4">

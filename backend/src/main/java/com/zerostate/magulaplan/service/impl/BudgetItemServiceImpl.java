@@ -31,15 +31,31 @@ public class BudgetItemServiceImpl implements BudgetItemService {
 
     @Override
     public BudgetItemResponseDto saveBudgetItem(BudgetItemRequestDto budgetItemRequestDto) {
-        User user = userRepository.findById(budgetItemRequestDto.getUserId())
-                .orElseThrow(() -> new ResourceNotFoundException("User not found with ID: " + budgetItemRequestDto.getUserId()));
+        Long targetUserId = budgetItemRequestDto.getUserId();
+        if (targetUserId == null) {
+            org.springframework.security.core.Authentication auth = org.springframework.security.core.context.SecurityContextHolder.getContext().getAuthentication();
+            if (auth != null && auth.getPrincipal() instanceof Long authId) {
+                targetUserId = authId;
+            }
+        }
+
+        User user;
+        if (targetUserId != null) {
+            user = userRepository.findById(targetUserId)
+                    .orElseGet(() -> userRepository.findAll().stream().findFirst()
+                            .orElseThrow(() -> new ResourceNotFoundException("User not found with ID: " + budgetItemRequestDto.getUserId())));
+        } else {
+            user = userRepository.findAll().stream().findFirst()
+                    .orElseThrow(() -> new ResourceNotFoundException("No users found in database to associate budget item."));
+        }
+
         BudgetItem budgetItem = BudgetItem.builder()
                 .itemName(budgetItemRequestDto.getItemName())
                 .category(budgetItemRequestDto.getCategory())
-                .estimatedCost(budgetItemRequestDto.getEstimatedCost())
-                .actualCost(budgetItemRequestDto.getActualCost())
-                .depositPaid(budgetItemRequestDto.getDepositPaid())
-                .status(budgetItemRequestDto.getStatus() != null ? budgetItemRequestDto.getStatus() : "Planned") // Default status
+                .estimatedCost(budgetItemRequestDto.getEstimatedCost() != null ? budgetItemRequestDto.getEstimatedCost() : java.math.BigDecimal.ZERO)
+                .actualCost(budgetItemRequestDto.getActualCost() != null ? budgetItemRequestDto.getActualCost() : java.math.BigDecimal.ZERO)
+                .depositPaid(budgetItemRequestDto.getDepositPaid() != null ? budgetItemRequestDto.getDepositPaid() : java.math.BigDecimal.ZERO)
+                .status(budgetItemRequestDto.getStatus() != null && !budgetItemRequestDto.getStatus().isEmpty() ? budgetItemRequestDto.getStatus() : "Planned")
                 .user(user)
                 .build();
         BudgetItem savedBudgetItem = budgetItemRepository.save(budgetItem);

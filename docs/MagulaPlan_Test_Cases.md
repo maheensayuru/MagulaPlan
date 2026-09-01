@@ -82,16 +82,24 @@
 | Responsive / Cross-Device | RESP-03 | Guest list at mobile width | ~375px viewport | 1. Open Guests | Table/list is readable; actions reachable without horizontal scroll. | Medium |  |  |
 | Responsive / Cross-Device | RESP-04 | Navigation adapts (sidebar vs bottom nav) | Desktop and mobile | 1. Open the app on desktop
 2. Open on mobile | Sidebar on desktop; bottom nav on mobile; all routes reachable. | Medium |  |  |
+| Event Countdown & Nekath | TIME-01 | Countdown timer calculates live remaining time | User with target wedding date | 1. Open Dashboard or Profile | Days, Hours, Minutes, and Seconds update every second in real time. | High |  |  |
+| Event Countdown & Nekath | TIME-02 | Event milestone tab selection | Any authenticated couple | 1. Select Poruwa / Nekath / Reception tabs | Milestone label and countdown switch dynamically. | Medium |  |  |
+| Vendor Registration | VEND-11 | Real Profile Image selection & Live Preview | Vendor self-registration portal | 1. Navigate to /vendors/new
+2. Pick a curated wedding photography preset or enter custom image URL | Live preview displays chosen image immediately; submitted with registration payload. | High |  |  |
+| Vendor Communication | VEND-12 | WhatsApp Sri Lankan number normalization & pre-filled inquiry | Vendor detail page | 1. Click WhatsApp button on a vendor card | Opens wa.me/94... with automated inquiry message. | High |  |  |
+| User Profile Management | USER-04 | Authenticated profile update | Logged-in user in Settings | 1. Update wedding date or partner name | Calls PUT /api/v1/users/me; updates Dashboard countdown and profile immediately. | High |  |  |
 
 ## Summary
 
 | Module | Test Count |
 | --- | --- |
 | Auth & Onboarding | 8 |
-| Vendor Directory | 10 |
+| Vendor Directory & Registration | 12 |
 | Budget Tracker | 7 |
 | Guest List & RSVP | 8 |
 | Share Invitations | 4 |
 | Security & Access Control | 5 |
 | Responsive / Cross-Device | 4 |
-| TOTAL | 46 |
+| Event Countdown & Timing | 2 |
+| User Profile Management | 1 |
+| TOTAL | 51 |

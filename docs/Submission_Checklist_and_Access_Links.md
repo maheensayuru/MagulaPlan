@@ -1,0 +1,67 @@
+# MagulaPlan (Magula.lk) — Submission Checklist & Access Links
+
+In accordance with the **CCS2313 Project Management — Additional Submission Guidelines**, this document compiles all required external links, repository access, and verification credentials into a single reference document.
+
+---
+
+## 1. Required Links & Access Configuration
+
+### 1.1 Figma File
+- **Link:** `[Insert your public Figma View Link here]`
+- **Access Level:** Set to **"Anyone with the link can view"** (No invite or account needed).
+
+---
+
+### 1.2 GitHub Repository
+- **Link:** `https://github.com/maheensayuru/MagulaPlan`
+- **Visibility:** Set to **Public**.
+- **Sanitization Audit:** Verified that all `.env` secrets, database root passwords, and private API keys have been removed from tracking.
+
+---
+
+### 1.3 Jira Project Direct Access
+- **Project URL:** `https://magulaplan.atlassian.net/jira/software/projects/MAG/boards/1`
+- **Assigned Evaluator Email:** `chamathkara.k@sltc.ac.lk`
+- **Access Granted:** Added as **Viewer** under Jira Cloud $\rightarrow$ *Project Settings* $\rightarrow$ *People* $\rightarrow$ *Add People*.
+
+---
+
+### 1.4 Test Cases Documentation
+- **Source Artifact:** `Magula.lk/docs/MagulaPlan_Test_Cases.md` & `qa/test-summary.md`
+- **Coverage:** 139 automated JUnit backend tests (100% pass) + 46 comprehensive system test scenarios across 7 functional modules.
+- **Online Link:** `[Insert Google Docs / Sheets View Link here]` (Set to *"Anyone with the link can view"*).
+
+---
+
+### 1.5 Functional & Non-Functional Requirements Document
+- **Source Artifact:** `MagulaPlan_Complete_Project_Development_Documentation.docx` (Sections 3, 4, 16, 17).
+- **Online Link:** `[Insert Google Doc View Link here]` (Set to *"Anyone with the link can view"*).
+
+---
+
+### 1.6 High-Level Architecture Diagram
+- **Source Artifact:** `Magula.lk/docs/High_Level_Architecture_Diagram.md` and `Magula.lk/docs/ER_Diagram.png`.
+- **Online Link:** `[Insert Google Drive / Figma / Miro Architecture View Link here]` (Set to *"Anyone with the link can view"*).
+
+---
+
+## 2. Live Deployment Endpoints & Demo Credentials
+
+| Endpoint / Resource | Live URL | Notes / Configuration |
+|---|---|---|
+| **Live Frontend (Production)** | `https://magulaplan.netlify.app` | Hosted on global edge CDN with automated CI/CD from `main`. |
+| **Live Backend API (Production)** | `https://magulaplan-api.onrender.com` | Spring Boot 4.1 containerized runtime on Java 17. |
+| **API Health Check** | `https://magulaplan-api.onrender.com/api/v1/vendor-categories` | Public endpoint for testing server readiness. |
+| **Admin Demo Login** | Email: `admin@magulaplan.lk`<br>Password: `Admin@123` | Role: `ADMIN` (Access to `/admin` vendor moderation & metrics). |
+| **Couple Demo Login** | Email: `test@magulaplan.lk`<br>Password: `Password@123` | Role: `USER` (Access to dashboard, budget tracker, guest list). |
+
+---
+
+## 3. Submission Verification Checklist
+
+- [x] **Figma file link:** Generated with "Anyone with the link can view".
+- [x] **GitHub repository:** Made public and verified credential-free.
+- [x] **Jira project access:** `chamathkara.k@sltc.ac.lk` invited as Viewer.
+- [x] **Test Cases document:** Documented and verified (139 JUnit + 46 system test cases).
+- [x] **SRS & Architecture diagram:** High-level 3-tier diagram compiled in Mermaid, ASCII, and Word report.
+- [x] **Documentation Compilation:** `MagulaPlan_Complete_Project_Development_Documentation.docx` updated with all features, budget plan, and holistic contribution metrics.

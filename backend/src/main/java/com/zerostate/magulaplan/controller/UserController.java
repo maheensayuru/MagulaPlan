@@ -67,4 +67,13 @@ public class UserController {
         UserResponseDto user = userService.getUserById(userId);
         return ResponseEntity.ok(user);
     }
+
+    // 7. Update the currently authenticated user's profile
+    @PutMapping("/me")
+    public ResponseEntity<UserResponseDto> updateCurrentUser(
+            @AuthenticationPrincipal Long userId,
+            @RequestBody UserRequestDto userRequestDto) {
+        UserResponseDto updatedUser = userService.updateUser(userId, userRequestDto);
+        return ResponseEntity.ok(updatedUser);
+    }
 }

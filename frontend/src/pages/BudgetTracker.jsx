@@ -10,17 +10,33 @@ import Badge from '../components/ui/Badge'
 import { SkeletonCard } from '../components/ui/Skeleton'
 import EmptyState from '../components/ui/EmptyState'
 import { useToast } from '../context/ToastContext'
+import { useAuth } from '../context/AuthContext'
 import { budgetApi } from '../services/api'
 import { useAsyncData } from '../lib/useAsyncData'
 
-const CHART_COLORS = ['#721F3A', '#CF7B97', '#5F856D', '#E5A8B5', '#81A38D', '#B44F70', '#A7C0B0']
+const CHART_COLORS = ['#721F3A', '#CF7B97', '#5F856D', '#E5A8B5', '#81A38D', '#B44F70', '#A7C0B0', '#D4A373', '#CCD5AE']
+
+const WEDDING_CATEGORIES = [
+  'Venues & Reception Halls',
+  'Photography & Videography',
+  'Catering & Banquets',
+  'Floral & Poruwa Decor',
+  'Traditional Poruwa & Nekath',
+  'Bridal Dressing & Hair',
+  'Groom & Bridal Attire',
+  'Live Bands & DJs',
+  'Wedding Cake & Sweetmeats',
+  'Invitations & Stationery',
+  'Wedding Transport & Vintage Cars',
+  'Jewellery',
+  'Other',
+]
 
 const STATUS_OPTIONS = [
   { value: 'Planned', label: 'Planned' },
   { value: 'Deposit Paid', label: 'Deposit Paid' },
   { value: 'Fully Paid', label: 'Fully Paid' },
 ]
-
 const emptyForm = {
   itemName: '',
   category: '',
@@ -31,6 +47,7 @@ const emptyForm = {
 }
 
 export default function BudgetTracker() {
+  const { userId } = useAuth()
   const { data: items = [], loading, error, reload } = useAsyncData(() => budgetApi.list(), { initialData: [] })
   const [modalOpen, setModalOpen] = useState(false)
   const [editing, setEditing] = useState(null)
@@ -40,7 +57,6 @@ export default function BudgetTracker() {
   const [deleteLoading, setDeleteLoading] = useState(false)
   const [categoryFilter, setCategoryFilter] = useState('')
   const { showToast } = useToast()
-
 
   const totals = useMemo(() => {
     const sum = (f) => items.reduce((s, i) => s + (Number(i[f]) || 0), 0)
@@ -97,12 +113,13 @@ export default function BudgetTracker() {
     e.preventDefault()
     setSaving(true)
     const payload = {
-      itemName: form.itemName,
-      category: form.category,
+      userId: userId ? Number(userId) : undefined,
+      itemName: form.itemName.trim(),
+      category: form.category.trim() || 'General',
       estimatedCost: form.estimatedCost === '' ? 0 : Number(form.estimatedCost),
       actualCost: form.actualCost === '' ? 0 : Number(form.actualCost),
       depositPaid: form.depositPaid === '' ? 0 : Number(form.depositPaid),
-      status: form.status,
+      status: form.status || 'Planned',
     }
     try {
       if (editing) {
@@ -120,7 +137,6 @@ export default function BudgetTracker() {
       setSaving(false)
     }
   }
-
   const handleDelete = async () => {
     if (!deleting) return
     setDeleteLoading(true)
@@ -297,7 +313,37 @@ export default function BudgetTracker() {
             <input id="itemName" name="itemName" value={form.itemName} onChange={handleChange} required placeholder="Photography Package" className="input-field" />
           </FormField>
           <FormField label="Category" htmlFor="category">
-            <input id="category" name="category" value={form.category} onChange={handleChange} required placeholder="Photography" className="input-field" />
+            <div className="space-y-2">
+              <select
+                id="categorySelect"
+                value={WEDDING_CATEGORIES.includes(form.category) ? form.category : (form.category ? 'Other' : '')}
+                onChange={(e) => {
+                  const val = e.target.value
+                  if (val === 'Other') {
+                    setForm((f) => ({ ...f, category: '' }))
+                  } else {
+                    setForm((f) => ({ ...f, category: val }))
+                  }
+                }}
+                className="input-field"
+              >
+                <option value="">Select a category</option>
+                {WEDDING_CATEGORIES.map((c) => (
+                  <option key={c} value={c}>{c}</option>
+                ))}
+              </select>
+              {(!WEDDING_CATEGORIES.includes(form.category) || form.category === 'Other') && (
+                <input
+                  id="category"
+                  name="category"
+                  value={form.category}
+                  onChange={handleChange}
+                  required
+                  placeholder="Or enter custom category..."
+                  className="input-field"
+                />
+              )}
+            </div>
           </FormField>
           <div className="grid grid-cols-2 gap-4">
             <FormField label="Estimated cost (LKR)" htmlFor="estimatedCost">

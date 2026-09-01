@@ -1,7 +1,7 @@
 import { useState, useEffect } from 'react'
 import { useNavigate, Link } from 'react-router-dom'
 import { motion } from 'framer-motion'
-import { FaStore, FaArrowLeft } from 'react-icons/fa'
+import { FaStore, FaArrowLeft, FaImage, FaCheck } from 'react-icons/fa'
 import Logo from '../components/layout/Logo'
 import FormField from '../components/ui/FormField'
 import Select from '../components/ui/Select'
@@ -11,6 +11,59 @@ import { DISTRICTS } from '../constants/districts'
 
 const districts = [...DISTRICTS, 'Other']
 
+const PRESET_IMAGES = [
+  {
+    id: 'venue',
+    label: 'Grand Ballroom & Venue',
+    url: 'https://images.unsplash.com/photo-1519167758481-83f550bb49b3?q=80&w=1000&auto=format&fit=crop',
+  },
+  {
+    id: 'resort',
+    label: 'Luxury Scenic Resort',
+    url: 'https://images.unsplash.com/photo-1540555700478-4be289fbecef?q=80&w=1000&auto=format&fit=crop',
+  },
+  {
+    id: 'photo',
+    label: 'Candid Wedding Photography',
+    url: 'https://images.unsplash.com/photo-1537633552985-df8429e8048b?q=80&w=1000&auto=format&fit=crop',
+  },
+  {
+    id: 'couple',
+    label: 'Editorial Couple Portrait',
+    url: 'https://images.unsplash.com/photo-1606800052052-a08af7148866?q=80&w=1000&auto=format&fit=crop',
+  },
+  {
+    id: 'floral',
+    label: 'Luxury Flora & Poruwa Backdrops',
+    url: 'https://images.unsplash.com/photo-1526047932273-341f2a7631f9?q=80&w=1000&auto=format&fit=crop',
+  },
+  {
+    id: 'poruwa',
+    label: 'Traditional Poruwa & Rituals',
+    url: 'https://images.unsplash.com/photo-1465495976277-4387d4b0b4c6?q=80&w=1000&auto=format&fit=crop',
+  },
+  {
+    id: 'catering',
+    label: 'Gourmet Catering & Banquets',
+    url: 'https://images.unsplash.com/photo-1555244162-803834f70033?q=80&w=1000&auto=format&fit=crop',
+  },
+  {
+    id: 'beauty',
+    label: 'Bridal Beauty & Salon',
+    url: 'https://images.unsplash.com/photo-1487412720507-e7ab37603c6f?q=80&w=1000&auto=format&fit=crop',
+  },
+  {
+    id: 'music',
+    label: 'Live Wedding Band & Entertainment',
+    url: 'https://images.unsplash.com/photo-1516450360452-9312f5e86fc7?q=80&w=1000&auto=format&fit=crop',
+  },
+  {
+    id: 'car',
+    label: 'Classic Wedding Transport',
+    url: 'https://images.unsplash.com/photo-1503376780353-7e6692767b70?q=80&w=1000&auto=format&fit=crop',
+  },
+]
+
 const emptyForm = {
   businessName: '',
   categoryId: '',
@@ -18,9 +71,9 @@ const emptyForm = {
   contactPhone: '',
   contactEmail: '',
   startingPrice: '',
+  imageUrl: PRESET_IMAGES[0].url,
   description: '',
 }
-
 export default function VendorRegistration() {
   const navigate = useNavigate()
   const { showToast } = useToast()
@@ -128,10 +181,76 @@ export default function VendorRegistration() {
               <input id="startingPrice" name="startingPrice" type="number" min="0" value={form.startingPrice} onChange={handleChange} placeholder="150000" className="input-field" />
             </FormField>
 
+            {/* Real Image Profile Selection */}
+            <div className="space-y-3 pt-2">
+              <label className="text-sm font-medium text-charcoal/80 block">
+                Vendor Profile & Cover Image
+              </label>
+              
+              {/* Preview */}
+              {form.imageUrl && (
+                <div className="relative h-44 w-full rounded-lg overflow-hidden border border-blush-200 bg-charcoal/5 shadow-inner">
+                  <img
+                    src={form.imageUrl}
+                    alt="Profile Preview"
+                    className="h-full w-full object-cover"
+                    onError={(e) => { e.target.src = PRESET_IMAGES[0].url }}
+                  />
+                  <span className="absolute bottom-2 right-2 bg-charcoal/80 text-white text-xs px-2.5 py-1 rounded-md backdrop-blur-xs font-medium">
+                    Live Image Preview
+                  </span>
+                </div>
+              )}
+
+              {/* Preset Gallery Picker */}
+              <div>
+                <p className="text-xs text-charcoal/50 mb-2 font-medium">Choose a real curated wedding photo or enter your custom image link below:</p>
+                <div className="grid grid-cols-2 sm:grid-cols-5 gap-2">
+                  {PRESET_IMAGES.map((img) => {
+                    const selected = form.imageUrl === img.url
+                    return (
+                      <button
+                        type="button"
+                        key={img.id}
+                        onClick={() => setForm((f) => ({ ...f, imageUrl: img.url }))}
+                        className={`group relative rounded-md overflow-hidden border-2 transition-all text-left h-20 ${
+                          selected ? 'border-maroon-700 ring-2 ring-maroon-700/20' : 'border-transparent hover:border-charcoal/30 opacity-75 hover:opacity-100'
+                        }`}
+                      >
+                        <img src={img.url} alt={img.label} className="h-full w-full object-cover" />
+                        <div className="absolute inset-0 bg-gradient-to-t from-black/70 via-transparent to-transparent flex items-end p-1.5">
+                          <span className="text-[10px] text-white font-medium line-clamp-1 leading-tight">{img.label}</span>
+                        </div>
+                        {selected && (
+                          <span className="absolute top-1 right-1 h-4 w-4 rounded-full bg-maroon-700 text-white flex items-center justify-center shadow-xs">
+                            <FaCheck size={8} />
+                          </span>
+                        )}
+                      </button>
+                    )
+                  })}
+                </div>
+              </div>
+
+              {/* Custom Image URL Field */}
+              <FormField label="Or Custom Image URL" htmlFor="imageUrl">
+                <div className="relative">
+                  <FaImage className="absolute left-4 top-1/2 -translate-y-1/2 text-charcoal/30" size={13} />
+                  <input
+                    id="imageUrl"
+                    name="imageUrl"
+                    value={form.imageUrl}
+                    onChange={handleChange}
+                    placeholder="https://images.unsplash.com/..."
+                    className="input-field pl-11 text-xs"
+                  />
+                </div>
+              </FormField>
+            </div>
+
             <FormField label="Description" htmlFor="description">
               <textarea id="description" name="description" value={form.description} onChange={handleChange} rows={4} placeholder="Tell couples about your services, packages, and wedding portfolio..." className="input-field resize-none" />
             </FormField>
-
             <button type="submit" disabled={saving} className="btn-primary w-full shadow-md">
               {saving ? 'Submitting...' : 'List my business'}
             </button>
