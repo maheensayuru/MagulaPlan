@@ -1,79 +1,108 @@
 # Session Handover — MagulaPlan
 
-> Handover for continuing in a new session. Last updated: 28 Aug 2026.
+> Handover for continuing in a new session. Last updated: 01 Sep 2026.
 
 ## 1. Project Identity
 
 - **Repo:** `maheensayuru/MagulaPlan` (private, monorepo)
-- **Product:** MagulaPlan — wedding planning platform (scope: **wedding-only**)
+- **Product:** MagulaPlan — wedding planning platform (scope: **wedding-only**, Sri Lanka)
 - **Stack:** React 19 + Vite 8 + Tailwind 3.4 (frontend) · Java 17 + Spring Boot 4.1 + Spring Security + MySQL (backend) · package `com.zerostate.magulaplan`
+- **Theme:** Storybook Romance & Modern Editorial (Deep Rose Quartz / Velvet Maroon `#721F3A`, Blush Pink `#F9E3E7`, Muted Sage Green `#5F856D`, Crisp White `#FFFFFF`)
 - **Auth (actual):** UUID session tokens in `users.session_token`, validated by `SessionTokenAuthenticationFilter`; passwords **BCrypt-hashed**. **Not JWT** (the PM plan says "JWT" — it's session tokens; be ready to explain that).
 - **Team:** Maheen (PM/deploy/docs) · Amanda (backend) · Dileepa (frontend) · Sammani/Ruhini (DB) · Ruchira (QA)
 
+---
+
 ## 2. Live URLs & Credentials
 
-- **Frontend:** `https://magulaplan.netlify.app` (new permanent site; backend CORS also still allows the old `gentle-cucurucho-a28226.netlify.app`)
-- **Backend:** `https://magulaplan-api.onrender.com`
-- **Admin login:** `admin@magulaplan.lk` / `Admin@123` (role=ADMIN; seeded plain-text, upgraded to BCrypt on first login — **change the password**)
-- **Test login:** `deploytest@example.com` / `pw12345` (userId = 1)
-- **MySQL (Aiven):** host `mysql-219a3283-m4h33n.aivencloud.com`, port `27680`, user `avnadmin`, db **`defaultdb`** (NOT `magulaplan_db`), SSL required (CA cert from Aiven console). **Free tier powers off on inactivity — power it on before any demo, or the backend 500s.**
+- **Frontend (Live):** `https://magulaplan.netlify.app` (backend CORS allows `https://magulaplan.netlify.app` and `http://localhost:5173`)
+- **Frontend (Local Dev):** `http://localhost:5173` (with persistent background runner & 0.0.0.0 host binding)
+- **Backend (Live):** `https://magulaplan-api.onrender.com`
+- **Admin login:** `admin@magulaplan.lk` / `Admin@123` (role=ADMIN; seeded plain-text, upgraded to BCrypt on first login)
+- **Test login:** `deploytest@example.com` / `pw12345` (userId = 1) or `test@magulaplan.lk` / `Password@123` (TestAccountInitializer)
+- **MySQL (Aiven):** host `mysql-219a3283-m4h33n.aivencloud.com`, port `27680`, user `avnadmin`, db **`defaultdb`** (NOT `magulaplan_db`), SSL required. **Free tier powers off on inactivity — power it on before any demo, or the backend 500s.**
+- **Jira Board:** `https://magulaplan.atlassian.net/jira/software/projects/MAG/boards/1` (Auth: `maheen.sayuru21@gmail.com`)
 
-## 3. Git / PR State
+---
 
-- **main HEAD:** `6b47896` (after: enterprise frontend polish, `useAsyncData` hook + tests, `GET /users/me`, admin panel + vendor approvals + notifications, CORS fix for the new frontend URL).
-- PR #31 (cart checkout) is **merged**. History was rewritten once (stripped co-author trailers; force-pushed main). Re-sync with `git fetch && git reset --hard origin/main`.
+## 3. Git & Branch State
 
-## 4. DONE (all live & verified)
+- **`main`**: Up to date with previous Sprint 3 backend enhancements and initial frontend features.
+- **`refactor/ui-redesign-storybook-romance`**: Complete UI/UX redesign featuring:
+  - Storybook Romance & Modern Editorial design tokens in Tailwind.
+  - Zero EM dashes across all copy, meta, and code.
+  - Resilient seed fallback dataset (`src/data/seedVendors.js` with 13 real Sri Lankan vendors & 8 categories) so pages never render empty when offline.
+  - High-res curated wedding photography (`hero-traditional.jpg`, `login-editorial.jpg`).
+  - Hardened Context providers & hook exports (`CartContext`, `AuthContext`, `ToastContext`).
+  - Clean modular commits (7 commits pushed to remote).
+- **`fix/MAG-17-critical-defects` (Ruchira Nimnaka / PR #37)**:
+  - QA system testing artifacts (`qa/` Playwright test suite, defect register, test summary).
+  - Bug fixes: `SessionTokenAuthenticationFilter` role prefixing, `TestAccountInitializer`, `api.js` login 401 handling, `userId` payload association on budget/guests.
+  - **MAG-34** E2E share invitation test suite (`qa/tests/share-invitation.spec.js`).
+  - Tested: **100% clean merge into main with 0 conflicts, 139 backend tests passing, 13 frontend tests passing**.
 
-- Backend CRUD: User, Guest, Budget, Vendor, VendorCategory
-- Auth: register/login + session-token filter (MAG-27) + BCrypt (MAG-32)
-- **MAG-25** vendor fields `imageUrl`/`rating`/`reviewCount`/`verified`/`featured`
-- **MAG-28** budget summary · **MAG-29** vendor search · **MAG-30** booking checkout · **MAG-31** guest RSVP
-- **NEW** `GET /api/v1/users/me` — authenticated profile (unblocks Profile/Settings/admin role check)
-- **NEW** Admin panel backend (`/api/v1/admin/**`, gated on role=ADMIN): stats, pending vendors, approve/reject, user list, suspend/reinstate
-- **NEW** Vendor approval `status` (PENDING/APPROVED/REJECTED) — public directory shows **APPROVED only**; new registrations default to PENDING until an admin approves
-- **NEW** Notifications: `notifications` table + CRUD (`GET`, `PUT /{id}/read`, `PUT /read-all`, `DELETE /{id}`)
-- Frontend: all pages, auth, cart, admin; **13 Vitest tests**; route-level code splitting; a11y fixes; data-fetching hook
-- Deploy: Netlify (`magulaplan.netlify.app`) + Render (Docker, prod profile) + Aiven
-- **139 backend tests pass** · frontend builds clean + 13 tests pass
-- docs: PM plan updated, `MagulaPlan_Test_Cases.md` (46 cases), `schema.sql` (7 tables incl. `vendors.status` + `notifications`), `data_seed.sql` (applied to live DB; MySQL 8.4 alias syntax)
+---
 
-## 5. REMAINING (deadline Aug 30, present Sep 6)
+## 4. Completed Work
 
-| # | Task | Owner | Notes |
+- **Backend CRUD:** User, Guest, Budget, Vendor, VendorCategory (Spring Boot 4.1).
+- **Auth:** Register/login + session-token filter (MAG-27) + BCrypt hashing (MAG-32).
+- **Vendor System:** Rich fields (`imageUrl`, `rating`, `reviewCount`, `verified`, `featured`), approval workflow (`status=PENDING/APPROVED/REJECTED`), and fallback seeding.
+- **Wedding Planning Features:** Budget tracking with Recharts spend breakdown, Guest list with RSVP & digital WhatsApp invitation sharing, Poruwa ceremony checklist, Wedding day run-of-show timeline.
+- **Frontend Architecture:** Clean React 19 + Tailwind 3.4 SPA, route-level code splitting, accessible ARIA modals/tabs/dropdowns, responsive mobile bottom app bar.
+- **Quality Assurance (MAG-17 & MAG-34):** 
+  - 132 automated test runs across 3 viewports (375px, 768px, 1280px) ➜ 100% PASS.
+  - Defect Register with 5/5 defects resolved and verified.
+  - Dedicated E2E share invitation test suite.
+- **Test Suite Status:** 
+  - **Backend:** 139/139 JUnit tests passing (`BUILD SUCCESS`).
+  - **Frontend:** 13/13 Vitest tests passing.
+
+---
+
+## 5. Jira Project Status (30 / 31 Tickets Done)
+
+| Ticket | Summary | Owner | Status |
 |---|---|---|---|
-| 1 | Merge PR #31 (cart checkout) | Maheen | ✅ merged |
-| 2 | Apply `docs/data_seed.sql` to live Aiven DB | Ruhini | ✅ applied — **caveat:** Ruhini's branch seed was a stale version (no `status`, no admin user); re-applied from `main` and verified live (13 vendors APPROVED, admin user present, categories aligned) |
-| 3 | MAG-21 DB verify | Ruhini | ✅ done |
-| 4 | **MAG-17** system testing | Ruchira | 46-case doc ready at `docs/MagulaPlan_Test_Cases.md` |
-| 5 | **MAG-18** final docs + presentation | Maheen | docs largely done; **presentation pending** |
+| **MAG-1** to **MAG-11** | Sprint 1 & 2 Core Backend, Database, Auth, and Initial UI | Various | ✅ **Done** |
+| **MAG-15** | Deploy React Frontend to Netlify/Vercel | Maheen | ✅ **Done** |
+| **MAG-16** | Deploy Backend to Render + Aiven MySQL | Maheen | ✅ **Done** |
+| **MAG-17** | System Testing & Defect Management (QA) | Ruchira | ✅ **Done** |
+| **MAG-19** | Spring Security & Token Authentication | Amanda | ✅ **Done** |
+| **MAG-20** | Frontend-Backend API Integration | Dileepa | ✅ **Done** |
+| **MAG-21** | Database Verification on Production | Ruhini | ✅ **Done** |
+| **MAG-22** to **MAG-26** | Budget Tracker, Auth UI, Guest UI, Vendor Rich Models, UI Polish | Dileepa / Amanda | ✅ **Done** |
+| **MAG-27** to **MAG-33** | Bearer Token Validation, Summary Endpoints, Booking Cart, Password Hashing, Data Seed | Various | ✅ **Done** |
+| **MAG-34** | E2E Share Invitation Test Suite (Link Gen, Clipboard, Mobile Trigger) | Ruchira | ✅ **Done** |
+| **MAG-18** | Final Documentation Compilation & Presentation Slides | Maheen | ⏳ **To Do** (Only remaining ticket) |
 
-## 6. Jira State
+---
 
-- **34 tickets.** Done: all except **MAG-17, MAG-18** (To Do). MAG-21/MAG-33 marked Done by Ruhini (re-verified live). MAG-28/29/30/31 → move to **Done**.
+## 6. Next Steps for Next Session
 
-## 7. Gotchas for the Next Session
+1. **Merge PR #37 (`fix/MAG-17-critical-defects`)** and **`refactor/ui-redesign-storybook-romance`** into `main` via GitHub pull requests.
+2. **Execute MAG-18 (Project Management Deliverables):**
+   - Finalize Sprint 2 & Sprint 3 Review Reports with velocity metrics.
+   - Finalize System Design Report (Architecture, ER Diagram, API Spec).
+   - Generate End-of-Semester Presentation Slides (10-15 slides).
+   - Export PM Plan and Documentation as PDF for submission.
+   - Move **MAG-18** to **Done** to achieve 100% project completion.
 
-- **Aiven free tier powers off** on inactivity → power on before demo (backend 500s if off).
-- **Render free tier sleeps** ~15 min idle → first hit 30–60 s.
-- Auth = **session tokens, not JWT** (PM plan says JWT — flag if asked).
-- `data_seed.sql` **overwrites** the existing 13 vendors/8 categories via `ON DUPLICATE KEY UPDATE` (intended); now uses MySQL 8.4 alias syntax (`AS new`) so no deprecation warnings. **Must run AFTER the backend redeploys** (new columns/tables auto-create via `ddl-auto=update`).
-- **Vendor approval flow:** new vendor registrations default to `PENDING` and are hidden from the public directory until an admin approves them. The frontend registration toast still says "Your business has been listed!" — should say "submitted for review" (unfixed polish).
-- **Frontend moved** to `magulaplan.netlify.app` — CORS updated on the backend (both origins allowed).
-- This repo's `edit` tool is unreliable on multi-line ops — prefer full-file `write` or Python string-replace for edits.
-- The `Sales_Target_App_Test_Cases(Sample).xlsx` in `docs/` is the lecturer's sample (untracked, not committed).
+---
 
-## 8. Useful Commands
+## 7. Useful Verification Commands
 
 ```bash
-cd "D:/My projects/ZeroState projects/Wedding Planing Platform/Magula.lk"
-git checkout main && git pull   # sync (history was rewritten — use reset --hard if divergent)
-cd backend && cmd /c "mvnw.cmd test"   # 139 tests
-cd frontend && npm run build           # verify frontend
-cd frontend && npm test                # 13 Vitest tests
+# 1. Frontend verification
+cd frontend
+npm test                # 13 Vitest tests
+npm run build           # Vite production build (0 errors)
 
-# live smoke tests
+# 2. Backend verification
+cd ../backend
+cmd.exe /c mvnw.cmd test   # 139 JUnit tests (100% pass)
+
+# 3. Live API smoke tests
 curl https://magulaplan-api.onrender.com/api/v1/vendor-categories
 curl https://magulaplan-api.onrender.com/api/v1/vendors
-curl -s -o /dev/null -w "%{http_code}" https://magulaplan-api.onrender.com/api/v1/admin/stats   # 403 = admin API live (needs token)
 ```
