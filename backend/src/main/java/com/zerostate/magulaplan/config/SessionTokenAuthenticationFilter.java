@@ -44,11 +44,12 @@ public class SessionTokenAuthenticationFilter extends OncePerRequestFilter {
                     .filter(user -> Boolean.TRUE.equals(user.getIsActive()))
                     .ifPresent(user -> {
                         String role = user.getRole() != null ? user.getRole() : "USER";
+                        String authority = role.startsWith("ROLE_") ? role : "ROLE_" + role;
                         UsernamePasswordAuthenticationToken authentication =
                                 new UsernamePasswordAuthenticationToken(
                                         user.getUserId(),
                                         null,
-                                        List.of(new SimpleGrantedAuthority("ROLE_" + role)));
+                                        List.of(new SimpleGrantedAuthority(authority)));
                         authentication.setDetails(new WebAuthenticationDetailsSource().buildDetails(request));
                         SecurityContextHolder.getContext().setAuthentication(authentication);
                     });

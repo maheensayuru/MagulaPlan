@@ -43,7 +43,7 @@ export async function apiFetch(path, { method = 'GET', body } = {}) {
     body: body ? JSON.stringify(body) : undefined,
   })
 
-  if (response.status === 401) {
+  if (response.status === 401 && path !== '/api/v1/auth/login') {
     clearToken()
     if (window.location.pathname !== '/login') {
       window.location.href = '/login'
@@ -82,8 +82,8 @@ export const authApi = {
 // Guests
 export const guestsApi = {
   list: () => apiFetch('/api/v1/guests'),
-  create: (payload) => apiFetch('/api/v1/guests', { method: 'POST', body: payload }),
-  update: (id, payload) => apiFetch(`/api/v1/guests/${id}`, { method: 'PUT', body: payload }),
+  create: (payload) => apiFetch('/api/v1/guests', { method: 'POST', body: { userId: payload?.userId || getUserId(), ...payload } }),
+  update: (id, payload) => apiFetch(`/api/v1/guests/${id}`, { method: 'PUT', body: { userId: payload?.userId || getUserId(), ...payload } }),
   remove: (id) => apiFetch(`/api/v1/guests/${id}`, { method: 'DELETE' }),
   share: (id) => apiFetch(`/api/v1/guests/${id}/share`),
 }
@@ -91,9 +91,9 @@ export const guestsApi = {
 // Budget items
 export const budgetApi = {
   list: () => apiFetch('/api/v1/budget-items'),
-  listByUser: (userId) => apiFetch(`/api/v1/budget-items/user/${userId}`),
-  create: (payload) => apiFetch('/api/v1/budget-items', { method: 'POST', body: payload }),
-  update: (id, payload) => apiFetch(`/api/v1/budget-items/${id}`, { method: 'PUT', body: payload }),
+  listByUser: (userId) => apiFetch(`/api/v1/budget-items/user/${userId || getUserId()}`),
+  create: (payload) => apiFetch('/api/v1/budget-items', { method: 'POST', body: { userId: payload?.userId || getUserId(), ...payload } }),
+  update: (id, payload) => apiFetch(`/api/v1/budget-items/${id}`, { method: 'PUT', body: { userId: payload?.userId || getUserId(), ...payload } }),
   remove: (id) => apiFetch(`/api/v1/budget-items/${id}`, { method: 'DELETE' }),
 }
 
