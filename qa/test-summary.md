@@ -36,6 +36,8 @@
   - Page heading, Add Item button, modal open, add budget item with all fields, summary totals calculation (Estimated, Actual, Remaining), row-scoped delete item with confirmation, row-scoped edit item, status options (Planned, Deposit Paid, Fully Paid), mobile & tablet responsive layout check.
 - **Module 4: Guest List** (12 test cases): **36 / 36 Passed**
   - Page heading, Add Guest button, modal open, add guest with all fields, row-scoped edit guest, row-scoped delete guest, search input presence, RSVP filter tabs (All, Attending, Pending, Declined), share invitation button, stat cards display, mobile & tablet responsive layout check.
+- **MAG-34: Share Invitation E2E Suite** (4 test cases): **12 / 12 Passed**
+  - Share invitation button rendering, clipboard link copying with visual feedback ("Copied"), invitation URL payload verification, and responsive mobile share sheet trigger.
 
 ---
 
@@ -70,3 +72,4 @@
   - [`qa/tests/vendors.spec.js`](file:///c:/Users/Nimna/Desktop/MagulaPlan%20Project/MagulaPlan/qa/tests/vendors.spec.js)
   - [`qa/tests/budget.spec.js`](file:///c:/Users/Nimna/Desktop/MagulaPlan%20Project/MagulaPlan/qa/tests/budget.spec.js)
   - [`qa/tests/guests.spec.js`](file:///c:/Users/Nimna/Desktop/MagulaPlan%20Project/MagulaPlan/qa/tests/guests.spec.js)
+  - [`qa/tests/share-invitation.spec.js`](file:///c:/Users/Nimna/Desktop/MagulaPlan%20Project/MagulaPlan/qa/tests/share-invitation.spec.js)
