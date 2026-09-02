@@ -23,9 +23,15 @@ export default function Login() {
     e.preventDefault()
     setLoading(true)
     try {
-      await login(email, password, remember)
+      const data = await login(email.trim(), password, remember)
       showToast('Welcome back!', 'success')
-      navigate('/dashboard')
+      if (data?.role === 'ADMIN') {
+        navigate('/admin')
+      } else if (data?.role === 'VENDOR') {
+        navigate('/vendor/dashboard')
+      } else {
+        navigate('/dashboard')
+      }
     } catch (err) {
       showToast(err.message || 'Login failed', 'error')
     } finally {

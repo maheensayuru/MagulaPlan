@@ -30,11 +30,11 @@ public class AuthController {
     // POST /api/v1/auth/register
     @PostMapping("/register")
     public ResponseEntity<?> register(@RequestBody UserRequestDto dto) {
-        if (userRepository.findByEmail(dto.getEmail()).isPresent()) {
+        String cleanEmail = dto.getEmail() != null ? dto.getEmail().trim() : "";
+        if (userRepository.findByEmailIgnoreCase(cleanEmail).isPresent()) {
             return ResponseEntity.status(HttpStatus.CONFLICT)
                     .body(Map.of("message", "An account with this email already exists."));
         }
-
         String token = UUID.randomUUID().toString();
 
         User user = User.builder()
@@ -61,11 +61,20 @@ public class AuthController {
     // POST /api/v1/auth/login
     @PostMapping("/login")
     public ResponseEntity<?> login(@RequestBody Map<String, String> body) {
-        String email = body.get("email");
-        String password = body.get("password");
+        String email = body != null ? body.get("email") : null;
+        String password = body != null ? body.get("password") : null;
 
-        return userRepository.findByEmail(email)
-                .filter(u -> password != null && credentialsMatch(password, u))
+        if (email == null || email.isBlank() || password == null) {
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED)
+                    .body(new AuthResponseDto());
+        }
+
+        String trimmedEmail = email.trim();
+
+        return userRepository.findByEmailIgnoreCase(trimmedEmail)
+                .or(() -> userRepository.findByEmail(trimmedEmail))
+                .filter(u -> Boolean.TRUE.equals(u.getIsActive()))
+                .filter(u -> credentialsMatch(password, u))
                 .map(u -> {
                     // Upgrade legacy plain-text passwords to BCrypt on successful login
                     if (isLegacyPlainText(u)) {
