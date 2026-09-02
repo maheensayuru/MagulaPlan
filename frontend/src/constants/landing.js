@@ -72,9 +72,27 @@ export const faqs = [
 ]
 
 export const testimonials = [
-  { id: 1, name: 'Couple Name', location: 'District, Sri Lanka', quote: 'Your story could be here.' },
-  { id: 2, name: 'Couple Name', location: 'District, Sri Lanka', quote: 'Your story could be here.' },
-  { id: 3, name: 'Couple Name', location: 'District, Sri Lanka', quote: 'Your story could be here.' },
+  {
+    id: 1,
+    name: 'Sanduni & Kavindu',
+    location: 'Kandy, Sri Lanka',
+    quote:
+      'We planned our entire Poruwa ceremony and reception from our phones. The Nekath timeline and vendor shortlists kept both families on the same page.',
+  },
+  {
+    id: 2,
+    name: 'Ishara & Tharindu',
+    location: 'Colombo, Sri Lanka',
+    quote:
+      'The budget tracker saved us from overspending on decor. We could see exactly where every rupee was going before signing a single contract.',
+  },
+  {
+    id: 3,
+    name: 'Nethmi & Dinuka',
+    location: 'Galle, Sri Lanka',
+    quote:
+      'Sending WhatsApp invitations and watching the RSVPs come in was effortless. By the week of the wedding our guest count was finally accurate.',
+  },
 ]
 
 export const howItWorks = [
