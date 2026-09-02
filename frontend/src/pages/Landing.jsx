@@ -27,6 +27,7 @@ export default function Landing() {
   const [vendorCount, setVendorCount] = useState(null)
   const [categories, setCategories] = useState([])
   const [vendors, setVendors] = useState([])
+  const [videoError, setVideoError] = useState(false)
 
   useEffect(() => {
     let cancelled = false
@@ -40,7 +41,6 @@ export default function Landing() {
     }).catch(() => {})
     return () => { cancelled = true }
   }, [])
-
   const featuredVendors = useMemo(() => {
     const source = vendors.length ? vendors : SEED_VENDORS
     const featured = source.filter((v) => v.featured)
@@ -54,23 +54,31 @@ export default function Landing() {
           wins on mobile browsers so the hero matches the *visible* area instead
           of sitting under the address bar. min-h (not h) lets it grow if the
           copy ever needs more room, so the CTAs never get clipped. */}
-      <section className="relative overflow-hidden min-h-screen min-h-svh flex items-center">
-        {/* Full-screen looping video background. Poster shows instantly while the
-            video streams in; the dark scrims below keep the headline readable
-            and let the navbar float on top. object-cover keeps it filling the
-            frame at every aspect ratio, from tall phones to wide desktops. */}
-        <video
-          autoPlay
-          loop
-          muted
-          playsInline
-          preload="auto"
-          poster={heroWedding}
-          aria-hidden="true"
+      <section className="relative overflow-hidden min-h-screen min-h-svh flex items-center bg-charcoal">
+        {/* Fallback & instant poster background image */}
+        <img
+          src={heroWedding}
+          alt="Traditional Sri Lankan Wedding Celebration"
           className="absolute inset-0 h-full w-full object-cover"
-        >
-          <source src={heroVideo} type="video/mp4" />
-        </video>
+          loading="eager"
+        />
+
+        {/* Full-screen looping video overlay when supported by host */}
+        {!videoError && (
+          <video
+            autoPlay
+            loop
+            muted
+            playsInline
+            preload="metadata"
+            poster={heroWedding}
+            onError={() => setVideoError(true)}
+            aria-hidden="true"
+            className="absolute inset-0 h-full w-full object-cover transition-opacity duration-1000"
+          >
+            <source src={heroVideo} type="video/mp4" />
+          </video>
+        )}
 
         {/* Readability scrims. A flat wash guarantees contrast on narrow screens
             where the copy spans most of the width; the left-weighted gradient
