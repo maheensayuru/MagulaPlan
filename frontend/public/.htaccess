@@ -1,0 +1,43 @@
+# ==============================================================================
+# MagulaPlan — Apache Configuration for InfinityFree / Shared Hosting
+# ==============================================================================
+
+# 1. Force Correct MIME Types for ES Modules & Modern Assets
+<IfModule mod_mime.c>
+    AddType application/javascript .js .mjs
+    AddType text/javascript .js .mjs
+    AddType text/css .css
+    AddType image/svg+xml .svg
+    AddType image/webp .webp
+    AddType font/woff .woff
+    AddType font/woff2 .woff2
+</IfModule>
+
+# 2. Disable MultiViews to avoid wrong content negotiation
+Options -MultiViews
+
+# 3. SPA Routing & Asset Bypass Rules
+<IfModule mod_rewrite.c>
+    RewriteEngine On
+    RewriteBase /
+
+    # Never rewrite existing files or directories
+    RewriteCond %{REQUEST_FILENAME} -f [OR]
+    RewriteCond %{REQUEST_FILENAME} -d
+    RewriteRule ^ - [L]
+
+    # Never rewrite static assets (JS, CSS, Images, Fonts) to index.html
+    RewriteCond %{REQUEST_URI} \.(js|mjs|css|png|jpg|jpeg|gif|svg|webp|ico|woff|woff2|ttf|eot)$ [NC]
+    RewriteRule ^ - [L]
+
+    # Route all other frontend URLs to index.html
+    RewriteRule ^ index.html [L]
+</IfModule>
+
+# 4. Caching & Security Headers
+<IfModule mod_headers.c>
+    # Allow cross-origin requests for static assets
+    <FilesMatch "\.(js|mjs|css|png|jpg|jpeg|gif|svg|webp|woff|woff2)$">
+        Header set Access-Control-Allow-Origin "*"
+    </FilesMatch>
+</IfModule>
