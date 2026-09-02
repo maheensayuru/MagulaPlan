@@ -1,5 +1,10 @@
 import { SEED_VENDORS, SEED_CATEGORIES } from '../data/seedVendors'
-const BASE_URL = (typeof import.meta !== 'undefined' && import.meta.env?.VITE_API_URL) || 'http://localhost:8080'
+const isLocalhost = typeof window !== 'undefined' && (window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1')
+const DEFAULT_REMOTE_API = 'https://magulaplan-api.onrender.com'
+const ENV_URL = typeof import.meta !== 'undefined' && import.meta.env?.VITE_API_URL
+const BASE_URL = ENV_URL && (isLocalhost || !ENV_URL.includes('localhost'))
+  ? ENV_URL
+  : (isLocalhost ? 'http://localhost:8080' : DEFAULT_REMOTE_API)
 const TOKEN_KEY = 'magulaplan_token'
 
 // "Remember me" controls which storage the token lives in: localStorage
@@ -138,8 +143,10 @@ export const vendorsApi = {
   },
   create: (payload) => apiFetch('/api/v1/vendors', { method: 'POST', body: payload }),
   register: (payload) => apiFetch('/api/v1/vendors', { method: 'POST', body: payload }),
+  me: () => apiFetch('/api/v1/vendors/me'),
+  update: (id, payload) => apiFetch(`/api/v1/vendors/${id}`, { method: 'PUT', body: payload }),
+  bookings: (vendorId) => apiFetch(`/api/v1/bookings/vendor/${vendorId}`),
 }
-
 // Vendor categories
 export const categoriesApi = {
   list: async () => {

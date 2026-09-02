@@ -24,6 +24,17 @@ public class Vendor {
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "category_id", nullable = false)
     private VendorCategory category;
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "user_id")
+    private User user;
+
+    @Builder.Default
+    @Column(name = "subscription_tier", length = 30)
+    private String subscriptionTier = "FREE";
+
+    @Builder.Default
+    @Column(name = "payment_status", length = 30)
+    private String paymentStatus = "PAID";
 
     @Column(name = "business_name", length = 150, nullable = false)
     private String businessName;

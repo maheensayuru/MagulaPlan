@@ -23,6 +23,7 @@ const Dashboard = lazy(() => import('./pages/Dashboard'))
 const VendorDirectory = lazy(() => import('./pages/VendorDirectory'))
 const VendorDetails = lazy(() => import('./pages/VendorDetails'))
 const VendorRegistration = lazy(() => import('./pages/VendorRegistration'))
+const VendorDashboard = lazy(() => import('./pages/VendorDashboard'))
 const GuestList = lazy(() => import('./pages/GuestList'))
 const BudgetTracker = lazy(() => import('./pages/BudgetTracker'))
 const Profile = lazy(() => import('./pages/Profile'))
@@ -58,6 +59,7 @@ function App() {
                   <Route path="/register" element={<PageTransition><Register /></PageTransition>} />
                   <Route path="/vendors/new" element={<PageTransition><VendorRegistration /></PageTransition>} />
 
+                  <Route path="/vendor/dashboard" element={<PageTransition><ProtectedRoute><VendorDashboard /></ProtectedRoute></PageTransition>} />
                   <Route element={<DashboardLayout />}>
                     <Route path="/dashboard" element={<PageTransition><ProtectedRoute><Dashboard /></ProtectedRoute></PageTransition>} />
                     <Route path="/vendors" element={<PageTransition><VendorDirectory /></PageTransition>} />

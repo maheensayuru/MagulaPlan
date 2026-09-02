@@ -33,6 +33,7 @@ CREATE TABLE IF NOT EXISTS vendor_categories (
 CREATE TABLE IF NOT EXISTS vendors (
     vendor_id BIGINT AUTO_INCREMENT PRIMARY KEY,
     category_id BIGINT NOT NULL,
+    user_id BIGINT DEFAULT NULL,
     business_name VARCHAR(150) NOT NULL,
     description TEXT DEFAULT NULL,
     district_location VARCHAR(100) NOT NULL,
@@ -44,8 +45,11 @@ CREATE TABLE IF NOT EXISTS vendors (
     review_count INT DEFAULT 0,
     verified BOOLEAN DEFAULT FALSE,
     featured BOOLEAN DEFAULT FALSE,
+    subscription_tier VARCHAR(30) DEFAULT 'FREE',
+    payment_status VARCHAR(30) DEFAULT 'PAID',
     status VARCHAR(20) DEFAULT 'PENDING',
-    FOREIGN KEY (category_id) REFERENCES vendor_categories(category_id) ON DELETE CASCADE
+    FOREIGN KEY (category_id) REFERENCES vendor_categories(category_id) ON DELETE CASCADE,
+    FOREIGN KEY (user_id) REFERENCES users(user_id) ON DELETE SET NULL
 );
 
 -- 4. Budget Items Table (Budget Tracker)

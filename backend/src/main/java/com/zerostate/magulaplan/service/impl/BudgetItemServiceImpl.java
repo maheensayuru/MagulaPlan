@@ -10,6 +10,9 @@ import com.zerostate.magulaplan.repo.BudgetItemRepository;
 import com.zerostate.magulaplan.repo.UserRepository;
 import com.zerostate.magulaplan.service.BudgetItemService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.access.AccessDeniedException;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 
 import java.math.BigDecimal;
@@ -32,18 +35,20 @@ public class BudgetItemServiceImpl implements BudgetItemService {
     @Override
     public BudgetItemResponseDto saveBudgetItem(BudgetItemRequestDto budgetItemRequestDto) {
         Long targetUserId = budgetItemRequestDto.getUserId();
-        if (targetUserId == null) {
-            org.springframework.security.core.Authentication auth = org.springframework.security.core.context.SecurityContextHolder.getContext().getAuthentication();
-            if (auth != null && auth.getPrincipal() instanceof Long authId) {
+        Authentication auth = SecurityContextHolder.getContext().getAuthentication();
+        if (auth != null && auth.getPrincipal() instanceof Long authId) {
+            boolean isAdmin = auth.getAuthorities().stream().anyMatch(a -> a.getAuthority().equals("ROLE_ADMIN"));
+            if (!isAdmin || targetUserId == null) {
                 targetUserId = authId;
             }
         }
 
         User user;
         if (targetUserId != null) {
+            final Long uid = targetUserId;
             user = userRepository.findById(targetUserId)
                     .orElseGet(() -> userRepository.findAll().stream().findFirst()
-                            .orElseThrow(() -> new ResourceNotFoundException("User not found with ID: " + budgetItemRequestDto.getUserId())));
+                            .orElseThrow(() -> new ResourceNotFoundException("User not found with ID: " + uid)));
         } else {
             user = userRepository.findAll().stream().findFirst()
                     .orElseThrow(() -> new ResourceNotFoundException("No users found in database to associate budget item."));
@@ -52,9 +57,9 @@ public class BudgetItemServiceImpl implements BudgetItemService {
         BudgetItem budgetItem = BudgetItem.builder()
                 .itemName(budgetItemRequestDto.getItemName())
                 .category(budgetItemRequestDto.getCategory())
-                .estimatedCost(budgetItemRequestDto.getEstimatedCost() != null ? budgetItemRequestDto.getEstimatedCost() : java.math.BigDecimal.ZERO)
-                .actualCost(budgetItemRequestDto.getActualCost() != null ? budgetItemRequestDto.getActualCost() : java.math.BigDecimal.ZERO)
-                .depositPaid(budgetItemRequestDto.getDepositPaid() != null ? budgetItemRequestDto.getDepositPaid() : java.math.BigDecimal.ZERO)
+                .estimatedCost(budgetItemRequestDto.getEstimatedCost() != null ? budgetItemRequestDto.getEstimatedCost() : BigDecimal.ZERO)
+                .actualCost(budgetItemRequestDto.getActualCost() != null ? budgetItemRequestDto.getActualCost() : BigDecimal.ZERO)
+                .depositPaid(budgetItemRequestDto.getDepositPaid() != null ? budgetItemRequestDto.getDepositPaid() : BigDecimal.ZERO)
                 .status(budgetItemRequestDto.getStatus() != null && !budgetItemRequestDto.getStatus().isEmpty() ? budgetItemRequestDto.getStatus() : "Planned")
                 .user(user)
                 .build();
@@ -64,11 +69,21 @@ public class BudgetItemServiceImpl implements BudgetItemService {
 
     @Override
     public List<BudgetItemResponseDto> getAllBudgetItems() {
+        Authentication auth = SecurityContextHolder.getContext().getAuthentication();
+        if (auth != null && auth.getPrincipal() instanceof Long authId) {
+            boolean isAdmin = auth.getAuthorities().stream().anyMatch(a -> a.getAuthority().equals("ROLE_ADMIN"));
+            if (!isAdmin) {
+                return budgetItemRepository.findByUser_UserId(authId).stream()
+                        .map(this::mapToResponseDto)
+                        .collect(Collectors.toList());
+            }
+        }
         return budgetItemRepository.findAll().stream().map(this::mapToResponseDto).collect(Collectors.toList());
     }
 
     @Override
     public List<BudgetItemResponseDto> getBudgetItemsByUserId(Long userId) {
+        checkAccessToUserData(userId);
         return budgetItemRepository.findByUser_UserId(userId).stream()
                 .map(this::mapToResponseDto)
                 .collect(Collectors.toList());
@@ -78,8 +93,7 @@ public class BudgetItemServiceImpl implements BudgetItemService {
     public BudgetItemResponseDto getBudgetItemById(Long budgetItemId) {
         BudgetItem budgetItem = budgetItemRepository.findById(budgetItemId)
                 .orElseThrow(() -> new ResourceNotFoundException("Budget Item not found with ID: " + budgetItemId));
-
-
+        checkItemOwnership(budgetItem);
         return mapToResponseDto(budgetItem);
     }
 
@@ -87,6 +101,7 @@ public class BudgetItemServiceImpl implements BudgetItemService {
     public BudgetItemResponseDto updateBudgetItem(Long budgetItemId, BudgetItemRequestDto budgetItemRequestDto) {
         BudgetItem existingBudgetItem = budgetItemRepository.findById(budgetItemId)
                 .orElseThrow(() -> new ResourceNotFoundException("Budget Item not found with ID: " + budgetItemId));
+        checkItemOwnership(existingBudgetItem);
 
         existingBudgetItem.setItemName(budgetItemRequestDto.getItemName());
         existingBudgetItem.setCategory(budgetItemRequestDto.getCategory());
@@ -104,11 +119,20 @@ public class BudgetItemServiceImpl implements BudgetItemService {
 
     @Override
     public void deleteBudgetItem(Long budgetItemId) {
-        budgetItemRepository.deleteById(budgetItemId);
+        Authentication auth = SecurityContextHolder.getContext().getAuthentication();
+        if (auth != null && auth.getPrincipal() instanceof Long) {
+            BudgetItem existingBudgetItem = budgetItemRepository.findById(budgetItemId)
+                    .orElseThrow(() -> new ResourceNotFoundException("Budget Item not found with ID: " + budgetItemId));
+            checkItemOwnership(existingBudgetItem);
+            budgetItemRepository.delete(existingBudgetItem);
+        } else {
+            budgetItemRepository.deleteById(budgetItemId);
+        }
     }
 
     @Override
     public BudgetSummaryResponseDto getBudgetSummary(Long userId) {
+        checkAccessToUserData(userId);
         List<BudgetItem> items = budgetItemRepository.findByUser_UserId(userId);
 
         BigDecimal totalEstimated = sum(items.stream().map(BudgetItem::getEstimatedCost));
@@ -119,19 +143,42 @@ public class BudgetItemServiceImpl implements BudgetItemService {
         return new BudgetSummaryResponseDto(totalEstimated, totalActual, totalDepositPaid, remaining);
     }
 
+    private void checkItemOwnership(BudgetItem item) {
+        Authentication auth = SecurityContextHolder.getContext().getAuthentication();
+        if (auth != null && auth.getPrincipal() instanceof Long authId) {
+            boolean isAdmin = auth.getAuthorities().stream().anyMatch(a -> a.getAuthority().equals("ROLE_ADMIN"));
+            if (!isAdmin && item.getUser() != null && !item.getUser().getUserId().equals(authId)) {
+                throw new AccessDeniedException("You are not authorized to access this budget item.");
+            }
+        }
+    }
+
+    private void checkAccessToUserData(Long targetUserId) {
+        Authentication auth = SecurityContextHolder.getContext().getAuthentication();
+        if (auth != null && auth.getPrincipal() instanceof Long authId) {
+            boolean isAdmin = auth.getAuthorities().stream().anyMatch(a -> a.getAuthority().equals("ROLE_ADMIN"));
+            if (!isAdmin && !authId.equals(targetUserId)) {
+                throw new AccessDeniedException("You are not authorized to view this user's budget data.");
+            }
+        }
+    }
+
     private BigDecimal sum(java.util.stream.Stream<BigDecimal> values) {
         return values.filter(Objects::nonNull).reduce(BigDecimal.ZERO, BigDecimal::add);
     }
 
     private BudgetItemResponseDto mapToResponseDto(BudgetItem budgetItem) {
-        return new BudgetItemResponseDto(
-                budgetItem.getBudgetItemId(),
-                budgetItem.getItemName(),
-                budgetItem.getCategory(),
-                budgetItem.getEstimatedCost(),
-                budgetItem.getActualCost(),
-                budgetItem.getDepositPaid(),
-                budgetItem.getStatus()
-        );
+        BudgetItemResponseDto responseDto = new BudgetItemResponseDto();
+        responseDto.setBudgetItemId(budgetItem.getBudgetItemId());
+        responseDto.setItemName(budgetItem.getItemName());
+        responseDto.setCategory(budgetItem.getCategory());
+        responseDto.setEstimatedCost(budgetItem.getEstimatedCost());
+        responseDto.setActualCost(budgetItem.getActualCost());
+        responseDto.setDepositPaid(budgetItem.getDepositPaid());
+        responseDto.setStatus(budgetItem.getStatus());
+        if (budgetItem.getUser() != null) {
+            responseDto.setUserId(budgetItem.getUser().getUserId());
+        }
+        return responseDto;
     }
 }

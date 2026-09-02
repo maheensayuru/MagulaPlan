@@ -8,4 +8,5 @@ import java.util.List;
 public interface BookingService {
     List<BookingResponseDto> checkout(BookingCheckoutRequestDto requestDto);
     List<BookingResponseDto> getBookingsByUserId(Long userId);
+    List<BookingResponseDto> getBookingsByVendorId(Long vendorId);
 }

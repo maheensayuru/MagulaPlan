@@ -7,6 +7,7 @@ import { useCart } from '../../context/CartContext'
 
 const links = [
   { href: '/vendors', label: 'Vendors', isRoute: true },
+  { href: '/vendors/new', label: 'List Business', isRoute: true },
   { href: '#features', label: 'Features' },
   { href: '#testimonials', label: 'Stories' },
 ]
