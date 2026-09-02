@@ -10,6 +10,9 @@ import com.zerostate.magulaplan.repo.GuestRepository;
 import com.zerostate.magulaplan.repo.UserRepository;
 import com.zerostate.magulaplan.service.GuestService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.access.AccessDeniedException;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -31,18 +34,20 @@ public class GuestServiceImpl implements GuestService {
     @Override
     public GuestResponseDto saveGuest(GuestRequestDto guestRequestDto) {
         Long targetUserId = guestRequestDto.getUserId();
-        if (targetUserId == null) {
-            org.springframework.security.core.Authentication auth = org.springframework.security.core.context.SecurityContextHolder.getContext().getAuthentication();
-            if (auth != null && auth.getPrincipal() instanceof Long authId) {
+        Authentication auth = SecurityContextHolder.getContext().getAuthentication();
+        if (auth != null && auth.getPrincipal() instanceof Long authId) {
+            boolean isAdmin = auth.getAuthorities().stream().anyMatch(a -> a.getAuthority().equals("ROLE_ADMIN"));
+            if (!isAdmin || targetUserId == null) {
                 targetUserId = authId;
             }
         }
-        
+
         User user;
         if (targetUserId != null) {
+            final Long uid = targetUserId;
             user = userRepository.findById(targetUserId)
                     .orElseGet(() -> userRepository.findAll().stream().findFirst()
-                            .orElseThrow(() -> new ResourceNotFoundException("User Not Found with ID: " + guestRequestDto.getUserId())));
+                            .orElseThrow(() -> new ResourceNotFoundException("User Not Found with ID: " + uid)));
         } else {
             user = userRepository.findAll().stream().findFirst()
                     .orElseThrow(() -> new ResourceNotFoundException("No users found in database to associate guest."));
@@ -64,21 +69,31 @@ public class GuestServiceImpl implements GuestService {
 
     @Override
     public List<GuestResponseDto> getAllGuests() {
-
+        Authentication auth = SecurityContextHolder.getContext().getAuthentication();
+        if (auth != null && auth.getPrincipal() instanceof Long authId) {
+            boolean isAdmin = auth.getAuthorities().stream().anyMatch(a -> a.getAuthority().equals("ROLE_ADMIN"));
+            if (!isAdmin) {
+                return guestRepository.findByUser_UserId(authId).stream()
+                        .map(this::mapToResponseDto)
+                        .collect(Collectors.toList());
+            }
+        }
         return guestRepository.findAll().stream().map(this::mapToResponseDto).collect(Collectors.toList());
     }
 
     @Override
     public GuestResponseDto getGuestById(UUID guestId) {
-
         Guest guest = guestRepository.findById(guestId)
                 .orElseThrow(() -> new ResourceNotFoundException("Guest Not Found with ID: " + guestId));
+        checkGuestOwnership(guest);
         return mapToResponseDto(guest);
     }
 
     @Override
     public GuestResponseDto updateGuest(UUID guestId, GuestRequestDto guestRequestDto) {
-        Guest existingGuest = guestRepository.findById(guestId).orElseThrow(() -> new ResourceNotFoundException("Guest Not Found with ID: " + guestId));
+        Guest existingGuest = guestRepository.findById(guestId)
+                .orElseThrow(() -> new ResourceNotFoundException("Guest Not Found with ID: " + guestId));
+        checkGuestOwnership(existingGuest);
 
         existingGuest.setGuestName(guestRequestDto.getGuestName());
         existingGuest.setContactNumber(guestRequestDto.getContactNumber());
@@ -94,7 +109,15 @@ public class GuestServiceImpl implements GuestService {
 
     @Override
     public void deleteGuest(UUID guestId) {
-        guestRepository.deleteById(guestId);
+        Authentication auth = SecurityContextHolder.getContext().getAuthentication();
+        if (auth != null && auth.getPrincipal() instanceof Long) {
+            Guest existingGuest = guestRepository.findById(guestId)
+                    .orElseThrow(() -> new ResourceNotFoundException("Guest Not Found with ID: " + guestId));
+            checkGuestOwnership(existingGuest);
+            guestRepository.delete(existingGuest);
+        } else {
+            guestRepository.deleteById(guestId);
+        }
     }
 
     @Override
@@ -103,7 +126,7 @@ public class GuestServiceImpl implements GuestService {
                 .orElseThrow(() -> new ResourceNotFoundException("Guest Not Found with ID: " + guestId));
 
         String rsvpUrl = "https://magulaplan.com/rsvp/" + guest.getGuestId();
-        String coupleName = guest.getUser().getFullName() != null
+        String coupleName = (guest.getUser() != null && guest.getUser().getFullName() != null)
                 ? guest.getUser().getFullName()
                 : "Us";
         String message = "You're invited! " + coupleName
@@ -123,22 +146,37 @@ public class GuestServiceImpl implements GuestService {
 
     @Override
     public GuestResponseDto updateRsvpStatus(UUID guestId, String rsvpStatus) {
-        Guest guest = guestRepository.findById(guestId)
+        Guest existingGuest = guestRepository.findById(guestId)
                 .orElseThrow(() -> new ResourceNotFoundException("Guest Not Found with ID: " + guestId));
 
-        guest.setRsvpStatus(rsvpStatus);
-        return mapToResponseDto(guestRepository.save(guest));
+        existingGuest.setRsvpStatus(rsvpStatus);
+        Guest updatedGuest = guestRepository.save(existingGuest);
+        return mapToResponseDto(updatedGuest);
+    }
+
+    private void checkGuestOwnership(Guest guest) {
+        Authentication auth = SecurityContextHolder.getContext().getAuthentication();
+        if (auth != null && auth.getPrincipal() instanceof Long authId) {
+            boolean isAdmin = auth.getAuthorities().stream().anyMatch(a -> a.getAuthority().equals("ROLE_ADMIN"));
+            if (!isAdmin && guest.getUser() != null && !guest.getUser().getUserId().equals(authId)) {
+                throw new AccessDeniedException("You are not authorized to access this guest.");
+            }
+        }
     }
 
     private GuestResponseDto mapToResponseDto(Guest guest) {
-        return new GuestResponseDto(
-                guest.getGuestId(),
-                guest.getGuestName(),
-                guest.getContactNumber(),
-                guest.getSideOfFamily(),
-                guest.getRsvpStatus(),
-                guest.getWhatsappStatus(),
-                guest.getPlusOnes(),
-                guest.getMealPreference());
+        GuestResponseDto guestResponseDto = new GuestResponseDto();
+        guestResponseDto.setGuestId(guest.getGuestId());
+        guestResponseDto.setGuestName(guest.getGuestName());
+        guestResponseDto.setContactNumber(guest.getContactNumber());
+        guestResponseDto.setSideOfFamily(guest.getSideOfFamily());
+        guestResponseDto.setRsvpStatus(guest.getRsvpStatus());
+        guestResponseDto.setWhatsappStatus(guest.getWhatsappStatus());
+        guestResponseDto.setPlusOnes(guest.getPlusOnes());
+        guestResponseDto.setMealPreference(guest.getMealPreference());
+        if (guest.getUser() != null) {
+            guestResponseDto.setUserId(guest.getUser().getUserId());
+        }
+        return guestResponseDto;
     }
 }

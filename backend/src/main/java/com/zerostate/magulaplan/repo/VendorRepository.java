@@ -16,4 +16,9 @@ public interface VendorRepository extends JpaRepository<Vendor, Long>, JpaSpecif
     List<Vendor> findByCategory_CategoryIdAndStatus(Long categoryId, String status);
 
     long countByStatus(String status);
+    java.util.Optional<Vendor> findByUser_UserId(Long userId);
+
+    List<Vendor> findAllByUser_UserId(Long userId);
+
+    java.util.Optional<Vendor> findByContactEmail(String contactEmail);
 }

@@ -2,9 +2,11 @@ package com.zerostate.magulaplan.service.impl;
 
 import com.zerostate.magulaplan.dto.VendorRequestDto;
 import com.zerostate.magulaplan.dto.VendorResponseDto;
+import com.zerostate.magulaplan.entity.User;
 import com.zerostate.magulaplan.entity.Vendor;
 import com.zerostate.magulaplan.entity.VendorCategory;
 import com.zerostate.magulaplan.exception.ResourceNotFoundException;
+import com.zerostate.magulaplan.repo.UserRepository;
 import com.zerostate.magulaplan.repo.VendorCategoryRepository;
 import com.zerostate.magulaplan.repo.VendorRepository;
 import com.zerostate.magulaplan.service.VendorService;
@@ -14,11 +16,16 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Sort;
 import org.springframework.data.jpa.domain.Specification;
+import org.springframework.security.access.AccessDeniedException;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import java.math.BigDecimal;
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
+import java.util.UUID;
 import java.util.stream.Collectors;
 
 @Service
@@ -26,20 +33,81 @@ public class VendorServiceImpl implements VendorService {
 
     private final VendorRepository vendorRepository;
     private final VendorCategoryRepository vendorCategoryRepository;
+    private final UserRepository userRepository;
+    private final PasswordEncoder passwordEncoder;
 
     @Autowired
-    public VendorServiceImpl(VendorRepository vendorRepository, VendorCategoryRepository vendorCategoryRepository) {
+    public VendorServiceImpl(VendorRepository vendorRepository,
+                             VendorCategoryRepository vendorCategoryRepository,
+                             @Autowired(required = false) UserRepository userRepository,
+                             @Autowired(required = false) PasswordEncoder passwordEncoder) {
         this.vendorRepository = vendorRepository;
         this.vendorCategoryRepository = vendorCategoryRepository;
+        this.userRepository = userRepository;
+        this.passwordEncoder = passwordEncoder;
+    }
+
+    public VendorServiceImpl(VendorRepository vendorRepository, VendorCategoryRepository vendorCategoryRepository) {
+        this(vendorRepository, vendorCategoryRepository, null, null);
     }
 
     @Override
     public VendorResponseDto saveVendor(VendorRequestDto requestDto) {
+        return saveVendor(requestDto, null);
+    }
+
+    @Override
+    public VendorResponseDto saveVendor(VendorRequestDto requestDto, Long authenticatedUserId) {
         VendorCategory category = vendorCategoryRepository.findById(requestDto.getCategoryId())
                 .orElseThrow(() -> new ResourceNotFoundException("Vendor Category not found with id: " + requestDto.getCategoryId()));
 
+        User user = null;
+        String sessionToken = null;
+
+        if (authenticatedUserId != null && userRepository != null) {
+            user = userRepository.findById(authenticatedUserId).orElse(null);
+        } else if (userRepository != null && requestDto.getContactEmail() != null && !requestDto.getContactEmail().isBlank()) {
+            String email = requestDto.getContactEmail().trim();
+            Optional<User> existing = userRepository.findByEmail(email);
+            if (existing.isPresent()) {
+                user = existing.get();
+            } else if (requestDto.getPassword() != null && !requestDto.getPassword().isBlank()) {
+                sessionToken = UUID.randomUUID().toString();
+                String encodedPw = (passwordEncoder != null)
+                        ? passwordEncoder.encode(requestDto.getPassword())
+                        : requestDto.getPassword();
+                User newUser = User.builder()
+                        .email(email)
+                        .fullName(requestDto.getBusinessName())
+                        .passwordHash(encodedPw)
+                        .phoneNumber(requestDto.getContactPhone())
+                        .role("VENDOR")
+                        .isActive(true)
+                        .createdAt(LocalDateTime.now())
+                        .sessionToken(sessionToken)
+                        .build();
+                user = userRepository.save(newUser);
+            }
+        }
+
+        String tier = (requestDto.getSubscriptionTier() != null && !requestDto.getSubscriptionTier().isBlank())
+                ? requestDto.getSubscriptionTier().toUpperCase()
+                : "FREE";
+        if (!tier.equals("PRO") && !tier.equals("FEATURED")) {
+            tier = "FREE";
+        }
+
+        boolean isFeatured = tier.equals("FEATURED") || Boolean.TRUE.equals(requestDto.getFeatured());
+        boolean isVerified = tier.equals("PRO") || tier.equals("FEATURED") || Boolean.TRUE.equals(requestDto.getVerified());
+        String paymentStatus = tier.equals("FREE") ? "PAID"
+                : (requestDto.getPaymentStatus() != null && !requestDto.getPaymentStatus().isBlank()
+                ? requestDto.getPaymentStatus() : "PAID");
+
         Vendor vendor = Vendor.builder()
                 .category(category)
+                .user(user)
+                .subscriptionTier(tier)
+                .paymentStatus(paymentStatus)
                 .businessName(requestDto.getBusinessName())
                 .description(requestDto.getDescription())
                 .districtLocation(requestDto.getDistrictLocation())
@@ -49,12 +117,17 @@ public class VendorServiceImpl implements VendorService {
                 .imageUrl(requestDto.getImageUrl())
                 .rating(requestDto.getRating())
                 .reviewCount(requestDto.getReviewCount())
-                .verified(requestDto.getVerified())
-                .featured(requestDto.getFeatured())
+                .verified(isVerified)
+                .featured(isFeatured)
+                .status("PENDING")
                 .build();
 
         Vendor savedVendor = vendorRepository.save(vendor);
-        return mapToResponseDto(savedVendor);
+        VendorResponseDto responseDto = mapToResponseDto(savedVendor);
+        if (sessionToken != null) {
+            responseDto.setSessionToken(sessionToken);
+        }
+        return responseDto;
     }
 
     @Override
@@ -79,9 +152,28 @@ public class VendorServiceImpl implements VendorService {
     }
 
     @Override
+    public VendorResponseDto getVendorByUserId(Long userId) {
+        Vendor vendor = vendorRepository.findByUser_UserId(userId)
+                .orElseThrow(() -> new ResourceNotFoundException("No vendor listing found for user id: " + userId));
+        return mapToResponseDto(vendor);
+    }
+
+    @Override
     public VendorResponseDto updateVendor(Long vendorId, VendorRequestDto requestDto) {
+        return updateVendor(vendorId, requestDto, null, true);
+    }
+
+    @Override
+    public VendorResponseDto updateVendor(Long vendorId, VendorRequestDto requestDto, Long authenticatedUserId, boolean isAdmin) {
         Vendor existingVendor = vendorRepository.findById(vendorId)
                 .orElseThrow(() -> new ResourceNotFoundException("Vendor not found with id: " + vendorId));
+
+        // IDOR ownership protection: non-admin callers must own the vendor listing
+        if (!isAdmin) {
+            if (existingVendor.getUser() == null || !existingVendor.getUser().getUserId().equals(authenticatedUserId)) {
+                throw new AccessDeniedException("You are not authorized to update this vendor listing");
+            }
+        }
 
         VendorCategory category = vendorCategoryRepository.findById(requestDto.getCategoryId())
                 .orElseThrow(() -> new ResourceNotFoundException("Vendor Category not found with id: " + requestDto.getCategoryId()));
@@ -94,10 +186,20 @@ public class VendorServiceImpl implements VendorService {
         existingVendor.setContactEmail(requestDto.getContactEmail());
         existingVendor.setStartingPrice(requestDto.getStartingPrice());
         existingVendor.setImageUrl(requestDto.getImageUrl());
-        existingVendor.setRating(requestDto.getRating());
-        existingVendor.setReviewCount(requestDto.getReviewCount());
-        existingVendor.setVerified(requestDto.getVerified());
-        existingVendor.setFeatured(requestDto.getFeatured());
+        if (requestDto.getRating() != null) existingVendor.setRating(requestDto.getRating());
+        if (requestDto.getReviewCount() != null) existingVendor.setReviewCount(requestDto.getReviewCount());
+
+        if (isAdmin) {
+            if (requestDto.getVerified() != null) existingVendor.setVerified(requestDto.getVerified());
+            if (requestDto.getFeatured() != null) existingVendor.setFeatured(requestDto.getFeatured());
+        }
+
+        if (requestDto.getSubscriptionTier() != null && !requestDto.getSubscriptionTier().isBlank()) {
+            String tier = requestDto.getSubscriptionTier().toUpperCase();
+            existingVendor.setSubscriptionTier(tier);
+            if (tier.equals("FEATURED")) existingVendor.setFeatured(true);
+            if (tier.equals("PRO") || tier.equals("FEATURED")) existingVendor.setVerified(true);
+        }
 
         Vendor updatedVendor = vendorRepository.save(existingVendor);
         return mapToResponseDto(updatedVendor);
@@ -106,6 +208,19 @@ public class VendorServiceImpl implements VendorService {
     @Override
     public void deleteVendor(Long vendorId) {
         vendorRepository.deleteById(vendorId);
+    }
+
+    @Override
+    public void deleteVendor(Long vendorId, Long authenticatedUserId, boolean isAdmin) {
+        Vendor existingVendor = vendorRepository.findById(vendorId)
+                .orElseThrow(() -> new ResourceNotFoundException("Vendor not found with id: " + vendorId));
+
+        if (!isAdmin) {
+            if (existingVendor.getUser() == null || !existingVendor.getUser().getUserId().equals(authenticatedUserId)) {
+                throw new AccessDeniedException("You are not authorized to delete this vendor listing");
+            }
+        }
+        vendorRepository.delete(existingVendor);
     }
 
     @Override
@@ -177,6 +292,11 @@ public class VendorServiceImpl implements VendorService {
         responseDto.setVerified(vendor.getVerified());
         responseDto.setFeatured(vendor.getFeatured());
         responseDto.setStatus(vendor.getStatus());
+        responseDto.setSubscriptionTier(vendor.getSubscriptionTier() != null ? vendor.getSubscriptionTier() : "FREE");
+        responseDto.setPaymentStatus(vendor.getPaymentStatus() != null ? vendor.getPaymentStatus() : "PAID");
+        if (vendor.getUser() != null) {
+            responseDto.setUserId(vendor.getUser().getUserId());
+        }
         return responseDto;
     }
 }

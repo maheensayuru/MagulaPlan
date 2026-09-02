@@ -11,6 +11,8 @@ import com.zerostate.magulaplan.repo.UserRepository;
 import com.zerostate.magulaplan.repo.VendorRepository;
 import com.zerostate.magulaplan.service.BookingService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
@@ -34,7 +36,16 @@ public class BookingServiceImpl implements BookingService {
 
     @Override
     public List<BookingResponseDto> checkout(BookingCheckoutRequestDto requestDto) {
-        User user = userRepository.findById(requestDto.getUserId())
+        Long targetUserId = requestDto.getUserId();
+        Authentication auth = SecurityContextHolder.getContext().getAuthentication();
+        if (auth != null && auth.getPrincipal() instanceof Long authId) {
+            boolean isAdmin = auth.getAuthorities().stream().anyMatch(a -> a.getAuthority().equals("ROLE_ADMIN"));
+            if (!isAdmin || targetUserId == null) {
+                targetUserId = authId;
+            }
+        }
+
+        User user = userRepository.findById(targetUserId)
                 .orElseThrow(() -> new ResourceNotFoundException("User not found with id: " + requestDto.getUserId()));
 
         return requestDto.getVendorIds().stream()
@@ -59,13 +70,26 @@ public class BookingServiceImpl implements BookingService {
                 .collect(Collectors.toList());
     }
 
+    @Override
+    public List<BookingResponseDto> getBookingsByVendorId(Long vendorId) {
+        return bookingRepository.findByVendor_VendorId(vendorId).stream()
+                .map(this::mapToResponseDto)
+                .collect(Collectors.toList());
+    }
+
     private BookingResponseDto mapToResponseDto(Booking booking) {
-        return new BookingResponseDto(
+        BookingResponseDto dto = new BookingResponseDto(
                 booking.getBookingId(),
                 booking.getUser().getUserId(),
                 booking.getVendor().getVendorId(),
                 booking.getVendor().getBusinessName(),
                 booking.getStatus(),
                 booking.getBookedAt());
+        if (booking.getUser() != null) {
+            dto.setCustomerName(booking.getUser().getFullName());
+            dto.setCustomerEmail(booking.getUser().getEmail());
+            dto.setCustomerPhone(booking.getUser().getPhoneNumber());
+        }
+        return dto;
     }
 }

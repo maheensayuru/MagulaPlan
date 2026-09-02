@@ -11,6 +11,7 @@ const items = [
 ]
 
 const accountItems = [
+  { to: '/vendor/dashboard', label: 'Vendor Portal', icon: FaStore },
   { to: '/notifications', label: 'Notifications', icon: FaBell },
   { to: '/profile', label: 'Profile', icon: FaUser },
   { to: '/settings', label: 'Settings', icon: FaCog },
