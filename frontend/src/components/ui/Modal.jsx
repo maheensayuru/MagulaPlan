@@ -16,13 +16,23 @@ export default function Modal({ open, onClose, title, children, size = 'md' }) {
   const titleId = useId()
   const dialogRef = useRef(null)
 
+  // Call sites usually pass an inline `onClose={() => setOpen(false)}`, so its
+  // identity changes on every parent re-render (e.g. every keystroke in a form
+  // field inside the dialog). Keep the latest handler in a ref so the effect
+  // below can depend only on `open`. Otherwise it tears down and re-runs on
+  // each render, stealing focus back out of whatever input the user is typing in.
+  const onCloseRef = useRef(onClose)
+  useEffect(() => {
+    onCloseRef.current = onClose
+  }, [onClose])
+
   useEffect(() => {
     if (!open) return
     const previouslyFocused = document.activeElement
 
     const onKey = (e) => {
       if (e.key === 'Escape') {
-        onClose()
+        onCloseRef.current()
         return
       }
       if (e.key !== 'Tab') return
@@ -53,7 +63,10 @@ export default function Modal({ open, onClose, title, children, size = 'md' }) {
       cancelAnimationFrame(frame)
       previouslyFocused?.focus?.()
     }
-  }, [open, onClose])
+    // onClose is read through onCloseRef, so it is intentionally not a dependency
+    // here. Re-running this effect on every parent render is what caused the
+    // focus-loss bug in the Guest and Budget forms.
+  }, [open])
 
   return (
     <AnimatePresence>

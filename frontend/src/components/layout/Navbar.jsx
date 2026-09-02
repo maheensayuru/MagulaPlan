@@ -32,6 +32,12 @@ export default function Navbar() {
     }, DRAWER_CLOSE_MS)
   }
 
+  // At the very top of the landing page the navbar floats over the hero video,
+  // so links use a light treatment; once scrolled it becomes the solid bar.
+  const linkClass = scrolled
+    ? 'text-sm font-medium text-charcoal/70 transition-colors hover:text-maroon-700'
+    : 'text-sm font-medium text-ivory-50/85 transition-colors hover:text-white'
+
   return (
     <header
       className={`fixed top-0 inset-x-0 z-50 transition-all duration-300 ${
@@ -44,19 +50,11 @@ export default function Navbar() {
         <div className="hidden md:flex items-center gap-8">
           {links.map((l) =>
             l.isRoute ? (
-              <Link
-                key={l.href}
-                to={l.href}
-                className="text-sm font-medium text-charcoal/70 transition-colors hover:text-maroon-700"
-              >
+              <Link key={l.href} to={l.href} className={linkClass}>
                 {l.label}
               </Link>
             ) : (
-              <a
-                key={l.href}
-                href={l.href}
-                className="text-sm font-medium text-charcoal/70 transition-colors hover:text-maroon-700"
-              >
+              <a key={l.href} href={l.href} className={linkClass}>
                 {l.label}
               </a>
             ),
@@ -64,13 +62,17 @@ export default function Navbar() {
         </div>
 
         <div className="hidden md:flex items-center gap-4">
-          <Link to="/login" className="btn-ghost">
+          <Link to="/login" className={scrolled ? 'btn-ghost' : 'btn-ghost !text-ivory-50/85 hover:!text-white'}>
             Log in
           </Link>
           <button
             onClick={() => setCartOpen(true)}
             aria-label="Open cart"
-            className="relative h-10 w-10 flex items-center justify-center rounded-full text-charcoal/70 hover:bg-blush-50 hover:text-maroon-700 transition-colors"
+            className={`relative h-10 w-10 flex items-center justify-center rounded-full transition-colors ${
+              scrolled
+                ? 'text-charcoal/70 hover:bg-blush-50 hover:text-maroon-700'
+                : 'text-ivory-50/85 hover:bg-white/10 hover:text-white'
+            }`}
           >
             <FaShoppingBag size={16} />
             {count > 0 && (
@@ -88,7 +90,7 @@ export default function Navbar() {
           <button
             onClick={() => setCartOpen(true)}
             aria-label="Open cart"
-            className="relative h-10 w-10 flex items-center justify-center rounded-full text-charcoal"
+            className={`relative h-10 w-10 flex items-center justify-center rounded-full ${scrolled ? 'text-charcoal' : 'text-ivory-50'}`}
           >
             <FaShoppingBag size={17} />
             {count > 0 && (
@@ -98,7 +100,7 @@ export default function Navbar() {
             )}
           </button>
           <button
-            className="h-10 w-10 flex items-center justify-center rounded-full text-charcoal"
+            className={`h-10 w-10 flex items-center justify-center rounded-full ${scrolled ? 'text-charcoal' : 'text-ivory-50'}`}
             aria-label={open ? 'Close menu' : 'Open menu'}
             aria-expanded={open}
             onClick={() => setOpen((o) => !o)}
