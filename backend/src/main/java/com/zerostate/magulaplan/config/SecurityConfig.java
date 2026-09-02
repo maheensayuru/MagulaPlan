@@ -59,8 +59,23 @@ public class SecurityConfig {
     @Bean
     public CorsConfigurationSource corsConfigurationSource() {
         CorsConfiguration config = new CorsConfiguration();
-        config.setAllowedOrigins(allowedOrigins);
-        config.setAllowedMethods(List.of("GET", "POST", "PUT", "DELETE", "OPTIONS"));
+        if (allowedOrigins != null && !allowedOrigins.isEmpty()) {
+            config.setAllowedOrigins(allowedOrigins);
+        }
+        config.setAllowedOriginPatterns(List.of(
+            "http://localhost:*",
+            "https://localhost:*",
+            "https://*.netlify.app",
+            "http://*.infinityfreeapp.com",
+            "https://*.infinityfreeapp.com",
+            "http://*.great-site.net",
+            "https://*.great-site.net",
+            "http://*.epizy.com",
+            "https://*.epizy.com",
+            "http://*.rf.gd",
+            "https://*.rf.gd"
+        ));
+        config.setAllowedMethods(List.of("GET", "POST", "PUT", "PATCH", "DELETE", "OPTIONS"));
         config.setAllowedHeaders(List.of("*"));
         config.setAllowCredentials(true);
 
