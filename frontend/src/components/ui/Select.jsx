@@ -1,6 +1,6 @@
 import { useId } from 'react'
 
-export default function Select({ label, id, value, onChange, options = [], placeholder, error, required }) {
+export default function Select({ label, id, name, value, onChange, options = [], placeholder, error, required }) {
   const errorId = useId()
   return (
     <div>
@@ -12,6 +12,7 @@ export default function Select({ label, id, value, onChange, options = [], place
       )}
       <select
         id={id}
+        name={name ?? id}
         value={value}
         onChange={onChange}
         required={required}

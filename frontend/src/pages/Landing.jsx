@@ -1,23 +1,39 @@
-import { useEffect, useState } from 'react'
+import { useEffect, useMemo, useState } from 'react'
 import { motion } from 'framer-motion'
 import { Link } from 'react-router-dom'
 import { FaHeart, FaStar, FaArrowRight, FaMapMarkerAlt, FaStore, FaChevronRight } from 'react-icons/fa'
 import { vendorsApi, categoriesApi } from '../services/api'
-import heroWedding from '../assets/hero-traditional.jpg'
+import { SEED_VENDORS } from '../data/seedVendors'
+import heroWedding from '../assets/hero-magula.jpg'
+import heroVideo from '../assets/hero-video.mp4'
 import SectionHeading from '../components/ui/SectionHeading'
 import StatCard from '../components/ui/StatCard'
 import Accordion from '../components/ui/Accordion'
+import VendorCard from '../components/vendor/VendorCard'
 import { riseIn, viewportOnce } from '../lib/motion'
 import { features, faqs, iconForCategory, testimonials, howItWorks } from '../constants/landing'
+
+// Showcase figures for the landing page. Real platform metrics replace these
+// once the backend reports them; until then they keep the page feeling alive
+// instead of showing "X+" placeholders.
+const SHOWCASE_STATS = {
+  vendors: SEED_VENDORS.length,
+  weddingsPlanned: 480,
+  districtsCovered: 25,
+  averageRating: 4.8,
+}
 
 export default function Landing() {
   const [vendorCount, setVendorCount] = useState(null)
   const [categories, setCategories] = useState([])
+  const [vendors, setVendors] = useState([])
 
   useEffect(() => {
     let cancelled = false
     vendorsApi.list().then((data) => {
-      if (!cancelled && Array.isArray(data)) setVendorCount(data.length)
+      if (cancelled || !Array.isArray(data)) return
+      setVendorCount(data.length)
+      setVendors(data)
     }).catch(() => {})
     categoriesApi.list().then((data) => {
       if (!cancelled && Array.isArray(data)) setCategories(data)
@@ -25,42 +41,64 @@ export default function Landing() {
     return () => { cancelled = true }
   }, [])
 
+  const featuredVendors = useMemo(() => {
+    const source = vendors.length ? vendors : SEED_VENDORS
+    const featured = source.filter((v) => v.featured)
+    return (featured.length ? featured : source).slice(0, 6)
+  }, [vendors])
+
   return (
     <div>
       {/* ─── HERO ─── */}
-      <section className="relative overflow-hidden min-h-[90vh]">
-        <motion.img
-          initial={{ opacity: 0, scale: 1.03 }}
-          animate={{ opacity: 1, scale: 1 }}
-          transition={{ duration: 1.2, ease: [0.16, 1, 0.3, 1] }}
-          src={heroWedding}
-          alt="Couple celebrating their wedding ceremony in timeless elegance"
-          className="absolute inset-0 h-full w-full object-cover object-[65%_25%]"
-        />
-        {/* gradient overlays: soft blush-cream on left fading to transparent over the photo */}
-        <div className="absolute inset-0 bg-gradient-to-r from-ivory via-ivory/95 sm:via-ivory/90 to-ivory/0" />
-        <div className="absolute inset-0 bg-gradient-to-t from-ivory/40 via-transparent to-transparent" />
+      {/* min-h-screen is the 100vh fallback; min-h-svh (small viewport height)
+          wins on mobile browsers so the hero matches the *visible* area instead
+          of sitting under the address bar. min-h (not h) lets it grow if the
+          copy ever needs more room, so the CTAs never get clipped. */}
+      <section className="relative overflow-hidden min-h-screen min-h-svh flex items-center">
+        {/* Full-screen looping video background. Poster shows instantly while the
+            video streams in; the dark scrims below keep the headline readable
+            and let the navbar float on top. object-cover keeps it filling the
+            frame at every aspect ratio, from tall phones to wide desktops. */}
+        <video
+          autoPlay
+          loop
+          muted
+          playsInline
+          preload="auto"
+          poster={heroWedding}
+          aria-hidden="true"
+          className="absolute inset-0 h-full w-full object-cover"
+        >
+          <source src={heroVideo} type="video/mp4" />
+        </video>
 
-        <div className="relative z-10 container-app min-h-[90vh] flex items-center pt-24 pb-20">
+        {/* Readability scrims. A flat wash guarantees contrast on narrow screens
+            where the copy spans most of the width; the left-weighted gradient
+            only kicks in from sm+ where the text column is offset. */}
+        <div className="absolute inset-0 bg-charcoal/60 sm:hidden" />
+        <div className="absolute inset-0 hidden sm:block bg-gradient-to-r from-charcoal/85 via-charcoal/55 to-charcoal/25" />
+        <div className="absolute inset-0 bg-gradient-to-t from-charcoal/75 via-transparent to-charcoal/45" />
+
+        <div className="relative z-10 container-app w-full pt-24 pb-16 sm:pb-20">
           <motion.div
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.7, delay: 0.2, ease: [0.16, 1, 0.3, 1] }}
             className="max-w-xl"
           >
-            <p className="section-eyebrow mb-4">Sri Lanka's Boutique Wedding Platform</p>
-            <h1 className="text-4xl sm:text-5xl lg:text-6xl font-display font-medium leading-[1.14] text-charcoal mb-6">
+            <p className="inline-flex items-center gap-2 text-xs font-semibold tracking-widest uppercase text-blush-200 mb-4">Sri Lanka's Boutique Wedding Platform</p>
+            <h1 className="text-4xl sm:text-5xl lg:text-6xl font-display font-medium leading-[1.14] text-ivory-50 mb-6">
               Plan Your Dream{' '}
-              <span className="text-maroon-700">Wedding</span>
+              <span className="text-blush-300">Wedding</span>
             </h1>
-            <p className="text-charcoal/65 text-base sm:text-lg leading-relaxed mb-10 max-w-md">
+            <p className="text-ivory-100/85 text-base sm:text-lg leading-relaxed mb-10 max-w-md">
               Discover trusted floral decorators, photographers, venues and caterers for your perfect Sri Lankan wedding, all in one curated hub.
             </p>
             <div className="flex flex-col sm:flex-row gap-4">
-              <Link to="/register" className="btn-primary">
+              <Link to="/register" className="btn-primary w-full sm:w-auto">
                 Start Planning Free <FaArrowRight size={12} />
               </Link>
-              <Link to="/vendors" className="btn-outline">
+              <Link to="/vendors" className="btn-outline w-full sm:w-auto">
                 Browse Vendors
               </Link>
             </div>
@@ -75,14 +113,13 @@ export default function Landing() {
             <StatCard
               icon={FaStore}
               label="Verified Vendors"
-              value={vendorCount ?? 0}
+              value={vendorCount ?? SHOWCASE_STATS.vendors}
               suffix="+"
-              display={vendorCount === null ? 'X+' : undefined}
               color="sage"
             />
-            <StatCard icon={FaHeart} label="Weddings Planned" display="X+" color="maroon" />
-            <StatCard icon={FaMapMarkerAlt} label="Districts Covered" value={25} color="sage" />
-            <StatCard icon={FaStar} label="Average Rating" display="X.X / 5" color="maroon" />
+            <StatCard icon={FaHeart} label="Weddings Planned" value={SHOWCASE_STATS.weddingsPlanned} suffix="+" color="maroon" />
+            <StatCard icon={FaMapMarkerAlt} label="Districts Covered" value={SHOWCASE_STATS.districtsCovered} color="sage" />
+            <StatCard icon={FaStar} label="Average Rating" display={`${SHOWCASE_STATS.averageRating} / 5`} color="maroon" />
           </div>
         </div>
       </section>
@@ -179,6 +216,27 @@ export default function Landing() {
                 <p className="text-charcoal/55 text-sm leading-relaxed">{item.desc}</p>
               </motion.div>
             ))}
+          </div>
+        </div>
+      </section>
+
+      {/* ─── FEATURED VENDORS ─── */}
+      <section className="py-16 sm:py-24 bg-white border-b border-blush-100/60">
+        <div className="container-app">
+          <SectionHeading
+            eyebrow="Handpicked"
+            title="Featured Wedding Vendors"
+            subtitle="A curated glimpse of the venues, photographers and decorators couples are booking on MagulaPlan."
+          />
+          <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-6 mt-14">
+            {featuredVendors.map((vendor, i) => (
+              <VendorCard key={vendor.vendorId ?? vendor.id ?? i} vendor={vendor} index={i} />
+            ))}
+          </div>
+          <div className="text-center mt-12">
+            <Link to="/vendors" className="btn-outline">
+              Explore All Vendors <FaChevronRight size={11} />
+            </Link>
           </div>
         </div>
       </section>
