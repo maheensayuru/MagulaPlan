@@ -1,7 +1,12 @@
 # MagulaPlan (Magula.lk) — High-Level Architecture Diagram
 
 ## 1. System Architecture Overview
-MagulaPlan is engineered following a modular **3-Tier Layered Architecture** that separates the Presentation, Application / Business Logic, and Data Persistence layers. This decoupled architecture ensures high scalability, maintainability, and clean separation of concerns.
+MagulaPlan is engineered following a modular **3-Tier Layered Architecture** supporting a **Multi-Role B2B2C Commercial Marketplace**. It connects three distinct primary user actors:
+1. **Couples / Customers (`ROLE_USER`):** Discover vendors across 25 Sri Lankan districts, track wedding budgets, coordinate digital RSVPs, and checkout multi-vendor selection carts.
+2. **Commercial Vendors (`ROLE_VENDOR`):** Self-register, select commercial hosting tiers (Free / Pro / Featured), simulate commercial checkout via an academic payment sandbox, track incoming couple booking leads, and manage business profiles.
+3. **Platform Administrators (`ROLE_ADMIN`):** Monitor platform health and metrics, moderate vendor listings (approval/rejection), assign verified and gold badges, and govern user accounts.
+
+Visual rendering available in: `docs/High_Level_Architecture_Diagram.png`.
 
 ---
 
@@ -9,41 +14,52 @@ MagulaPlan is engineered following a modular **3-Tier Layered Architecture** tha
 
 ```mermaid
 flowchart TB
-    subgraph ClientTier[Presentation Tier - Client Layer]
-        SPA[React 19 Single Page Application]
-        Vite[Vite 8 Build Engine]
-        Tailwind[Tailwind CSS 3.4 & Storybook Romance Tokens]
-        Recharts[Recharts Interactive Financial Analytics]
-        Timer[Event Countdown & Nekath Milestones]
-        WebShare[Web Share API & WhatsApp Click-to-Chat]
+    subgraph Ecosystem[User, Vendor & Admin Ecosystem]
+        Couple[Couples & Customers\nROLE_USER\n• Discover Vendors • WhatsApp Click-to-Chat\n• Multi-Vendor Cart • Budget & Guest Tools]
+        Vendor[Commercial Vendors\nROLE_VENDOR\n• Self-Registration • 3-Tier Hosting Plan\n• Payment Sandbox • Portal Leads & Inquiries]
+        Admin[Platform Administrators\nROLE_ADMIN\n• Central Stats KPI • Vendor Moderation\n• Badge Governance • User Suspension]
+    end
+
+    subgraph ClientTier[1. Presentation Tier - Client Layer (React 19 SPA)]
+        PublicUI[Public Discovery & Landing\n• Hero Video & Editorial Storybook Tokens\n• Dynamic District & Category Filters]
+        CoupleUI[Couple Planning Suite\n• Recharts Budget Analytics • Nekath Countdown\n• Guest List Manager & Web Share API]
+        VendorUI[Commercial Vendor Portal\n• /vendor/dashboard • Leads & Inquiries Table\n• Profile Editor • Subscription Upgrade Modal]
+        AdminUI[Admin Moderation Suite\n• /admin & /admin/vendors • User Management\n• Destructive Action ConfirmDialog Modals]
     end
 
     subgraph SecurityGateway[Security & API Gateway Layer]
-        CORS[Dual-Origin CORS Whitelist Netlify & Local]
-        AuthFilter[SessionTokenAuthenticationFilter]
-        BCrypt[BCrypt Password Cryptography]
-        RBAC[Spring Security RBAC USER / ADMIN]
+        CORS[CORS Multi-Origin Whitelist\nNetlify • InfinityFree • Localhost]
+        AuthFilter[SessionTokenAuthenticationFilter\nBearer 64-Char Cryptographic UUID]
+        RBAC[Spring Security 6 Authorization\nROLE_USER • ROLE_VENDOR • ROLE_ADMIN]
+        IDOR[IDOR Tenant Ownership Protection\nVendor & Couple Resource Isolation]
+        Validation[Jakarta Bean Validation & GlobalExceptionHandler\nStructured 400 Bad Request & Field Mappings]
     end
 
-    subgraph ApplicationTier[Application Tier - Spring Boot 4.1 Services]
-        AuthSvc[AuthService & User Registration]
-        VendorSvc[VendorService & Category Service]
-        BudgetSvc[BudgetItemService & Financial Summary]
-        GuestSvc[GuestService & Digital Invitation Generator]
-        BookingSvc[BookingService & Cart Checkout Engine]
-        AdminSvc[AdminService & Vendor Moderation]
-        NotifSvc[NotificationService]
+    subgraph ApplicationTier[2. Application Tier - Spring Boot 4.1 Microservices]
+        AuthSvc[AuthService\n• BCrypt Hashing • Case-Insensitive Login\n• Auto-Provisioning on Registration]
+        VendorSvc[VendorService & Category Engine\n• Search & 25-District Filter Engine\n• Tier Processing (Free/Pro/Featured)\n• Moderation State: PENDING/APPROVED]
+        BookingSvc[BookingService & Lead Engine\n• Cart Checkout (POST /bookings/checkout)\n• Vendor Leads (GET /bookings/vendor/:id)\n• Couple Contact Phone & Email Routing]
+        BudgetSvc[BudgetItemService\n• Real-Time Spend Tracking • User Scoping]
+        GuestSvc[GuestService\n• WhatsApp Status Tracker • Digital RSVP Generator]
+        AdminSvc[AdminService\n• Live KPI Metrics • User Suspension Pipeline]
     end
 
-    subgraph DataTier[Data Tier - Persistence & Database Layer]
-        JPA[Spring Data JPA & Hibernate 7.4]
-        MySQL[(MySQL 8.4 Relational Database)]
-        Seed[Idempotent Data Seeding Engine data_seed.sql]
+    subgraph DataTier[3. Data Tier - MySQL 8.4 Relational Database]
+        MySQL[(MySQL 8.4 Relational Storage\n7 Normalized Tables)]
+        T_Users[users: user_id, email, password_hash, role, session_token]
+        T_Vendors[vendors: vendor_id, user_id, category_id, subscription_tier, payment_status, status]
+        T_Categories[vendor_categories: category_id, category_name]
+        T_Bookings[bookings: booking_id, user_id, vendor_id, status, booked_at]
+        T_Budget[budget_items: budget_id, user_id, estimated_cost, actual_cost, deposit_paid]
+        T_Guests[guests: guest_id, user_id, rsvp_status, whatsapp_status, meal_preference]
+        T_Notif[notifications: notification_id, user_id, message, is_read]
+        Seed[Idempotent Startup Seeding Engine\nTestAccountInitializer: Admin, Couple, Vendor & Categories]
     end
 
+    Ecosystem --> ClientTier
     ClientTier -->|HTTPS REST JSON + Bearer Session Token| SecurityGateway
     SecurityGateway --> ApplicationTier
-    ApplicationTier -->|JPA Queries & Transactions| DataTier
+    ApplicationTier -->|Spring Data JPA 3.4 & Hibernate 7.4| DataTier
 ```
 
 ---
@@ -52,15 +68,22 @@ flowchart TB
 
 ```
 +=============================================================================+
-|                      MAGULAPLAN 3-TIER SYSTEM ARCHITECTURE                  |
+|             MAGULAPLAN 3-TIER ECOSYSTEM & SYSTEM ARCHITECTURE               |
 +=============================================================================+
+| [0. MULTI-ROLE ACTORS / ECOSYSTEM]                                          |
+|   • Couples (ROLE_USER): Vendor Discovery, WhatsApp Inquiries, Cart Checkout|
+|   • Vendors (ROLE_VENDOR): Self-Registration, Tiers, Sandbox Payment, Portal|
+|   • Administrators (ROLE_ADMIN): System Metrics, Moderation, User Safety    |
++-----------------------------------------------------------------------------+
+                                       |
+                                       v
++-----------------------------------------------------------------------------+
 | [1. PRESENTATION TIER - Client Single Page Application]                     |
-|   • React 19 SPA (Vite 8, Tailwind CSS 3.4)                                 |
-|   • Storybook Romance & Modern Editorial Design Tokens                      |
-|   • Client Routing (React Router DOM v7) & Framer Motion                    |
-|   • Recharts Financial Spend Breakdown & Real-time Budget Metrics           |
-|   • Event Countdown Timer (Poruwa, Nekath, Reception Milestones)            |
-|   • Mobile Web Share API & WhatsApp Click-to-Chat Link Generation           |
+|   • React 19 SPA (Vite 8, Tailwind CSS 3.4, Framer Motion)                  |
+|   • Public Discovery Layer (Category & 25-District Search, WhatsApp Links)  |
+|   • Couple Planning Suite (Budget Recharts, Guest RSVP, Nekath Countdown)   |
+|   • Vendor Portal (/vendor/dashboard: Leads, Listing Editor, Tier Upgrades) |
+|   • Admin Suite (/admin, /admin/vendors: Moderation, /admin/users)          |
 +-----------------------------------------------------------------------------+
                                        |
                                        | HTTPS / REST JSON API
@@ -68,39 +91,41 @@ flowchart TB
                                        v
 +-----------------------------------------------------------------------------+
 | [2. APPLICATION TIER - Spring Boot 4.1 REST Microservices]                 |
-|   • Security Filter: SessionTokenAuthenticationFilter (RBAC)                |
+|   • Security Gateway: SessionTokenAuthenticationFilter                      |
+|   • Access Control: RBAC (ROLE_USER, ROLE_VENDOR, ROLE_ADMIN)               |
 |   • Cryptography: BCrypt Password Hashing (BCryptPasswordEncoder)           |
-|   • CORS Whitelisting: Dual-Origin (Netlify Production & Localhost)         |
+|   • IDOR Protection: Caller scoping on Budget, Guests, Vendors & Leads      |
+|   • Server Validation: Jakarta Bean Validation & GlobalExceptionHandler     |
 |   • Core Controllers & Services:                                            |
 |     - AuthController / UserService (UUID Session Tokens, Profile /me)       |
-|     - VendorController / VendorService (Search, Filter, Pagination, Rating) |
-|     - BudgetItemController / BudgetItemService (Financial Summary)          |
-|     - GuestController / GuestService (RSVP Tracking, Invitation Links)      |
-|     - BookingController / BookingService (Multi-Vendor Cart Checkout)       |
-|     - AdminController / AdminService (Vendor Moderation & System Metrics)   |
-|     - NotificationController / NotificationService                          |
+|     - VendorController / VendorService (Public Self-Reg, Plan Tiers, /me)   |
+|     - BookingController / BookingService (Cart Checkout, Vendor Leads API)  |
+|     - BudgetItemController / BudgetItemService (Financial Analytics)        |
+|     - GuestController / GuestService (RSVP Tracking, WhatsApp Links)        |
+|     - AdminController / AdminService (Moderation & Live KPI Metrics)        |
 +-----------------------------------------------------------------------------+
                                        |
-                                       | Spring Data JPA / Hibernate 7.4
+                                       | Spring Data JPA 3.4 / Hibernate 7.4
                                        | TLS/SSL Encrypted JDBC Connection
                                        v
 +-----------------------------------------------------------------------------+
 | [3. DATA TIER - MySQL 8.4 Relational Database]                              |
 |   • 7 Normalized Relational Tables:                                         |
-|     - `users` (Session tokens, BCrypt hashes, wedding dates, budgets)       |
-|     - `vendors` (Rich ratings, reviews, pricing, verification status)       |
-|     - `vendor_categories` (8 core Sri Lankan wedding industry domains)     |
-|     - `budget_items` (Itemized estimates, actuals, deposit tracking)        |
-|     - `guests` (RSVP status, plus-ones, meal preferences, WhatsApp status)  |
-|     - `bookings` (Multi-vendor confirmed cart bookings)                     |
-|     - `notifications` (In-app alerts and planning updates)                  |
-|   • Idempotent Data Seeding Engine (`data_seed.sql`)                         |
+|     - `users` (user_id, email, password_hash, role, session_token)          |
+|     - `vendors` (vendor_id, user_id, category_id, tier, payment_status)    |
+|     - `vendor_categories` (8 core domains: Venue, Photography, Catering...)|
+|     - `bookings` (booking_id, user_id, vendor_id, status, booked_at)       |
+|     - `budget_items` (budget_id, user_id, estimated, actual, deposit)       |
+|     - `guests` (guest_id, user_id, rsvp_status, whatsapp_status, meals)   |
+|     - `notifications` (notification_id, user_id, message, is_read)         |
+|   • Startup Seeding Engine: TestAccountInitializer (Admin, Couple, Vendor)  |
 +=============================================================================+
 ```
 
 ---
 
 ## 4. Key Architectural Patterns & Technical Decisions
-1. **Stateless Session Token Authentication:** Instead of complex JWT signature overhead, the system issues cryptographically secure 64-character UUID session tokens validated via `SessionTokenAuthenticationFilter`, ensuring sub-millisecond authentication lookups and straightforward invalidation on logout.
-2. **Dual-Tier Resilient Data Fallbacks:** The frontend features an embedded fallback dataset (`seedVendors.js`) containing 13 verified Sri Lankan vendor profiles across 8 categories, ensuring zero UI disruption during cloud cold starts.
-3. **Idempotent Relational Seeding:** The backend database utilizes `INSERT ... ON DUPLICATE KEY UPDATE` to guarantee safe, repeatable deployment scripts across local H2, Aiven Cloud, and InfinityFree environments.
+1. **Multi-Role RBAC & IDOR Hardening:** Spring Security enforces role boundaries across `ROLE_USER`, `ROLE_VENDOR`, and `ROLE_ADMIN`. Every mutation and read operation on tenant-specific resources (budget items, guest lists, and vendor profiles) inspects the authenticated principal from `SecurityContextHolder`, preventing cross-account data leaks.
+2. **Demo-Safe Commercial Monetization Sandbox:** To satisfy commercial evaluation criteria without requiring a live banking gateway (PayHere / Stripe), the system integrates a clean simulated payment checkout modal. Vendors choose between Free, Pro (LKR 2,500/mo), and Featured (LKR 5,000/mo) tiers and simulate instant verified badge activation.
+3. **Self-Healing Startup Seeding:** Rather than relying solely on external SQL scripts that may fail to execute in ephemeral cloud environments, `TestAccountInitializer` automatically provisions default vendor categories and all three ecosystem demo logins (`admin@magulaplan.lk`, `test@magulaplan.lk`, `vendor@magulaplan.lk`) on boot.
+4. **Dynamic Host Fallback Client Routing:** The frontend client automatically inspects `window.location.hostname`. When accessed from remote staging or hosting servers (such as InfinityFree or Netlify), it dynamically directs API calls to `https://magulaplan-api.onrender.com`, while routing to `http://localhost:8080` during local development.

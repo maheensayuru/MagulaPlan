@@ -2,13 +2,14 @@
 
 **Base URL:** `/api/v1`  
 **Protocol:** HTTPS  
-**Authentication:** Bearer Session Token (`Authorization: Bearer <token>`)
+**Authentication:** Bearer Session Token (`Authorization: Bearer <sessionToken>`)  
+**Security Roles:** `ROLE_USER` (Couples), `ROLE_VENDOR` (Commercial Vendors), `ROLE_ADMIN` (Administrators)
 
 ---
 
 ## 1. Authentication & User Management
 
-### 1.1 User Registration
+### 1.1 User / Couple Registration
 - **Endpoint:** `POST /api/v1/auth/register`
 - **Auth Required:** No
 - **Request Payload:**
@@ -26,38 +27,39 @@
 - **Response Payload (201 Created):**
 ```json
 {
-  "userId": 1,
   "token": "a1b2c3d4-e5f6-7a8b-9c0d-1e2f3a4b5c6d",
-  "email": "couple@example.lk",
+  "userId": 1,
   "fullName": "Kasun & Sandani",
+  "email": "couple@example.lk",
   "role": "USER"
 }
 ```
 
-### 1.2 User Login
+### 1.2 User Login (All Roles)
 - **Endpoint:** `POST /api/v1/auth/login`
 - **Auth Required:** No
 - **Request Payload:**
 ```json
 {
-  "email": "couple@example.lk",
-  "password": "Password@123"
+  "email": "admin@magulaplan.lk",
+  "password": "Admin@123"
 }
 ```
 - **Response Payload (200 OK):**
 ```json
 {
+  "token": "d7e8f9a0-b1c2-3d4e-5f6a-7b8c9d0e1f2a",
   "userId": 1,
-  "token": "a1b2c3d4-e5f6-7a8b-9c0d-1e2f3a4b5c6d",
-  "email": "couple@example.lk",
-  "fullName": "Kasun & Sandani",
-  "role": "USER"
+  "fullName": "MagulaPlan Admin",
+  "email": "admin@magulaplan.lk",
+  "role": "ADMIN"
 }
 ```
+*Note:* The endpoint automatically trims leading/trailing whitespace and performs case-insensitive matching (`findByEmailIgnoreCase`). Password hashes are evaluated against BCrypt.
 
-### 1.3 Get Current User Profile
+### 1.3 Get Authenticated Profile
 - **Endpoint:** `GET /api/v1/users/me`
-- **Auth Required:** Yes (Bearer Token)
+- **Auth Required:** Yes (`ROLE_USER`, `ROLE_VENDOR`, `ROLE_ADMIN`)
 - **Response Payload (200 OK):**
 ```json
 {
@@ -72,9 +74,9 @@
 }
 ```
 
-### 1.4 Update Current User Profile
+### 1.4 Update Authenticated Profile
 - **Endpoint:** `PUT /api/v1/users/me`
-- **Auth Required:** Yes (Bearer Token)
+- **Auth Required:** Yes
 - **Request Payload:**
 ```json
 {
@@ -95,19 +97,18 @@
 
 ---
 
-## 2. Vendor Directory & Marketplace
+## 2. Vendor Directory & Commercial Marketplace
 
-### 2.1 Get Approved Vendors
+### 2.1 Get Approved Vendors (Public Directory)
 - **Endpoint:** `GET /api/v1/vendors`
 - **Auth Required:** No
-- **Query Params:** `?search=Studio&district=Colombo&categoryId=2`
 - **Response Payload (200 OK):**
 ```json
 [
   {
-    "vendorId": 1,
+    "vendorId": 3,
     "categoryId": 2,
-    "categoryName": "Photography & Videography",
+    "categoryName": "Photography",
     "businessName": "Studio 3000DF",
     "districtLocation": "Colombo",
     "contactPhone": "0732345678",
@@ -118,43 +119,102 @@
     "reviewCount": 210,
     "verified": true,
     "featured": true,
-    "status": "APPROVED"
+    "status": "APPROVED",
+    "subscriptionTier": "FEATURED",
+    "paymentStatus": "PAID"
   }
 ]
 ```
 
-### 2.2 Vendor Self-Registration
-- **Endpoint:** `POST /api/v1/vendors`
+### 2.2 Search & Filter Vendors
+- **Endpoint:** `GET /api/v1/vendors/search`
 - **Auth Required:** No
+- **Query Params:** `?search=Studio&district=Colombo&minPrice=10000&maxPrice=50000&page=0&size=10`
+- **Response Payload (200 OK):** Pageable JSON response with matching approved vendors.
+
+### 2.3 Vendor Self-Registration & Plan Selection
+- **Endpoint:** `POST /api/v1/vendors`
+- **Auth Required:** No (Public self-registration permitted)
+- **Validation Constraints:** `@NotBlank` on `businessName`, `districtLocation`, `contactPhone`; `@NotNull` on `categoryId`; `@Email` on `contactEmail`.
 - **Request Payload:**
 ```json
 {
-  "categoryId": 1,
-  "businessName": "Grand Ballroom Ceylon",
+  "categoryId": 2,
+  "businessName": "Royal Ceylon Photography",
   "districtLocation": "Colombo",
   "contactPhone": "0771234567",
-  "contactEmail": "weddings@grandballroom.lk",
-  "startingPrice": 250000.00,
-  "imageUrl": "https://images.unsplash.com/photo-1519167758481-83f550bb49b3",
-  "description": "Luxury 5-star wedding venue with panoramic ballroom."
+  "contactEmail": "royal@ceylon.lk",
+  "startingPrice": 75000.00,
+  "imageUrl": "https://images.unsplash.com/photo-1537633552985-df8429e8048b",
+  "description": "Premier wedding photography studio in Colombo. Specializing in Kandyan weddings.",
+  "subscriptionTier": "PRO",
+  "paymentStatus": "PAID",
+  "password": "VendorSecret@123"
 }
 ```
 - **Response Payload (201 Created):**
 ```json
 {
   "vendorId": 14,
+  "categoryId": 2,
+  "categoryName": "Photography",
+  "businessName": "Royal Ceylon Photography",
+  "districtLocation": "Colombo",
+  "contactPhone": "0771234567",
+  "contactEmail": "royal@ceylon.lk",
+  "startingPrice": 75000.00,
+  "imageUrl": "https://images.unsplash.com/photo-1537633552985-df8429e8048b",
+  "rating": null,
+  "reviewCount": 0,
+  "verified": true,
+  "featured": false,
   "status": "PENDING",
-  "message": "Registration submitted for admin review."
+  "subscriptionTier": "PRO",
+  "paymentStatus": "PAID",
+  "userId": 5,
+  "sessionToken": "b4e2f1a9-8c3d-4e5f-9a1b-2c3d4e5f6a7b"
 }
 ```
+*Note:* Automatically creates a `User` account with `ROLE_VENDOR` if `password` is provided, returning `sessionToken` for instant client-side authentication.
+
+### 2.4 Get Authenticated Vendor Listing
+- **Endpoint:** `GET /api/v1/vendors/me`
+- **Auth Required:** Yes (`ROLE_VENDOR` or owning user)
+- **Response Payload (200 OK):** The authenticated vendor's full business profile.
+
+### 2.5 Update Vendor Listing (IDOR Protected)
+- **Endpoint:** `PUT /api/v1/vendors/{vendorId}`
+- **Auth Required:** Yes (Owner of `vendorId` or `ROLE_ADMIN`)
+- **Access Control:** Non-admin callers who do not own the vendor receive `403 Forbidden`.
+- **Request Payload:**
+```json
+{
+  "categoryId": 2,
+  "businessName": "Royal Ceylon Photography",
+  "districtLocation": "Colombo",
+  "contactPhone": "0779998888",
+  "contactEmail": "royal@ceylon.lk",
+  "startingPrice": 85000.00,
+  "imageUrl": "https://images.unsplash.com/photo-1537633552985-df8429e8048b",
+  "description": "Updated portfolio description.",
+  "subscriptionTier": "FEATURED"
+}
+```
+- **Response Payload (200 OK):** Updated `VendorResponseDto`.
+
+### 2.6 Delete Vendor Listing
+- **Endpoint:** `DELETE /api/v1/vendors/{vendorId}`
+- **Auth Required:** Yes (Owner or `ROLE_ADMIN`)
+- **Response Payload (204 No Content)**
 
 ---
 
-## 3. Budget Tracker & Financial Analytics
+## 3. Budget Tracker & Financial Analytics (IDOR Scoped)
 
 ### 3.1 Get Budget Items for User
 - **Endpoint:** `GET /api/v1/budget-items`
-- **Auth Required:** Yes (Bearer Token)
+- **Auth Required:** Yes (`ROLE_USER`)
+- **Isolation Rule:** Authenticated non-admin callers automatically receive **only their own** budget items.
 - **Response Payload (200 OK):**
 ```json
 [
@@ -165,18 +225,19 @@
     "estimatedCost": 350000.00,
     "actualCost": 350000.00,
     "depositPaid": 100000.00,
-    "status": "Deposit Paid"
+    "status": "Deposit Paid",
+    "userId": 1
   }
 ]
 ```
 
 ### 3.2 Add Budget Item
 - **Endpoint:** `POST /api/v1/budget-items`
-- **Auth Required:** Yes (Bearer Token)
+- **Auth Required:** Yes
+- **Isolation Rule:** Caller's user ID from `SecurityContextHolder` overrides client-supplied `userId`.
 - **Request Payload:**
 ```json
 {
-  "userId": 1,
   "itemName": "Floral Poruwa Arch",
   "category": "Floral & Poruwa Decor",
   "estimatedCost": 75000.00,
@@ -185,90 +246,43 @@
   "status": "Planned"
 }
 ```
-- **Response Payload (201 Created):**
-```json
-{
-  "budgetItemId": 2,
-  "itemName": "Floral Poruwa Arch",
-  "status": "Planned"
-}
-```
+- **Response Payload (201 Created)**
 
-### 3.3 Get Financial Budget Summary
-- **Endpoint:** `GET /api/v1/budget-items/summary/{userId}`
-- **Auth Required:** Yes (Bearer Token)
-- **Response Payload (200 OK):**
-```json
-{
-  "totalBudget": 3500000.00,
-  "totalEstimated": 1250000.00,
-  "totalActual": 950000.00,
-  "totalDepositPaid": 450000.00,
-  "remainingBudget": 2250000.00
-}
-```
+### 3.3 Update / Delete Budget Item
+- **Endpoint:** `PUT /api/v1/budget-items/{budgetItemId}` / `DELETE /api/v1/budget-items/{budgetItemId}`
+- **Auth Required:** Yes (Owner or Admin)
+- **Access Control:** Unauthorized modification returns `403 Forbidden`.
 
 ---
 
-## 4. Guest List, RSVP & Digital Invitations
+## 4. Guest List, RSVP & Digital Invitations (IDOR Scoped)
 
-### 4.1 Get All Guests
+### 4.1 Get All Guests for User
 - **Endpoint:** `GET /api/v1/guests`
-- **Auth Required:** Yes (Bearer Token)
-- **Response Payload (200 OK):**
-```json
-[
-  {
-    "guestId": "a123e456-e89b-12d3-a456-426614174000",
-    "guestName": "Nadeesha Gunawardena",
-    "contactNumber": "0771234567",
-    "sideOfFamily": "Bride",
-    "rsvpStatus": "Attending",
-    "whatsappStatus": "SENT",
-    "plusOnes": 1,
-    "mealPreference": "Non-Veg"
-  }
-]
-```
+- **Auth Required:** Yes (`ROLE_USER`)
+- **Isolation Rule:** Scoped to caller's `user_id`. Non-admin users cannot view other couples' guests.
 
 ### 4.2 Generate Shareable Digital Invitation
 - **Endpoint:** `GET /api/v1/guests/{guestId}/share`
-- **Auth Required:** Yes (Bearer Token)
+- **Auth Required:** Yes
 - **Response Payload (200 OK):**
 ```json
 {
+  "title": "Wedding Invitation",
+  "message": "You're invited! Kasun & Sandani request the pleasure of your company at our wedding. Please RSVP here: https://magulaplan.com/rsvp/a123e456-e89b-12d3-a456-426614174000",
+  "rsvpUrl": "https://magulaplan.com/rsvp/a123e456-e89b-12d3-a456-426614174000",
   "guestName": "Nadeesha Gunawardena",
-  "rsvpUrl": "https://magulaplan.netlify.app/rsvp/a123e456-e89b-12d3-a456-426614174000",
-  "title": "Wedding Invitation — Kasun & Sandani",
-  "message": "Dear Nadeesha Gunawardena, Kasun & Sandani invite you to celebrate their wedding day! Please confirm your attendance here:",
   "whatsappStatus": "SENT"
 }
 ```
 
-### 4.3 Update Guest RSVP Status
-- **Endpoint:** `PATCH /api/v1/guests/{guestId}/rsvp`
-- **Auth Required:** Yes
-- **Request Payload:**
-```json
-{
-  "rsvpStatus": "Attending"
-}
-```
-- **Response Payload (200 OK):**
-```json
-{
-  "guestId": "a123e456-e89b-12d3-a456-426614174000",
-  "rsvpStatus": "Attending"
-}
-```
-
 ---
 
-## 5. Multi-Vendor Commerce & Cart Checkout
+## 5. Multi-Vendor Commerce & Lead Pipeline
 
-### 5.1 Finalize Booking Checkout
+### 5.1 Finalize Booking Cart Checkout
 - **Endpoint:** `POST /api/v1/bookings/checkout`
-- **Auth Required:** Yes (Bearer Token)
+- **Auth Required:** Yes (`ROLE_USER`)
 - **Request Payload:**
 ```json
 {
@@ -281,10 +295,84 @@
 [
   {
     "bookingId": 101,
-    "vendorId": 1,
+    "userId": 1,
+    "vendorId": 3,
     "vendorName": "Studio 3000DF",
-    "status": "CONFIRMED",
-    "bookedAt": "2026-09-01T12:00:00"
+    "status": "PENDING",
+    "bookedAt": "2026-09-02T12:00:00",
+    "customerName": "Kasun & Sandani",
+    "customerEmail": "couple@example.lk",
+    "customerPhone": "0771234567"
   }
 ]
 ```
+
+### 5.2 Get Vendor Booking Inquiries & Leads
+- **Endpoint:** `GET /api/v1/bookings/vendor/{vendorId}`
+- **Auth Required:** Yes (`ROLE_VENDOR` owning `vendorId` or `ROLE_ADMIN`)
+- **Response Payload (200 OK):**
+```json
+[
+  {
+    "bookingId": 101,
+    "userId": 1,
+    "vendorId": 3,
+    "vendorName": "Studio 3000DF",
+    "status": "PENDING",
+    "bookedAt": "2026-09-02T12:00:00",
+    "customerName": "Kasun & Sandani",
+    "customerEmail": "couple@example.lk",
+    "customerPhone": "0771234567"
+  }
+]
+```
+
+---
+
+## 6. Platform Administration & Governance (`ROLE_ADMIN`)
+
+### 6.1 Platform Overview KPI Metrics
+- **Endpoint:** `GET /api/v1/admin/stats`
+- **Auth Required:** Yes (`ROLE_ADMIN`)
+- **Response Payload (200 OK):**
+```json
+{
+  "totalVendors": 14,
+  "totalUsers": 28,
+  "pendingApprovals": 2,
+  "totalBookings": 45
+}
+```
+
+### 6.2 Pending Vendor Moderation Queue
+- **Endpoint:** `GET /api/v1/admin/vendors/pending`
+- **Auth Required:** Yes (`ROLE_ADMIN`)
+- **Response Payload (200 OK):** Array of vendors with status `PENDING`.
+
+### 6.3 Approve Vendor Listing
+- **Endpoint:** `PUT /api/v1/admin/vendors/{vendorId}/approve`
+- **Auth Required:** Yes (`ROLE_ADMIN`)
+- **Action:** Sets `status = "APPROVED"` and `verified = true`, publishing the business to the public directory.
+
+### 6.4 Reject Vendor Listing
+- **Endpoint:** `PUT /api/v1/admin/vendors/{vendorId}/reject`
+- **Auth Required:** Yes (`ROLE_ADMIN`)
+- **Action:** Sets `status = "REJECTED"`, excluding the business from search.
+
+### 6.5 User Management & Account Suspension
+- **Endpoint:** `GET /api/v1/admin/users` (List all users)
+- **Endpoint:** `PUT /api/v1/admin/users/{userId}/suspend` (Sets `isActive = false`)
+- **Endpoint:** `PUT /api/v1/admin/users/{userId}/reinstate` (Sets `isActive = true`)
+- **Auth Required:** Yes (`ROLE_ADMIN`)
+
+---
+
+## 7. Standard Error Responses
+
+| Status Code | Scenario | Payload Structure |
+|---|---|---|
+| **`400 Bad Request`** | Jakarta Bean Validation Failure | `{"timestamp": "...", "message": "Business name is required; Contact phone is required", "fieldErrors": {"businessName": "...", "contactPhone": "..."}}` |
+| **`401 Unauthorized`** | Missing or Invalid Session Token | `{"token": null, "userId": null, "fullName": null, "email": null, "role": null}` |
+| **`403 Forbidden`** | Cross-Tenant IDOR Attempt or Insufficient Role | `{"timestamp": "...", "message": "You are not authorized to update this vendor listing"}` |
+| **`404 Not Found`** | Resource Non-Existent | `{"timestamp": "...", "message": "Vendor not found with id: 99"}` |
+| **`409 Conflict`** | Duplicate Registration Email | `{"message": "An account with this email already exists."}` |

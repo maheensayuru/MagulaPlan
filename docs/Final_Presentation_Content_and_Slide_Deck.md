@@ -30,30 +30,27 @@
 ---
 
 ### Slide 3: The Proposed Solution — MagulaPlan
-- **Core Value Proposition:**
-  - Centralized marketplace for verified Sri Lankan wedding vendors across 8 districts.
-  - Real-time budget tracker with dynamic visual category breakdowns.
-  - Cultural Poruwa ceremony run-of-show checklists and live event countdown timers.
-  - Zero-cost digital invitation sharing via native Web Share API & WhatsApp.
-  - Multi-vendor shopping cart and booking checkout engine.
+- **Core Value Proposition (3-Role B2B2C Marketplace):**
+  - **Couples:** Centralized marketplace for verified Sri Lankan wedding vendors across 25 districts, real-time budget analytics, Poruwa ceremony checklists, and digital WhatsApp RSVP sharing.
+  - **Commercial Vendors:** Self-service registration, 3-tier commercial hosting plans (Free / Pro / Featured), sandbox payment gateway, customer booking leads tracking, and business profile management.
+  - **Administrators:** Centralized platform overview, vendor listing approvals/rejections, badge governance, and user safety moderation.
+  - Multi-vendor shopping cart and booking checkout engine connecting couples with vendors.
 
 ---
 
 ### Slide 4: High-Level 3-Tier System Architecture (MANDATORY)
-*(Insert diagram from `High_Level_Architecture_Diagram.md`)*
-- **Client Tier:** React 19 SPA, Tailwind CSS 3.4, Recharts, Event Countdown Timer.
-- **Application Tier:** Spring Boot 4.1, Spring Security, Session Token Filter, BCrypt Cryptography.
-- **Data Tier:** MySQL 8.4 Relational Database, Spring Data JPA / Hibernate, Idempotent Data Seeding.
-
+*(Visual Reference: `docs/High_Level_Architecture_Diagram.png` & Slide 5/9)*
+- **Client Tier:** React 19 SPA, Tailwind CSS 3.4, Recharts, Event Countdown Timer, Commercial Vendor Portal (`/vendor/dashboard`), Admin Moderation Suite (`/admin`).
+- **Application Tier:** Spring Boot 4.1, Spring Security 6 RBAC (`ROLE_USER`, `ROLE_VENDOR`, `ROLE_ADMIN`), IDOR Tenant Ownership Protection, Session Token Filter, BCrypt Cryptography.
+- **Data Tier:** MySQL 8.4 Relational Database, Spring Data JPA 3.4 / Hibernate 7.4, 7 Normalized Relational Tables, Self-Healing Startup Seeding.
 ---
 
 ### Slide 5: System Features & UI Highlights
-- **Couple Dashboard & Event Countdown:** Days/Hours/Minutes live ticker with Poruwa Nekath milestones.
-- **Vendor Directory & Rich Filters:** Search by name, category, district, and starting price.
-- **Budget Tracker & Analytics:** Dynamic spend vs. allocation calculations.
-- **Guest List & RSVP Management:** Bride/Groom family partitioning and instant WhatsApp invite dispatch.
-- **Admin Moderation Portal:** Vendor approval workflows and platform analytics.
-
+- **Couple Planning Suite:** Real-time budget tracker, countdown timer, digital RSVP manager, and WhatsApp invitation generator.
+- **Vendor Commercial Portal:** Dedicated `/vendor/dashboard` with customer inquiry leads, listing profile editor, and interactive plan tier upgrade modal.
+- **Commercial Monetization Gateway:** 3-tier plan selector (Free LKR 0, Pro LKR 2,500/mo, Featured LKR 5,000/mo) with simulated card payment sandbox.
+- **Vendor Directory & Rich Filters:** Search by name, category, district, and starting price with verified checkmark and gold badges.
+- **Admin Moderation Portal:** Vendor approval queue, platform KPI metrics, and user safety suspension controls.
 ---
 
 ### Slide 6: Agile Project Management & Jira Sprint Execution
@@ -82,11 +79,10 @@
 ---
 
 ### Slide 9: Quality Assurance & Testing Verification
-- **Automated Backend Tests:** **139 / 139 JUnit 5 Tests Passing (100% Pass Rate)**.
-- **Frontend Unit Tests:** **13 / 13 Vitest Tests Passing**.
-- **System Test Plan:** 46 manual and end-to-end test scenarios documented in `MagulaPlan_Test_Cases.md`.
-- **E2E Automation:** Playwright regression suite testing mobile and desktop viewports.
-
+- **Automated Backend Tests:** **142 / 142 JUnit 5 Tests Passing (100% Pass Rate)**, including dedicated VendorSecurityIntegrationTest suite.
+- **Frontend Unit Tests:** **13 / 13 Vitest Tests Passing (100% Pass Rate)**.
+- **System Test Plan:** 55 manual and end-to-end test scenarios documented in `MagulaPlan_Test_Cases.md`.
+- **E2E Automation:** Playwright regression suite testing mobile and desktop viewports, link generation, and clipboard copying.
 ---
 
 ### Slide 10: Individual Member Contributions (25 Marks)
@@ -107,8 +103,13 @@
 ---
 
 ### Slide 12: Conclusion & Q&A
-- **Live URLs:**
-  - Frontend: `https://magulaplan.netlify.app`
-  - Backend API: `https://magulaplan-api.onrender.com`
-  - GitHub Repo: `https://github.com/maheensayuru/MagulaPlan`
-- **Summary:** MagulaPlan delivers an enterprise-grade, culturally tailored, and thoroughly tested digital wedding planning platform ready for production deployment.
+- **Live Deployments:**
+  - Primary Live Frontend (InfinityFree): `https://magulaplan.infinityfreeapp.com/?i=1`
+  - Edge CDN Frontend (Netlify): `https://magulaplan.netlify.app`
+  - Backend REST API (Render): `https://magulaplan-api.onrender.com`
+  - GitHub Repository: `https://github.com/maheensayuru/MagulaPlan`
+- **Demo Credentials:**
+  - Admin: `admin@magulaplan.lk` / `Admin@123` (Role: `ADMIN`)
+  - Couple: `test@magulaplan.lk` / `Password@123` (Role: `USER`)
+  - Vendor: `vendor@magulaplan.lk` / `Vendor@123` (Role: `VENDOR`)
+- **Summary:** MagulaPlan delivers a fully demonstrable, multi-role B2B2C wedding commerce platform with operational customer discovery, commercial vendor monetization, and administrative governance.

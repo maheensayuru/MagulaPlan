@@ -20,23 +20,25 @@ timeline
 ## 3. Detailed Feature Specifications for Future Upgrades
 
 ### Phase 1: Commercialization & Payment Gateway Integration (Q4 2026)
-1. **PayHere / Stripe Online Payment Gateway:**
-   - Enable direct advance payments and deposits for booked vendors using Visa, MasterCard, and LankaQR.
-   - Implement automated escrow holds released to vendors upon service delivery verification.
+*Current Release Status:* The commercial tier selection (Free / Pro / Featured), tier-based verified/gold badge provisioning, and interactive simulated payment sandbox have been **accelerated and fully implemented in the current release** to prove the business model. Post-academic enterprise upgrades include:
+1. **Live PayHere / Stripe Online Payment Gateway:**
+   - Production merchant account integration enabling live advance payments and deposits using Visa, MasterCard, and LankaQR.
+   - Automated escrow holds released to vendors upon service delivery verification.
 2. **Automated Digital Invoicing & Tax Receipts:**
-   - PDF generation of booking invoices, receipts, and payment schedules for couples and vendors.
+   - Automated PDF generation of booking invoices, receipts, and payment schedules for couples and vendors.
 3. **SMS & Email Notification Service (Twilio / SendGrid):**
    - Automated RSVP change alerts, vendor booking updates, and payment milestone reminders.
 
 ---
 
-### Phase 2: Vendor Self-Service & Commerce Management Portal (Q1 2027)
-1. **Dedicated Vendor Admin Dashboard:**
-   - Allow registered vendors to log in, customize service packages, update pricing tiers, and upload portfolio photo galleries.
-2. **Live Vendor Availability Calendar:**
+### Phase 2: Advanced Vendor Self-Service & Commerce Management (Q1 2027)
+*Current Release Status:* The core **Dedicated Vendor Dashboard** (`/vendor/dashboard`), customer booking inquiries pipeline with one-click WhatsApp routing, and profile editor have been **accelerated and fully implemented in the current release**. Post-academic enterprise upgrades include:
+1. **Live Vendor Availability Calendar:**
    - Interactive calendar booking sync preventing double-booking on popular Sri Lankan auspicious wedding dates (Nekath days).
-3. **In-App Direct Messaging System:**
+2. **In-App Direct Messaging System:**
    - Real-time chat powered by Spring WebSockets / STOMP allowing couples to message vendors directly with attached reference photos.
+3. **Multi-Service Package Builder:**
+   - Ability for vendors to create multi-tier sub-packages (e.g. Bronze, Silver, Gold photography packages) with customizable deliverables.
 
 ---
 

@@ -55,11 +55,12 @@ graph TD
     CostStructure -->|Operational Expenses| Profit
 ```
 
-1. **Freemium Vendor Subscriptions:**
-   - Free Tier: Basic business listing in directory with standard search appearance.
-   - Pro Tier (LKR 2,500/month): Verified checkmark badge, customer inquiry analytics, contact number priority.
-   - Featured Tier (LKR 5,000/month): Top-of-category placement, featured badge, highlighted card on landing page.
+1. **Freemium Vendor Subscriptions (Implemented & Demonstrable):**
+   - **Free Tier (LKR 0/month):** Basic business listing in public directory, standard search appearance, and customer inquiry reception.
+   - **Pro Tier (LKR 2,500/month):** Verified Blue Checkmark badge, customer inquiry analytics, contact number priority, and lead tracking.
+   - **Featured Tier (LKR 5,000/month):** Top-of-category placement, Gold Featured card badge, landing page showcase highlight, and verified checkmark.
+   - *Implementation Note:* In the current software release, the commercial subscription selection, payment verification, and badge provisioning workflow is fully implemented via an interactive **Simulated Payment Sandbox Gateway** (`/vendors/new` and `/vendor/dashboard`), enabling full evaluation of the monetization pipeline without live credit card merchant fees.
 2. **Booking Commission / Lead Generation:**
-   - 2.5% to 5.0% commission charged to vendors upon successful booking confirmation facilitated through the platform cart.
+   - 2.5% to 5.0% commission charged to vendors upon successful booking confirmation facilitated through the multi-vendor selection cart.
 3. **Category Sponsorships:**
    - Sponsored banner placement for premier luxury hotels and wedding decor companies.
