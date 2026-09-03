@@ -315,3 +315,88 @@
 | **How does your system prevent IDOR vulnerabilities?** | Amanda | On endpoints like `GET/PUT /api/v1/budget-items` and `GET/PUT /api/v1/guests`, the backend never trusts client-supplied `userId` values. Instead, our `SessionTokenAuthenticationFilter` extracts the verified user ID from the bearer token and injects it into `SecurityContextHolder`. Service implementations enforce that the authenticated user owns the target record before executing any read, update, or delete operation. Non-owners receive an immediate `403 Access Denied`, verified by our `VendorSecurityIntegrationTest` suite. |
 | **How did you handle cloud database sleep timeouts?** | Ruhini / Maheen | Cloud MySQL instances on free tiers like Aiven or Render pause connections after inactivity, which previously caused 500 timeouts on initial page load. We mitigated this by configuring HikariCP connection pool validation queries (`SELECT 1`), keeping the pool resilient. Additionally, the frontend features an embedded fallback dataset (`seedVendors.js`) so the public directory remains functional even during cloud container cold starts. |
 | **What was your testing strategy and defect resolution process?** | Ruchira | We adopted a multi-layered testing pyramid. At the base, we engineered 142 automated JUnit 5 tests covering controllers, services, and security filters with MockMvc. On the frontend, we ran 13 Vitest tests for components and cart context. For end-to-end testing, we executed a 55-scenario System Test Plan using Playwright across 375px mobile, 768px tablet, and 1280px desktop viewports. All defects (like DEF-001 to DEF-005) were formally logged, tracked, and verified closed in our Defect Register. |
+
+---
+
+## 5. Project Manager (Maheen Sayuru) Defense & Viva Q&A Guide
+
+This section provides direct, evidence-backed answers for the Project Manager when questioned by university examiners on Agile governance, resource allocation, budget variance, DevOps pipelines, risk mitigation, and scope control:
+
+### PM-Q1: "How did you derive the Work Breakdown Structure (WBS), and how did it map to your Jira Kanban board and sprint cycle?"
+> **Maheen's Answer:**  
+> *"We derived our WBS by decomposing the four foundational modules from our project proposal—Vendor Directory, Budget Tracker, Guest List, and Digital Invitations—down into assignable, deliverable-oriented work packages with discrete 2 to 6-hour estimates. Each WBS code (such as `VD-01`, `BT-03`, `WA-05`) was mapped directly onto a parent Jira user story (`MAG-1` through `MAG-34`).  
+> We governed execution across three consecutive two-week Agile sprints in Atlassian Jira Cloud:  
+> • **Sprint 1 (Architecture & Setup):** 3NF MySQL modeling, base REST routing, Figma wireframes, and GitHub monorepo CI/CD setup.  
+> • **Sprint 2 (Core Feature Build):** Domain services, CRUD controllers, Budget Tracker, Guest List, and initial frontend integration.  
+> • **Sprint 3 (Hardening & Deployment):** Spring Security 6 session tokens, BCrypt cryptography, Playwright E2E testing, InfinityFree/Render cloud deployment, and our commercial vendor monetization pipeline.  
+> Through daily async standups and sprint retrospectives, we tracked velocity and achieved a **100% completion rate, closing 31 out of 31 Jira tickets** on schedule."*
+
+---
+
+### PM-Q2: "You had a single primary backend developer (Amanda) and one QA engineer (Ruchira). How did you prevent bottlenecks and manage team velocity?"
+> **Maheen's Answer:**  
+> *"To mitigate single-point-of-failure risks, we established cross-functional secondary ownership early in our Project Management Plan (documented under Risk `RSK-02`).  
+> As Project Manager, I am cross-trained in Spring Boot and full-stack development. When Amanda was focused on core security filters, BCrypt hashing, and the cart checkout engine, I independently engineered and shipped the budget summary aggregation endpoint (`GET /api/v1/budget-items/summary/{userId}`) and the guest RSVP status PATCH endpoint (`PATCH /api/v1/guests/{id}/rsvp`), preventing a backend delivery bottleneck.  
+> Similarly, in QA, while Ruchira led test case authoring and automated Playwright E2E suites, Dileepa and I wrote component-level Vitest unit tests on the frontend. This parallel track structure prevented developers from waiting on testing sign-offs."*
+
+---
+
+### PM-Q3: "You expanded beyond your initial proposal by building an e-commerce cart, vendor portal, and admin dashboard, yet you deferred live PayHere/Stripe. What framework guided your scope trade-offs?"
+> **Maheen's Answer:**  
+> *"We utilized the **MoSCoW Prioritization Framework** (Must-Have, Should-Have, Could-Have, Won't-Have) balanced against our strict 6-week academic deadline:  
+> • **Must-Haves (Delivered):** The 4 core modules (Directory, Budget, Guests, Invitations) with robust authentication and automated tests.  
+> • **Should-Haves (Delivered via Scope Expansion):** The multi-vendor cart drawer (`MAG-26`), customer booking checkout (`MAG-30`), and administrative moderation suite (`MAG-20`) were added because they naturally connected the B2C customer journey with B2B vendor value.  
+> • **Scope Governance on Payments:** When evaluating live banking gateways (PayHere / Stripe), we identified significant external blocker risks: corporate business registration (BR) verification delays, merchant KYC, and monthly recurring fees. Attempting live bank integration would have jeopardized our core sprint delivery. Instead, we made the strategic engineering decision to build an **interactive Simulated Payment Sandbox Gateway**. This fully demonstrated our monetization model, plan tiers, and badge provisioning without schedule creep, while deferring live merchant accounts to Phase 1 of our enterprise roadmap."*
+
+---
+
+### PM-Q4: "Explain your budget variance: planned LKR 861,500 vs. actual LKR 720,000. How did you achieve a 16.4% cost saving?"
+> **Maheen's Answer:**  
+> *"Our planned budget of LKR 861,500 included LKR 720,000 for development human resource effort (600 engineering hours across 5 members @ an academic baseline rate of LKR 1,200/hour) plus LKR 141,500 in contingency for cloud hosting, commercial design tools, and paid messaging APIs.  
+> We achieved **LKR 141,500 in direct cash savings (a 16.4% cost saving)** through three strategic operational optimizations:  
+> 1. **Zero-Cost Tooling:** Leveraged the Figma Education license (saving LKR 18,000), GitHub Academic monorepo tier (saving LKR 12,000), and Jira Cloud Free tier (saving LKR 20,000).  
+> 2. **Lean Cloud Infrastructure:** Replaced paid cloud hosting with an optimized multi-cloud free tier architecture: InfinityFree Apache hosting for the frontend, Render Docker container for Spring Boot, and Aiven Cloud for MySQL 8.4 (saving LKR 36,000).  
+> 3. **Architectural WhatsApp Pivot:** Pivoted from Meta WhatsApp Business Cloud API per-message template fees ($0.05/msg) to the native Web Share API with automated Click-to-Chat deep links (saving LKR 40,000 in messaging fees and verification delays).  
+> As a result, our actual out-of-pocket operational spend was **LKR 0**, keeping the project 100% within human resource allocation."*
+
+---
+
+### PM-Q5: "Why did you use a dual-frontend deployment (InfinityFree + Netlify) and Render for Spring Boot? How does your DevOps pipeline handle deployment drift?"
+> **Maheen's Answer:**  
+> *"Our deployment strategy was engineered for high availability and zero single-point-of-failure hosting:  
+> • **Backend API:** Containerized on **Render** using a custom Dockerfile with an Eclipse Temurin JRE 17 runtime, connected to an Aiven Cloud MySQL 8.4 instance over TLS-encrypted JDBC. It auto-deploys via continuous integration whenever changes are merged into the `main` branch.  
+> • **Primary Frontend:** Deployed on **InfinityFree Apache storage** configured with an `.htaccess` rewrite rule (`mod_rewrite`) to guarantee HTML5 pushState SPA routing without 404 errors on deep subpaths like `/vendors/new` or `/rsvp/:guestId`.  
+> • **Edge CDN Mirror:** Mirrored on **Netlify CDN** with automated GitHub commit hooks for high global delivery speed.  
+> • **Environment Drift Prevention:** In our frontend `api.js`, we engineered an intelligent dynamic host fallback: when running locally, it binds to `http://localhost:8080`; when running on InfinityFree, Netlify, or any remote domain, it automatically resolves to `https://magulaplan-api.onrender.com`, eliminating hardcoded host bugs across environments."*
+
+---
+
+### PM-Q6: "What were the most severe risks you faced during the project lifecycle, and can you describe a specific time you had to pivot?"
+> **Maheen's Answer:**  
+> *"Our top risk was **Risk RSK-01: Meta WhatsApp Business API Bottlenecks**, which scored a maximum Critical score of 25 (Likelihood 5 × Impact 5) in our Risk Matrix. In Sprint 2, we discovered that obtaining Meta Cloud API business approval in Sri Lanka required corporate documentation that would have taken 3 to 4 weeks, completely stalling our sprint.  
+> I led an **Architectural Pivot**: we replaced the server-side Meta API webhook with the browser's native **Web Share API (`navigator.share`)** on mobile and desktop clipboard copy fallbacks, paired with pre-formatted WhatsApp deep links (`https://wa.me/94...`). This eliminated 100% of the recurring message costs, bypassed Meta approval entirely, and allowed couples to share digital invitations and inquiries directly from their own WhatsApp accounts.  
+> A second major risk was **RSK-02: Cloud Database Inactivity Sleep**. We resolved this by configuring HikariCP connection pool validation queries (`SELECT 1`), implementing an automated startup seed engine (`TestAccountInitializer`), and embedding an offline fallback dataset (`seedVendors.js`) on the client."*
+
+---
+
+### PM-Q7: "What was your Definition of Done (DoD) before a Jira ticket could move to 'Done', and how did you govern code reviews on GitHub?"
+> **Maheen's Answer:**  
+> *"Our team established a strict **Definition of Done (DoD)** enforced across all 31 Jira tickets:  
+> 1. **Code Completeness:** Feature implemented according to documented functional acceptance criteria with clean separation of concerns.  
+> 2. **Automated Testing:** All unit and integration tests passing with zero regressions across our 142 JUnit backend tests and 13 Vitest frontend tests.  
+> 3. **Branch Protection & Code Review:** Direct pushes to `main` were disabled. Developers created feature branches (`feat/MAG-N-description`), opened a GitHub Pull Request, and required at least one peer review approval. I personally reviewed pull requests for architectural alignment, security constraints, and clean cutovers before merging.  
+> 4. **Cross-Viewport Responsiveness:** Frontend UI verified across 375px mobile, 768px tablet, and 1280px desktop breakpoints with zero horizontal scrollbar violations.  
+> 5. **Documentation Traceability:** Code changes cross-referenced with the corresponding Jira issue ID, API specification, and test case register."*
+
+---
+
+### PM-Q8: "Why is your individual contribution split 21% / 21% / 20% / 19% / 19% instead of being based strictly on raw GitHub code commits?"
+> **Maheen's Answer:**  
+> *"Evaluating software engineering contributions purely on raw lines of code or commit counts is a well-documented anti-pattern in project management because it completely overlooks critical non-coding engineering deliverables across the SDLC.  
+> In MagulaPlan, our **Holistic SDLC Contribution Model** evaluates work across four essential engineering dimensions:  
+> • **Project Management & DevOps (Maheen — 21.0%):** WBS, sprint governance, 9 Jira tickets, monorepo CI/CD, multi-cloud hosting, and API development.  
+> • **Backend Architecture & Security (Amanda — 21.0%):** Spring Boot 4.1 services, Spring Security 6 RBAC, BCrypt cryptography, IDOR protection, and 7 Jira tickets.  
+> • **UI/UX & Design Systems (Dileepa — 20.0%):** Figma wireframes, Storybook Romance design tokens, React 19 SPA, Vendor Dashboard, 8 Jira tickets.  
+> • **Database Modeling & Business Analysis (Ruhini/Sammani — 19.0%):** 3NF normalized schema design, ER diagram modeling, idempotent SQL seed scripts, functional requirements specifications, and 4 Jira tickets.  
+> • **Quality Assurance & Test Automation (Ruchira — 19.0%):** 142 automated JUnit tests, Playwright E2E cross-device suite, 55-scenario System Test Plan, defect registers, and 3 Jira tickets.  
+> Every member owned an indispensable domain of the engineering lifecycle, resulting in an equitable, transparent, and evidence-backed workload distribution."*
