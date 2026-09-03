@@ -20,14 +20,16 @@
 
 ## 2. Live URLs & Verification Credentials
 
-- **Frontend (Live Production):** `https://magulaplan.netlify.app`
+- **Frontend (Primary Live Mirror):** `https://magulaplan.infinityfreeapp.com/?i=1`
+- **Frontend (Edge CDN):** `https://magulaplan.netlify.app`
 - **Frontend (Local Dev):** `http://localhost:5173`
-- **Backend (Live Production):** `https://magulaplan-api.onrender.com`
+- **Backend (Live Production API):** `https://magulaplan-api.onrender.com`
 - **Admin Login:** `admin@magulaplan.lk` / `Admin@123` (role=ADMIN)
-- **Couple Demo Login:** `test@magulaplan.lk` / `Password@123` or `deploytest@example.com` / `pw12345`
+- **Couple Demo Login:** `test@magulaplan.lk` / `Password@123` (role=USER)
+- **Vendor Demo Login:** `vendor@magulaplan.lk` / `Vendor@123` (role=VENDOR)
 - **MySQL Cloud (Aiven):** host `mysql-219a3283-m4h33n.aivencloud.com`, port `27680`, user `avnadmin`, db `defaultdb`
 - **Jira Board:** `https://magulaplan.atlassian.net/jira/software/projects/MAG/boards/1` (Viewer access granted to `chamathkara.k@sltc.ac.lk`)
-
+- **Automated Tests:** 142 JUnit 5 backend tests (100% pass) · 13 Vitest frontend tests (100% pass)
 ---
 
 ## 3. Project Status (31 / 31 Jira Tickets Completed — 100% Done)
@@ -70,14 +72,10 @@
 
 ## 4. Completed Feature & Bug Fix Highlights
 
-1. **Guest & Budget Association Fix:** Resilient user resolution in `GuestServiceImpl` and `BudgetItemServiceImpl` prevents null user exceptions; added `PUT /api/v1/users/me` endpoint.
-2. **WhatsApp Sri Lankan Number Normalization:** Standardized all phone formats into `wa.me/947...` with automated pre-filled inquiry messaging in `VendorDetails.jsx`.
-3. **Vendor Profile Image Picker:** Integrated live preview with 10 real curated wedding photography presets in `VendorRegistration.jsx`.
-4. **Event Countdown Timer:** Live Days/Hours/Minutes ticker with Nekath milestone switching on Dashboard & Profile.
-5. **Word Documentation Suite:** Generated `.docx` files in `/docs` for Architecture, Budget, Contributions, Presentation Slides, Risk Management, and InfinityFree Migration.
-
----
-
+1. **Commercial Vendor Portal & Monetization:** Implemented public vendor self-registration, 3-tier commercial plan selection (Free LKR 0, Pro LKR 2,500/mo, Featured LKR 5,000/mo), interactive simulated payment sandbox modal, and dedicated `/vendor/dashboard` with incoming couple cart leads and profile editor.
+2. **Public Invitee Digital RSVP Portal:** Created standalone public guest portal (`/rsvp/:guestId`) with attendance and dietary meal preference submission. Updated `GuestServiceImpl` to dynamically generate active domain links.
+3. **IDOR & Cross-Tenant Access Protection:** Gated budget items, guest lists, and vendor profiles so authenticated users cannot access or tamper with other tenants' records; added unit tests proving 403 Forbidden denial.
+4. **Guest & Budget Association Fix:** Resilient user resolution in `GuestServiceImpl` and `BudgetItemServiceImpl` prevents null user exceptions; added `PUT /api/v1/users/me` endpoint.
 ## 5. Verification Commands
 
 ```bash

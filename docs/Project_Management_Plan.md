@@ -18,8 +18,10 @@ The team adopts an Agile-based iterative development methodology. The six-week t
 
 ### 1.3 Project Vision
 
-MagulaPlan eliminates the fragmented, manual process of planning a wedding in Sri Lanka. By centralizing vendor discovery, budget tracking, guest list management, and WhatsApp-based digital invitations into a single platform, the system reduces the coordination burden on couples and provides vendors with a structured marketplace. The Minimum Viable Product (MVP) targets four core modules: Vendor Directory, Budget Tracker, Guest List & RSVP Manager, and WhatsApp Invitation Integration.
-
+MagulaPlan eliminates the fragmented, manual process of planning a wedding in Sri Lanka. By centralizing vendor discovery, budget tracking, guest list management, and WhatsApp-based digital invitations into a single multi-role B2B2C marketplace, the system reduces the coordination burden on couples and provides commercial wedding vendors with a structured, monetized hosting platform. The platform connects three primary user roles:
+1. **Couples (B2C):** Discover vendors across 25 districts, track itemized wedding expenses, coordinate digital RSVPs, and checkout multi-vendor selection carts.
+2. **Commercial Vendors (B2B):** Self-register, select 3-tier hosting packages (Free / Pro / Featured), simulate commercial checkout via an academic payment sandbox, track customer booking leads, and manage business profiles.
+3. **Administrators:** Monitor platform health and KPI metrics, moderate vendor listings (approval/rejection), assign verified and gold badges, and govern user safety.
 ---
 
 ## 2. Team Workload & Resource Allocation
@@ -82,13 +84,13 @@ Sprint 2 transitions from design to implementation. The database engineer execut
 **Focus:** Unit testing, quality assurance, cloud deployment, and final documentation.
 
 The final sprint completes the MVP and prepares it for submission. Ruchira carries over MAG-10 (Automated JUnit Tests) from Sprint 2, writing unit and integration tests for the Guest, User, Budget, Vendor, and VendorCategory service layers using JUnit 5, Mockito, and an H2 in-memory database. In parallel, she executes the full system test plan (MAG-17), logging defects in a structured defect register with severity classifications and retesting resolved issues. Amanda implements Spring Security with token-based authentication (MAG-19), configuring the filter chain, building user registration and login endpoints, and adding a global exception handler. Dileepa completes the frontend: wiring all pages to the live backend API (MAG-20), building the Budget Tracker page (MAG-22), implementing authentication and protected routes (MAG-23), and building shared UI components with Guest List CRUD (MAG-24). Amanda and Dileepa jointly enrich the vendor model with image, rating, and verification fields (MAG-25). Sammani supports deployment verification (MAG-21), ensuring the MySQL schema on Render matches the development database. The project manager deploys the frontend to Netlify (MAG-15) and the backend with database to Render (MAG-16), then compiles the final project documentation and presentation (MAG-18).
-- Automated JUnit test suite (Guest, User, Budget, Vendor, VendorCategory)
-- Completed system test execution report with defect log
-- Production deployment: Netlify (frontend) + Render (backend) + Aiven (MySQL database)
-- Guest List page with share invitation links
-- End-of-semester presentation
-- Final project documentation package
-
+- Automated JUnit test suite (**142 tests across controllers, services, repositories, and security — 100% pass rate**)
+- Automated frontend unit test suite (**13 Vitest tests — 100% pass rate**)
+- Completed system test execution report (**55 scenarios**) with verified defect register
+- Production deployment: **InfinityFree (Primary Frontend)** + **Netlify (Edge CDN)** + **Render (Spring Boot Backend)** + **Aiven (MySQL Database)**
+- Commercial Vendor Portal (`/vendor/dashboard`) with leads pipeline and 3-tier plan selection
+- Public Guest Digital RSVP Portal (`/rsvp/:guestId`) with attendance and meal preference tracking
+- End-of-semester presentation and comprehensive technical documentation package
 ---
 
 ## 4. Work Breakdown Structure (WBS)
@@ -266,8 +268,9 @@ All project documentation — including this Project Management Plan, the system
 | Frontend-backend integration issues at sprint boundaries | Medium | Medium | Schedule a mid-sprint integration checkpoint in each sprint; define API contracts (request/response shapes) before implementation begins |
 | MySQL schema changes after backend development starts | Low | High | Freeze the schema at the end of Sprint 1; any post-freeze changes require a migration script and team-wide notification |
 | Team member unavailability due to academic workload | High | Low | All tasks have documented acceptance criteria; any member can pick up a partially completed task with minimal onboarding |
-| Deployment environment configuration drift | Low | Medium | Use Spring profiles (`application-local.properties`, `application-prod.properties`) and Netlify/Render environment variables; document all config in README |
-
+| Payment gateway scope creep | High | Medium | Decoupled live banking gateways from MVP; engineered an interactive **Commercial Payment Sandbox Gateway** on `/vendors/new` and `/vendor/dashboard` allowing full evaluation of the monetization model without merchant fees |
+| Cross-tenant resource tampering (IDOR) | Low | High | Enforced server-side principal verification across budget items, guest lists, and vendor profile endpoints in Spring Security; added unit tests proving 403 Forbidden denial |
+| Deployment environment configuration drift | Low | Medium | Use Spring profiles (`application-local.properties`, `application-prod.properties`), automated startup seeding (`TestAccountInitializer`), and document all config in README |
 ---
 
 ## 7. Quality Assurance Strategy
