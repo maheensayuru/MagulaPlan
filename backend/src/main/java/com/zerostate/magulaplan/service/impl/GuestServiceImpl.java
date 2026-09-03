@@ -124,8 +124,14 @@ public class GuestServiceImpl implements GuestService {
     public ShareInvitationResponse getShareInvitation(UUID guestId) {
         Guest guest = guestRepository.findById(guestId)
                 .orElseThrow(() -> new ResourceNotFoundException("Guest Not Found with ID: " + guestId));
-
-        String rsvpUrl = "https://magulaplan.com/rsvp/" + guest.getGuestId();
+        String baseUrl = System.getenv("FRONTEND_URL");
+        if (baseUrl == null || baseUrl.isBlank()) {
+            baseUrl = "https://magulaplan.infinityfreeapp.com";
+        }
+        if (baseUrl.endsWith("/")) {
+            baseUrl = baseUrl.substring(0, baseUrl.length() - 1);
+        }
+        String rsvpUrl = baseUrl + "/rsvp/" + guest.getGuestId();
         String coupleName = (guest.getUser() != null && guest.getUser().getFullName() != null)
                 ? guest.getUser().getFullName()
                 : "Us";

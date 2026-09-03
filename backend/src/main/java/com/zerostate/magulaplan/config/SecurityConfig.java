@@ -39,6 +39,10 @@ public class SecurityConfig {
                 .requestMatchers(HttpMethod.GET, "/api/v1/vendor-categories/**").permitAll()
                 // Allow prospective vendors to self-register
                 .requestMatchers(HttpMethod.POST, "/api/v1/vendors").permitAll()
+                // Allow invited guests to view invitations and submit digital RSVPs without couple login
+                .requestMatchers(HttpMethod.GET, "/api/v1/guests/*/share").permitAll()
+                .requestMatchers(HttpMethod.GET, "/api/v1/guests/*").permitAll()
+                .requestMatchers(HttpMethod.PATCH, "/api/v1/guests/*/rsvp").permitAll()
                 // Admin endpoints are gated on the ADMIN role
                 .requestMatchers("/api/v1/admin/**").hasRole("ADMIN")
                 // Everything else requires authentication

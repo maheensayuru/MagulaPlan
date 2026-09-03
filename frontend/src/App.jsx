@@ -25,6 +25,7 @@ const VendorDetails = lazy(() => import('./pages/VendorDetails'))
 const VendorRegistration = lazy(() => import('./pages/VendorRegistration'))
 const VendorDashboard = lazy(() => import('./pages/VendorDashboard'))
 const GuestList = lazy(() => import('./pages/GuestList'))
+const Rsvp = lazy(() => import('./pages/Rsvp'))
 const BudgetTracker = lazy(() => import('./pages/BudgetTracker'))
 const Profile = lazy(() => import('./pages/Profile'))
 const Settings = lazy(() => import('./pages/Settings'))
@@ -58,6 +59,7 @@ function App() {
                   <Route path="/login" element={<PageTransition><Login /></PageTransition>} />
                   <Route path="/register" element={<PageTransition><Register /></PageTransition>} />
                   <Route path="/vendors/new" element={<PageTransition><VendorRegistration /></PageTransition>} />
+                  <Route path="/rsvp/:guestId" element={<PageTransition><Rsvp /></PageTransition>} />
 
                   <Route path="/vendor/dashboard" element={<PageTransition><ProtectedRoute><VendorDashboard /></ProtectedRoute></PageTransition>} />
                   <Route element={<DashboardLayout />}>
