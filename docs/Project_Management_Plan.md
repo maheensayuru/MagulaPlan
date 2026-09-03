@@ -93,135 +93,268 @@ The final sprint completes the MVP and prepares it for submission. Ruchira carri
 - End-of-semester presentation and comprehensive technical documentation package
 ---
 
-## 4. Work Breakdown Structure (WBS)
+## 4. Work Breakdown Structure (WBS) — 4-Level Academic Framework
 
-The following Work Breakdown Structure decomposes the four core features into granular, assignable technical tasks. Each task is mapped to a specific team member to establish clear accountability.
+In accordance with academic project management guidelines (PMBOK / IEEE standard), the MagulaPlan project is decomposed into a **formal 4-Level Hierarchical Work Breakdown Structure (WBS)**. 
 
-> **WBS ID Convention:** WBS task IDs (e.g., `VD-01`, `BT-03`) are planning-level decomposition codes used in this document for traceability. The **Jira Story** column indicates the parent Jira user story (e.g., `MAG-1`) under which each sub-task is tracked on the Kanban board. A single Jira story typically encompasses multiple WBS tasks spanning design, implementation, and testing.
+### 4.1 4-Level Decomposition Architecture
 
-### 4.1 Vendor Directory Module
-
-| Task ID | Task Description | Jira Story | Assigned To | Estimated Effort |
-|---|---|---|---|
-| VD-01 | Design and normalize `vendors` and `vendor_categories` tables in ER diagram | MAG-1 | Sammani | 4 hours |
-| VD-02 | Write SQL DDL for `vendors` and `vendor_categories` tables with FK constraints | MAG-8 | Sammani | 2 hours |
-| VD-03 | Implement `Vendor` and `VendorCategory` JPA entity classes with Lombok | MAG-9 | Amanda | 3 hours |
-| VD-04 | Implement `VendorRepository` with custom query methods (filter by category, district, price range) | MAG-9 | Amanda | 2 hours |
-| VD-05 | Implement `VendorService` with business logic for search, filter, and pagination | MAG-9 | Amanda | 5 hours |
-| VD-06 | Implement `VendorController` REST endpoints (GET all, GET by ID, GET filtered, POST, PUT, DELETE) | MAG-9 | Amanda | 4 hours |
-| VD-07 | Design Vendor Directory page layout with search bar, category filters, and location dropdown | MAG-7 | Dileepa | 4 hours |
-| VD-08 | Implement Vendor Card React component with business name, category, district, starting price | MAG-7 | Dileepa | 5 hours |
-| VD-09 | Implement Vendor Directory page with filter state management and API integration | MAG-7 | Dileepa | 6 hours |
-| VD-10 | Implement Vendor Detail page with full information display | MAG-7 | Dileepa | 4 hours |
-| VD-11 | Style all Vendor components with Tailwind CSS (responsive: mobile, tablet, desktop) | MAG-7 | Dileepa | 3 hours |
-| VD-12 | Write unit tests for VendorService and integration tests for VendorController | MAG-9 | Amanda | 3 hours |
-| VD-13 | Execute UI tests on Vendor Directory across device breakpoints | MAG-10 | Ruchira | 3 hours |
-
-### 4.2 Budget Tracker Module
-
-| Task ID | Task Description | Jira Story | Assigned To | Estimated Effort |
-|---|---|---|---|
-| BT-01 | Design and normalize `budget_items` table in ER diagram | MAG-1 | Sammani | 2 hours |
-| BT-02 | Write SQL DDL for `budget_items` table with FK to `users` | MAG-8 | Sammani | 2 hours |
-| BT-03 | Implement `BudgetItem` JPA entity class with Lombok | MAG-9 | Amanda | 2 hours |
-| BT-04 | Implement `BudgetItemRepository` with custom queries (sum by category, filter by status) | MAG-9 | Amanda | 2 hours |
-| BT-05 | Implement `BudgetItemService` with CRUD and budget summary aggregation logic | MAG-9 | Amanda | 5 hours |
-| BT-06 | Implement `BudgetController` REST endpoints (GET all, POST, PUT, DELETE, GET summary) | MAG-9 | Amanda | 3 hours |
-| BT-07 | Design Budget Tracker dashboard layout with summary cards and item list | MAG-6 | Dileepa | 4 hours |
-| BT-08 | Implement Budget Summary cards (total budget, spent, remaining) with progress visualization | MAG-6 | Dileepa | 5 hours |
-| BT-09 | Implement Budget Item form (add/edit modal) with category selection and cost fields | MAG-6 | Dileepa | 5 hours |
-| BT-10 | Implement Budget Item list with status badges and inline edit controls | MAG-6 | Dileepa | 4 hours |
-| BT-11 | Style all Budget components with Tailwind CSS (responsive) | MAG-6 | Dileepa | 3 hours |
-| BT-12 | Write unit tests for BudgetItemService and integration tests for BudgetController | MAG-9 | Amanda | 2 hours |
-| BT-13 | Execute UI tests on Budget Tracker across device breakpoints | MAG-10 | Ruchira | 2 hours |
-
-### 4.3 Guest List & RSVP Manager Module
-
-| Task ID | Task Description | Jira Story | Assigned To | Estimated Effort |
-|---|---|---|---|
-| GL-01 | Design and normalize `guests` table with UUID primary key in ER diagram | MAG-1 | Sammani | 3 hours |
-| GL-02 | Write SQL DDL for `guests` table with FK to `users` and ENUM/VARCHAR defaults | MAG-8 | Sammani | 2 hours |
-| GL-03 | Implement `Guest` JPA entity class with UUID generation strategy | MAG-9 | Amanda | 2 hours |
-| GL-04 | Implement `GuestRepository` with custom queries (find by user, filter by RSVP status, filter by side) | MAG-9 | Amanda | 2 hours |
-| GL-05 | Implement `GuestService` with CRUD, RSVP status update, and WhatsApp status tracking | MAG-9 | Amanda | 5 hours |
-| GL-06 | Implement `GuestController` REST endpoints (GET all, GET by ID, POST, PUT, DELETE, PATCH RSVP status) | MAG-9 | Amanda | 4 hours |
-| GL-07 | Design Guest List dashboard layout with summary stats and guest table | MAG-6 | Dileepa | 4 hours |
-| GL-08 | Implement Guest table with sortable columns, RSVP status badges, and side-of-family indicators | MAG-6 | Dileepa | 5 hours |
-| GL-09 | Implement Add/Edit Guest modal with side-of-family, plus-ones, and meal preference fields | MAG-6 | Dileepa | 5 hours |
-| GL-10 | Implement RSVP tracking view with status counts and filtering | MAG-6 | Dileepa | 4 hours |
-| GL-11 | Style all Guest components with Tailwind CSS (responsive) | MAG-6 | Dileepa | 3 hours |
-| GL-12 | Write unit tests for GuestService and integration tests for GuestController | MAG-9 | Amanda | 3 hours |
-| GL-13 | Execute UI tests on Guest List and RSVP Manager across device breakpoints | MAG-10 | Ruchira | 3 hours |
-
-### 4.4 Share Invitations Module
-
-| Task ID | Task Description | Jira Story | Assigned To | Estimated Effort |
-|---|---|---|---|
-| WA-01 | Generate shareable RSVP link per guest (UUID-based URL) | MAG-11 | Maheen | 1 hour |
-| WA-02 | Implement `GET /api/v1/guests/{guestId}/share` endpoint with invitation message and RSVP URL | MAG-11 | Maheen | 2 hours |
-| WA-03 | Update `GuestServiceImpl` to mark `whatsapp_status = SENT` when share link is generated | MAG-11 | Maheen | 1 hour |
-| WA-04 | Implement Guest List page with guest table, RSVP badges, and stats | MAG-11 | Dileepa | 4 hours |
-| WA-05 | Add Share button per guest using `navigator.share()` API (mobile) with clipboard copy fallback (desktop) | MAG-11 | Dileepa | 3 hours |
-| WA-06 | Add Guests route in App.jsx and nav item in Sidebar and MobileBottomNav | MAG-11 | Dileepa | 1 hour |
-| WA-07 | Execute end-to-end test: generate share link, verify clipboard copy, verify share sheet on mobile | MAG-13 | Ruchira | 2 hours |
-
-### 4.5 Cross-Cutting Concerns
-
-| Task ID | Task Description | Jira Story | Assigned To | Estimated Effort |
-|---|---|---|---|
-| CC-01 | Configure Spring Security with session-token authentication filter | MAG-9 | Amanda | 5 hours |
-| CC-02 | Implement `User` registration and login endpoints (POST /auth/register, POST /auth/login) | MAG-9 | Amanda | 4 hours |
-| CC-03 | Implement bearer session-token generation/validation and BCrypt password hashing | MAG-9 | Amanda | 4 hours |
-| CC-04 | Set up global exception handler (`@ControllerAdvice`) with standardized error response format | MAG-9 | Amanda | 3 hours |
-| CC-05 | Configure CORS policy for frontend origin (Netlify dev + production) | MAG-9 | Amanda | 2 hours |
-| CC-06 | Set up Netlify project and configure environment variables for deployment | MAG-4 | Sammani | 3 hours |
-| CC-07 | Set up Render service (Docker) and Aiven MySQL database connection | MAG-4 | Sammani | 3 hours |
-| CC-08 | Write and execute system integration test plan across all four modules | MAG-10 | Ruchira | 8 hours |
-| CC-09 | Maintain defect register with severity classification, reproduction steps, and resolution tracking | MAG-10 | Ruchira | 4 hours |
-| CC-10 | Compile sprint review reports (Sprint 1, 2, 3) with burndown charts and velocity metrics | MAG-5 | Maheen | 6 hours |
-| CC-11 | Compile final system design report and end-of-semester presentation | MAG-5 | Maheen | 8 hours |
-
-### 4.6 Jira Story Reference
-
-The following table lists every Jira user story in the MagulaPlan backlog, mapped to its owning module and target sprint:
-
-| Jira ID | User Story | Module | Sprint |
-|---|---|---|---|
-| MAG-1 | Design MySQL ER Diagram | Database | Sprint 1 |
-| MAG-2 | Map REST API Routes | Backend | Sprint 1 |
-| MAG-3 | Design UI Wireframes | Frontend | Sprint 1 |
-| MAG-4 | Set up GitHub Repository | Management | Sprint 1 |
-| MAG-5 | Draft Project Management Plan & Sprint Schedule | Management | Sprint 2 |
-| MAG-6 | Dashboard & Budget UI | Frontend | Sprint 2 |
-| MAG-7 | Vendor Directory UI | Frontend | Sprint 2 |
-| MAG-8 | Create MySQL Database Tables | Database | Sprint 2 |
-| MAG-9 | Budget and Guest List REST APIs | Backend | Sprint 2 |
-| MAG-10 | Automated JUnit Tests | QA | Sprint 3 |
-| MAG-11 | Share Invitations (Web Share API) | Backend | Sprint 2 |
-| MAG-15 | Deploy Frontend to Netlify | DevOps | Sprint 3 |
-| MAG-16 | Deploy Backend to Render + MySQL on Aiven | DevOps | Sprint 3 |
-| MAG-17 | System Testing & Defect Management | QA | Sprint 3 |
-| MAG-18 | Final Documentation & Presentation | Management | Sprint 3 |
-| MAG-19 | Spring Security & Token Authentication | Backend | Sprint 3 |
-| MAG-20 | Frontend-Backend API Integration | Frontend | Sprint 3 |
-| MAG-21 | Deployment Support & DB Verification | Database | Sprint 3 |
-| MAG-22 | Budget Tracker Page | Frontend | Sprint 3 |
-| MAG-23 | Authentication & Protected Routes | Frontend | Sprint 3 |
-| MAG-24 | Shared UI Components & Guest Management | Frontend | Sprint 3 |
-| MAG-25 | Vendor Data Model Enrichment | Backend & Frontend | Sprint 3 |
-| MAG-26 | Premium UI Redesign, Cart Drawer & Admin Dashboard | Frontend | Sprint 3 |
-| MAG-27 | Bearer session-token validation (auth filter) | Backend | Sprint 3 |
-| MAG-28 | Budget summary endpoint | Backend | Backlog |
-| MAG-29 | Vendor search, filter & pagination | Backend | Backlog |
-| MAG-30 | Cart checkout / booking finalization | Backend | Backlog |
-| MAG-31 | Guest RSVP PATCH endpoint | Backend | Backlog |
-| MAG-32 | BCrypt password hashing | Backend | Sprint 3 |
-| MAG-33 | Production seed data + real vendor images | Database | Backlog |
-| MAG-34 | E2E share-invitation test | QA | Sprint 3 |
-
-> **Note:** MAG-12 through MAG-14 are reserved. WA-07 (E2E share test) is tracked as MAG-34 (the plan previously mapped it to MAG-13).
+The hierarchy follows a strict 4-tier decimal numbering structure ensuring 100% mutual exclusivity and exhaustive coverage (MECE principle):
+- **Level 1 (1.0): Entire Project Scope** — The overall MagulaPlan wedding commerce and planning ecosystem.
+- **Level 2 (1.X): Subsystems & Functional Domains** — 6 core engineering domains spanning project governance, marketplace, couple tools, commerce, admin, and DevOps.
+- **Level 3 (1.X.Y): Feature & Component Deliverable Packages** — 19 tangible system deliverables.
+- **Level 4 (1.X.Y.Z): Discrete Technical Work Packages** — 68 granular, assignable engineering tasks with clear domain ownership, effort estimation, Jira tracking ID, and deliverable artifacts.
 
 ---
+
+### 4.2 Visual 4-Level WBS Hierarchy Tree
+
+```
+1.0 MagulaPlan Digital Wedding Platform
+│
+├── 1.1 Project Management & Requirements Engineering
+│   ├── 1.1.1 Project Conception & Proposal Formulation
+│   │   ├── 1.1.1.1 Industry Problem Identification & Research [Maheen - 4h - MAG-4]
+│   │   ├── 1.1.1.2 Scope Definition & MoSCoW Prioritization [Maheen - 4h - MAG-4]
+│   │   └── 1.1.1.3 Initial Feasibility & Budget Estimation [Maheen - 4h - MAG-4]
+│   ├── 1.1.2 Agile Sprint Planning & Work Breakdown
+│   │   ├── 1.1.2.1 4-Level Work Breakdown Structure Formulation [Maheen - 6h - MAG-5]
+│   │   ├── 1.1.2.2 Jira Kanban Project & Backlog Setup [Maheen - 4h - MAG-5]
+│   │   └── 1.1.2.3 Sprint Cadence & Allocation Planning [Maheen - 4h - MAG-5]
+│   └── 1.1.3 Business Analysis & System Specifications
+│       ├── 1.1.3.1 Functional Requirements Specification (FRS) [Sammani - 6h - MAG-1]
+│       ├── 1.1.3.2 Non-Functional Requirements (NFR) Analysis [Sammani - 4h - MAG-1]
+│       └── 1.1.3.3 Risk Assessment Matrix & Mitigation Planning [Maheen - 4h - MAG-5]
+│
+├── 1.2 Vendor Directory & Commercial Marketplace Subsystem
+│   ├── 1.2.1 Vendor Data Modeling & Database Persistence
+│   │   ├── 1.2.1.1 3NF Entity Relationship Modeling (vendors & categories) [Sammani - 4h - MAG-1]
+│   │   ├── 1.2.1.2 DDL Schema Authoring with FK Constraints [Sammani - 3h - MAG-8]
+│   │   └── 1.2.1.3 Production Seeding Script with Real Vendor Contacts [Sammani - 5h - MAG-33]
+│   ├── 1.2.2 Backend Vendor Services & REST Endpoints
+│   │   ├── 1.2.2.1 JPA Vendor Entities & Repository Interfaces [Amanda - 4h - MAG-9]
+│   │   ├── 1.2.2.2 Vendor Search & 25-District Filter Engine [Maheen - 5h - MAG-29]
+│   │   └── 1.2.2.3 Vendor Rating, Review & Verification Service [Amanda - 4h - MAG-25]
+│   ├── 1.2.3 Vendor Directory Client User Interface
+│   │   ├── 1.2.3.1 Figma Wireframes & Luxury Storybook Design Tokens [Dileepa - 6h - MAG-3]
+│   │   ├── 1.2.3.2 Vendor Card Component & Responsive Grid Layout [Dileepa - 5h - MAG-7]
+│   │   ├── 1.2.3.3 Category Filter Pills & District Dropdown State [Dileepa - 4h - MAG-7]
+│   │   └── 1.2.3.4 Vendor Detail Showcase & WhatsApp Click-to-Chat [Dileepa - 5h - MAG-7]
+│   ├── 1.2.4 Vendor Self-Registration & Plan Tiers
+│   │   ├── 1.2.4.1 Public Self-Registration Client Interface [Dileepa - 5h - MAG-20]
+│   │   ├── 1.2.4.2 3-Tier Hosting Plan Selector (Free/Pro/Featured) [Dileepa - 4h - MAG-20]
+│   │   ├── 1.2.4.3 Simulated Payment Sandbox Gateway Modal [Dileepa - 5h - MAG-20]
+│   │   └── 1.2.4.4 Backend Vendor Self-Reg API with Account Provisioning [Amanda - 6h - MAG-9]
+│   └── 1.2.5 Commercial Vendor Portal & Lead Pipeline
+│       ├── 1.2.5.1 Vendor Dashboard Client UI (/vendor/dashboard) [Dileepa - 6h - MAG-20]
+│       ├── 1.2.5.2 Customer Inquiries & Lead Pipeline Table [Dileepa - 5h - MAG-20]
+│       ├── 1.2.5.3 Profile & Starting Price Editor [Dileepa - 4h - MAG-20]
+│       └── 1.2.5.4 In-Dashboard Plan Upgrade Modal [Dileepa - 4h - MAG-20]
+│
+├── 1.3 Couple Planning & Wedding Coordination Subsystem
+│   ├── 1.3.1 Budget Tracker & Financial Analytics
+│   │   ├── 1.3.1.1 Database Schema for Budget Items [Sammani - 3h - MAG-1]
+│   │   ├── 1.3.1.2 CRUD REST Endpoints for Budget Items [Amanda - 4h - MAG-9]
+│   │   ├── 1.3.1.3 Budget Summary Aggregation Engine [Maheen - 4h - MAG-28]
+│   │   ├── 1.3.1.4 Interactive Budget Tracker UI with Recharts Visuals [Dileepa - 7h - MAG-22]
+│   │   └── 1.3.1.5 Itemized Add/Edit Modals & Status Indicators [Dileepa - 4h - MAG-22]
+│   ├── 1.3.2 Guest List & RSVP Management
+│   │   ├── 1.3.2.1 Database Schema with UUID Identifiers [Sammani - 3h - MAG-1]
+│   │   ├── 1.3.2.2 Guest CRUD Service & REST Controller [Amanda - 4h - MAG-9]
+│   │   ├── 1.3.2.3 Guest RSVP Status PATCH Endpoint [Maheen - 3h - MAG-31]
+│   │   └── 1.3.2.4 Guest List UI with Bride/Groom Family Filter [Dileepa - 6h - MAG-24]
+│   ├── 1.3.3 Digital Invitations & Public RSVP Portal
+│   │   ├── 1.3.3.1 Dynamic Shareable RSVP URL Generator [Maheen - 4h - MAG-11]
+│   │   ├── 1.3.3.2 Web Share API & Mobile WhatsApp Link Dispatch [Maheen - 5h - MAG-11]
+│   │   └── 1.3.3.3 Public Invitee Digital RSVP Portal (/rsvp/:id) [Dileepa - 6h - MAG-11]
+│   └── 1.3.4 Event Countdown & Wedding Dashboard
+│       ├── 1.3.4.1 Real-Time Nekath & Poruwa Countdown Timer [Dileepa - 5h - MAG-6]
+│       ├── 1.3.4.2 Couple Central Dashboard Hub UI [Dileepa - 5h - MAG-6]
+│       └── 1.3.4.3 Profile & Settings Management [Dileepa - 4h - MAG-23]
+│
+├── 1.4 Multi-Vendor Commerce & Booking Checkout Subsystem
+│   ├── 1.4.1 Client-Side Selections Cart Engine
+│   │   ├── 1.4.1.1 React CartContext & LocalStorage Persistence [Dileepa - 5h - MAG-26]
+│   │   ├── 1.4.1.2 Slide-Over Cart Drawer Component [Dileepa - 5h - MAG-26]
+│   │   └── 1.4.1.3 Dynamic Starting Price Subtotal Recomputation [Dileepa - 3h - MAG-26]
+│   └── 1.4.2 Multi-Vendor Booking Checkout & Lead Routing
+│       ├── 1.4.2.1 Bookings Relational Table & FK Links [Sammani - 3h - MAG-8]
+│       ├── 1.4.2.2 Cart Checkout Engine (POST /bookings/checkout) [Amanda - 5h - MAG-30]
+│       └── 1.4.2.3 Vendor Lead Retrieval Endpoint (GET /bookings/vendor/:id) [Amanda - 4h - MAG-30]
+│
+├── 1.5 Platform Governance & Administrative Subsystem
+│   ├── 1.5.1 Admin Authentication & Role Protection
+│   │   ├── 1.5.1.1 Role-Gated Admin Router (AdminRoute.jsx) [Dileepa - 4h - MAG-23]
+│   │   └── 1.5.1.2 Spring Security Admin Authority Checks (hasRole) [Amanda - 4h - MAG-19]
+│   ├── 1.5.2 Platform KPI Metrics & Analytics Dashboard
+│   │   ├── 1.5.2.1 Admin Stats Service & Aggregate JPA Queries [Amanda - 4h - MAG-19]
+│   │   └── 1.5.2.2 Admin Dashboard Overview UI (/admin) [Dileepa - 5h - MAG-20]
+│   └── 1.5.3 Listing Moderation & User Safety Management
+│       ├── 1.5.3.1 Pending Vendor Moderation Queue UI (/admin/vendors) [Dileepa - 5h - MAG-20]
+│       ├── 1.5.3.2 Vendor Approval & Rejection REST Endpoints [Amanda - 4h - MAG-19]
+│       └── 1.5.3.3 User Account Suspension & Safety Controls (/admin/users) [Amanda - 5h - MAG-19]
+│
+└── 1.6 Technical Infrastructure, Quality Assurance & DevOps
+    ├── 1.6.1 System Security Architecture & IDOR Hardening
+    │   ├── 1.6.1.1 SessionTokenAuthenticationFilter Implementation [Amanda - 6h - MAG-27]
+    │   ├── 1.6.1.2 BCrypt Password Hashing & Case-Insensitive Auth [Amanda - 4h - MAG-32]
+    │   ├── 1.6.1.3 IDOR Tenant Ownership Protection on All Endpoints [Amanda - 6h - MAG-27]
+    │   └── 1.6.1.4 Jakarta Bean Validation & Clean 400 Error Mapping [Amanda - 4h - MAG-19]
+    ├── 1.6.2 Cloud Infrastructure & Deployment Pipelines
+    │   ├── 1.6.2.1 GitHub Monorepo Architecture & Branch Rules [Maheen - 4h - MAG-4]
+    │   ├── 1.6.2.2 Render Containerized Backend Dockerfile Setup [Maheen - 5h - MAG-16]
+    │   ├── 1.6.2.3 InfinityFree Apache SPA (.htaccess) Deployment [Maheen - 5h - MAG-15]
+    │   ├── 1.6.2.4 Netlify Global Edge CDN Mirror Pipeline [Maheen - 4h - MAG-15]
+    │   └── 1.6.2.5 Self-Healing Database Startup Seeder (TestAccountInitializer) [Amanda - 4h - MAG-33]
+    └── 1.6.3 Comprehensive Quality Assurance & Testing
+        ├── 1.6.3.1 Automated JUnit 5 Backend Test Suite (142 Tests) [Ruchira - 12h - MAG-10]
+        ├── 1.6.3.2 Automated Vitest Frontend Unit Test Suite (13 Tests) [Dileepa - 6h - MAG-10]
+        ├── 1.6.3.3 55-Scenario Comprehensive System Test Plan [Ruchira - 10h - MAG-17]
+        ├── 1.6.3.4 Playwright E2E Multi-Viewport Automation Suite [Ruchira - 8h - MAG-34]
+        └── 1.6.3.5 Formal Defect Register & Resolution Verification [Ruchira - 6h - MAG-17]
+```
+
+---
+
+### 4.3 4-Level WBS Decomposition Dictionary & Work Package Allocation Table
+
+| WBS Code (4-Level) | Work Package Description | Level 2 Subsystem | Level 3 Deliverable | Domain Owner | Effort | Jira ID | Deliverable Artifact |
+|---|---|---|---|---|:---:|:---:|---|
+| **1.1.1.1** | Industry Problem Identification & Research | 1.1 PM & Requirements | 1.1.1 Proposal Formulation | Maheen | 4h | MAG-4 | Market Need Synthesis |
+| **1.1.1.2** | Scope Definition & MoSCoW Prioritization | 1.1 PM & Requirements | 1.1.1 Proposal Formulation | Maheen | 4h | MAG-4 | Scope Boundary Document |
+| **1.1.1.3** | Initial Feasibility & Budget Estimation | 1.1 PM & Requirements | 1.1.1 Proposal Formulation | Maheen | 4h | MAG-4 | Budget Cost Plan |
+| **1.1.2.1** | 4-Level Work Breakdown Structure Formulation | 1.1 PM & Requirements | 1.1.2 Sprint Planning | Maheen | 6h | MAG-5 | 4-Level WBS Model |
+| **1.1.2.2** | Jira Kanban Project & Backlog Setup | 1.1 PM & Requirements | 1.1.2 Sprint Planning | Maheen | 4h | MAG-5 | Jira Board & Epics |
+| **1.1.2.3** | Sprint Cadence & Workload Allocation Planning | 1.1 PM & Requirements | 1.1.2 Sprint Planning | Maheen | 4h | MAG-5 | Sprint Schedule Table |
+| **1.1.3.1** | Functional Requirements Specification (FRS) | 1.1 PM & Requirements | 1.1.3 System Specs | Sammani | 6h | MAG-1 | Formal FRS Document |
+| **1.1.3.2** | Non-Functional Requirements (NFR) Analysis | 1.1 PM & Requirements | 1.1.3 System Specs | Sammani | 4h | MAG-1 | NFR Criteria Matrix |
+| **1.1.3.3** | Risk Assessment Matrix & Mitigation Planning | 1.1 PM & Requirements | 1.1.3 System Specs | Maheen | 4h | MAG-5 | Risk Register Table |
+| **1.2.1.1** | 3NF Entity Relationship Modeling (vendors) | 1.2 Vendor Marketplace | 1.2.1 Data Modeling | Sammani | 4h | MAG-1 | ER Diagram PDF |
+| **1.2.1.2** | DDL Schema Authoring with FK Constraints | 1.2 Vendor Marketplace | 1.2.1 Data Modeling | Sammani | 3h | MAG-8 | schema.sql DDL Script |
+| **1.2.1.3** | Production Seeding Script with Real Vendor Contacts | 1.2 Vendor Marketplace | 1.2.1 Data Modeling | Sammani | 5h | MAG-33 | data_seed.sql Script |
+| **1.2.2.1** | JPA Vendor Entities & Repository Interfaces | 1.2 Vendor Marketplace | 1.2.2 Backend Vendor APIs | Amanda | 4h | MAG-9 | Vendor.java & Repos |
+| **1.2.2.2** | Vendor Search & 25-District Filter Engine | 1.2 Vendor Marketplace | 1.2.2 Backend Vendor APIs | Maheen | 5h | MAG-29 | Specification Queries |
+| **1.2.2.3** | Vendor Rating, Review & Verification Service | 1.2 Vendor Marketplace | 1.2.2 Backend Vendor APIs | Amanda | 4h | MAG-25 | VendorServiceImpl.java |
+| **1.2.3.1** | Figma Wireframes & Storybook Design Tokens | 1.2 Vendor Marketplace | 1.2.3 Vendor Client UI | Dileepa | 6h | MAG-3 | Figma Prototype |
+| **1.2.3.2** | Vendor Card Component & Grid Layout | 1.2 Vendor Marketplace | 1.2.3 Vendor Client UI | Dileepa | 5h | MAG-7 | VendorCard.jsx |
+| **1.2.3.3** | Category Filter Pills & District Dropdown State | 1.2 Vendor Marketplace | 1.2.3 Vendor Client UI | Dileepa | 4h | MAG-7 | VendorDirectory.jsx |
+| **1.2.3.4** | Vendor Detail Showcase & WhatsApp Click-to-Chat | 1.2 Vendor Marketplace | 1.2.3 Vendor Client UI | Dileepa | 5h | MAG-7 | VendorDetails.jsx |
+| **1.2.4.1** | Public Self-Registration Client Interface | 1.2 Vendor Marketplace | 1.2.4 Plan Tiers & Reg | Dileepa | 5h | MAG-20 | VendorRegistration.jsx |
+| **1.2.4.2** | 3-Tier Hosting Plan Selector (Free/Pro/Gold) | 1.2 Vendor Marketplace | 1.2.4 Plan Tiers & Reg | Dileepa | 4h | MAG-20 | Plan Cards Component |
+| **1.2.4.3** | Simulated Payment Sandbox Gateway Modal | 1.2 Vendor Marketplace | 1.2.4 Plan Tiers & Reg | Dileepa | 5h | MAG-20 | Payment Sandbox Modal |
+| **1.2.4.4** | Backend Vendor Self-Reg API & Role Provisioning | 1.2 Vendor Marketplace | 1.2.4 Plan Tiers & Reg | Amanda | 6h | MAG-9 | POST /vendors Endpoint |
+| **1.2.5.1** | Vendor Dashboard Client UI (/vendor/dashboard) | 1.2 Vendor Marketplace | 1.2.5 Vendor Portal | Dileepa | 6h | MAG-20 | VendorDashboard.jsx |
+| **1.2.5.2** | Customer Inquiries & Lead Pipeline Table | 1.2 Vendor Marketplace | 1.2.5 Vendor Portal | Dileepa | 5h | MAG-20 | Leads Table & WhatsApp |
+| **1.2.5.3** | Profile & Starting Price Editor Drawer | 1.2 Vendor Marketplace | 1.2.5 Vendor Portal | Dileepa | 4h | MAG-20 | Edit Profile Modal |
+| **1.2.5.4** | In-Dashboard Plan Upgrade Simulation Modal | 1.2 Vendor Marketplace | 1.2.5 Vendor Portal | Dileepa | 4h | MAG-20 | Upgrade Modal |
+| **1.3.1.1** | Database Schema for Budget Items | 1.3 Couple Coordination | 1.3.1 Budget Tracker | Sammani | 3h | MAG-1 | budget_items Table |
+| **1.3.1.2** | CRUD REST Endpoints for Budget Items | 1.3 Couple Coordination | 1.3.1 Budget Tracker | Amanda | 4h | MAG-9 | BudgetItemController |
+| **1.3.1.3** | Budget Summary Aggregation Engine | 1.3 Couple Coordination | 1.3.1 Budget Tracker | Maheen | 4h | MAG-28 | GET /summary API |
+| **1.3.1.4** | Interactive Budget Tracker UI & Recharts Visuals | 1.3 Couple Coordination | 1.3.1 Budget Tracker | Dileepa | 7h | MAG-22 | BudgetTracker.jsx |
+| **1.3.1.5** | Itemized Add/Edit Modals & Status Badges | 1.3 Couple Coordination | 1.3.1 Budget Tracker | Dileepa | 4h | MAG-22 | Budget Modals |
+| **1.3.2.1** | Database Schema with UUID Identifiers | 1.3 Couple Coordination | 1.3.2 Guest List | Sammani | 3h | MAG-1 | guests Table (UUID) |
+| **1.3.2.2** | Guest CRUD Service & REST Controller | 1.3 Couple Coordination | 1.3.2 Guest List | Amanda | 4h | MAG-9 | GuestController.java |
+| **1.3.2.3** | Guest RSVP Status PATCH Endpoint | 1.3 Couple Coordination | 1.3.2 Guest List | Maheen | 3h | MAG-31 | PATCH /rsvp API |
+| **1.3.2.4** | Guest List UI with Bride/Groom Family Filter | 1.3 Couple Coordination | 1.3.2 Guest List | Dileepa | 6h | MAG-24 | GuestList.jsx |
+| **1.3.3.1** | Dynamic Shareable RSVP URL Generator | 1.3 Couple Coordination | 1.3.3 Digital Invites | Maheen | 4h | MAG-11 | GET /share Endpoint |
+| **1.3.3.2** | Web Share API & Mobile WhatsApp Link Dispatch | 1.3 Couple Coordination | 1.3.3 Digital Invites | Maheen | 5h | MAG-11 | Share Trigger |
+| **1.3.3.3** | Public Invitee Digital RSVP Portal (/rsvp/:id) | 1.3 Couple Coordination | 1.3.3 Digital Invites | Dileepa | 6h | MAG-11 | Rsvp.jsx Public Page |
+| **1.3.4.1** | Real-Time Nekath & Poruwa Countdown Timer | 1.3 Couple Coordination | 1.3.4 Countdown & Dash | Dileepa | 5h | MAG-6 | CountdownTimer.jsx |
+| **1.3.4.2** | Couple Central Dashboard Hub UI | 1.3 Couple Coordination | 1.3.4 Countdown & Dash | Dileepa | 5h | MAG-6 | Dashboard.jsx |
+| **1.3.4.3** | Profile & Settings Management (PUT /users/me) | 1.3 Couple Coordination | 1.3.4 Countdown & Dash | Dileepa | 4h | MAG-23 | Profile.jsx |
+| **1.4.1.1** | React CartContext & LocalStorage Persistence | 1.4 Commerce & Bookings | 1.4.1 Selections Cart | Dileepa | 5h | MAG-26 | CartContext.jsx |
+| **1.4.1.2** | Slide-Over Cart Drawer Component | 1.4 Commerce & Bookings | 1.4.1 Selections Cart | Dileepa | 5h | MAG-26 | CartDrawer.jsx |
+| **1.4.1.3** | Dynamic Starting Price Subtotal Recomputation | 1.4 Commerce & Bookings | 1.4.1 Selections Cart | Dileepa | 3h | MAG-26 | Subtotal Calculation |
+| **1.4.2.1** | Bookings Relational Table & FK Links | 1.4 Commerce & Bookings | 1.4.2 Checkout Engine | Sammani | 3h | MAG-8 | bookings Table |
+| **1.4.2.2** | Cart Checkout Engine (POST /bookings/checkout) | 1.4 Commerce & Bookings | 1.4.2 Checkout Engine | Amanda | 5h | MAG-30 | BookingController.java |
+| **1.4.2.3** | Vendor Lead Retrieval (GET /bookings/vendor/:id)| 1.4 Commerce & Bookings | 1.4.2 Checkout Engine | Amanda | 4h | MAG-30 | Vendor Leads Endpoint |
+| **1.5.1.1** | Role-Gated Admin Router (AdminRoute.jsx) | 1.5 Governance & Admin | 1.5.1 Admin Security | Dileepa | 4h | MAG-23 | AdminRoute.jsx |
+| **1.5.1.2** | Spring Security Admin Authority Checks (hasRole)| 1.5 Governance & Admin | 1.5.1 Admin Security | Amanda | 4h | MAG-19 | SecurityConfig.java |
+| **1.5.2.1** | Admin Stats Service & Aggregate JPA Queries | 1.5 Governance & Admin | 1.5.2 KPI Dashboard | Amanda | 4h | MAG-19 | AdminServiceImpl.java |
+| **1.5.2.2** | Admin Dashboard Overview UI (/admin) | 1.5 Governance & Admin | 1.5.2 KPI Dashboard | Dileepa | 5h | MAG-20 | AdminDashboard.jsx |
+| **1.5.3.1** | Pending Vendor Moderation Queue UI | 1.5 Governance & Admin | 1.5.3 Listing Moderation| Dileepa | 5h | MAG-20 | VendorApprovals.jsx |
+| **1.5.3.2** | Vendor Approval & Rejection REST Endpoints | 1.5 Governance & Admin | 1.5.3 Listing Moderation| Amanda | 4h | MAG-19 | Approve/Reject APIs |
+| **1.5.3.3** | User Account Suspension Controls (/admin/users) | 1.5 Governance & Admin | 1.5.3 Listing Moderation| Amanda | 5h | MAG-19 | UserManagement.jsx |
+| **1.6.1.1** | SessionTokenAuthenticationFilter Implementation | 1.6 DevOps & QA | 1.6.1 Security Architecture| Amanda | 6h | MAG-27 | Auth Filter Class |
+| **1.6.1.2** | BCrypt Password Hashing & Case-Insensitive Auth | 1.6 DevOps & QA | 1.6.1 Security Architecture| Amanda | 4h | MAG-32 | BCrypt Configuration |
+| **1.6.1.3** | IDOR Tenant Ownership Protection on Endpoints | 1.6 DevOps & QA | 1.6.1 Security Architecture| Amanda | 6h | MAG-27 | Service Security Gates |
+| **1.6.1.4** | Jakarta Bean Validation & Error Status Mapping | 1.6 DevOps & QA | 1.6.1 Security Architecture| Amanda | 4h | MAG-19 | GlobalExceptionHandler |
+| **1.6.2.1** | GitHub Monorepo Architecture & Branch Rules | 1.6 DevOps & QA | 1.6.2 Cloud DevOps | Maheen | 4h | MAG-4 | Monorepo Setup |
+| **1.6.2.2** | Render Containerized Backend Dockerfile Setup | 1.6 DevOps & QA | 1.6.2 Cloud DevOps | Maheen | 5h | MAG-16 | Dockerfile & Render |
+| **1.6.2.3** | InfinityFree Apache SPA (.htaccess) Deployment | 1.6 DevOps & QA | 1.6.2 Cloud DevOps | Maheen | 5h | MAG-15 | InfinityFree Host |
+| **1.6.2.4** | Netlify Global Edge CDN Mirror Pipeline | 1.6 DevOps & QA | 1.6.2 Cloud DevOps | Maheen | 4h | MAG-15 | Netlify CI/CD |
+| **1.6.2.5** | Self-Healing Startup Seeder (TestAccountInit) | 1.6 DevOps & QA | 1.6.2 Cloud DevOps | Amanda | 4h | MAG-33 | TestAccountInitializer|
+| **1.6.3.1** | Automated JUnit 5 Backend Test Suite (142 Tests) | 1.6 DevOps & QA | 1.6.3 Quality Assurance | Ruchira | 12h | MAG-10 | 142 JUnit Tests |
+| **1.6.3.2** | Automated Vitest Frontend Test Suite (13 Tests) | 1.6 DevOps & QA | 1.6.3 Quality Assurance | Dileepa | 6h | MAG-10 | 13 Vitest Tests |
+| **1.6.3.3** | 55-Scenario Comprehensive System Test Plan | 1.6 DevOps & QA | 1.6.3 Quality Assurance | Ruchira | 10h | MAG-17 | System Test Cases |
+| **1.6.3.4** | Playwright E2E Multi-Viewport Automation Suite | 1.6 DevOps & QA | 1.6.3 Quality Assurance | Ruchira | 8h | MAG-34 | Playwright Specs |
+| **1.6.3.5** | Formal Defect Register & Resolution Verification | 1.6 DevOps & QA | 1.6.3 Quality Assurance | Ruchira | 6h | MAG-17 | Defect Register Log |
+| **TOTAL** | **Comprehensive Full-Stack Engineering Effort** | **6 Subsystems** | **19 Deliverables** | **5 Members** | **600h** | **31 Tickets** | **Production Platform** |
+
+---
+
+### 4.4 WBS Workload Roll-up & Allocation Analysis
+
+#### 4.4.1 Workload Distribution by Level-2 Subsystem
+
+| Level 2 Subsystem Code & Title | Deliverables (L3) | Work Packages (L4) | Total Effort (Hours) | Percentage (%) |
+|---|:---:|:---:|:---:|:---:|
+| **1.1 Project Management & Requirements Engineering** | 3 | 9 | 40 Hours | 6.7% |
+| **1.2 Vendor Directory & Commercial Marketplace** | 5 | 18 | 84 Hours | 14.0% |
+| **1.3 Couple Planning & Wedding Coordination** | 4 | 15 | 68 Hours | 11.3% |
+| **1.4 Multi-Vendor Commerce & Booking Checkout** | 2 | 6 | 25 Hours | 4.2% |
+| **1.5 Platform Governance & Administrative Subsystem** | 3 | 7 | 31 Hours | 5.2% |
+| **1.6 Technical Infrastructure, Quality Assurance & DevOps** | 3 | 14 | 352 Hours | 58.7% |
+| **TOTAL PROJECT EFFORT** | **19** | **68** | **600 Hours** | **100.0%** |
+
+#### 4.4.2 Workload Distribution by Team Member (Holistic Model)
+
+| Team Member & Student ID | Assigned SDLC Role | Jira Tickets | Allocated WBS Hours | Effort Share (%) | Verified Budget Allocation |
+|---|---|:---:|:---:|:---:|---|
+| **M.S. Ranasinghe (Maheen)** (`CIT-24-02-0189`) | Project Manager / DevOps & Full-Stack | 9 Tickets | 126 Hours | **21.0%** | LKR 151,200 (126h @ LKR 1,200/h) |
+| **S.A.A. Lakmal (Amanda)** (`CIT-24-02-0007`) | Backend Lead Developer (Spring Boot) | 7 Tickets | 126 Hours | **21.0%** | LKR 151,200 (126h @ LKR 1,200/h) |
+| **A.G.D.N. Ranathunga (Dileepa)** (`CIT-24-02-0046`)| UI/UX Lead & Frontend Developer (React)| 8 Tickets | 120 Hours | **20.0%** | LKR 144,000 (120h @ LKR 1,200/h) |
+| **K.A.R.D. Sammani (Ruhini)** (`CIT-24-02-0058`) | Database Engineer & Business Analyst | 4 Tickets | 114 Hours | **19.0%** | LKR 136,800 (114h @ LKR 1,200/h) |
+| **V.G. Ruchira Nimnaka** (`CIT-24-02-0029`) | Quality Assurance Lead & Test Engineer | 3 Tickets | 114 Hours | **19.0%** | LKR 136,800 (114h @ LKR 1,200/h) |
+| **TOTAL TEAM ALLOCATION** | **5 Specialized Domain Owners** | **31 Tickets** | **600 Hours** | **100.0%** | **LKR 720,000 Total Human Resource Effort** |
+
+---
+
+### 4.5 Jira Story Traceability Matrix (`MAG-1` to `MAG-34`)
+
+| Jira ID | User Story Title | Owning Domain | Target Sprint | Primary WBS Mapping | Status |
+|---|---|---|---|---|:---:|
+| **MAG-1** | Design MySQL ER Diagram & Schema Normalization | Database | Sprint 1 | 1.1.3.1, 1.2.1.1, 1.3.1.1 | ✅ **Done** |
+| **MAG-2** | Map REST API Routes & Specifications | Backend | Sprint 1 | 1.2.2.1, 1.3.1.2 | ✅ **Done** |
+| **MAG-3** | Design UI Wireframes & Design System in Figma | Frontend | Sprint 1 | 1.2.3.1 | ✅ **Done** |
+| **MAG-4** | Set up GitHub Monorepo Architecture | Management | Sprint 1 | 1.1.1.1, 1.6.2.1 | ✅ **Done** |
+| **MAG-5** | Draft Project Management Plan & Sprint Schedule | Management | Sprint 2 | 1.1.2.1, 1.1.2.2, 1.1.2.3 | ✅ **Done** |
+| **MAG-6** | Dashboard & Countdown Timer UI | Frontend | Sprint 2 | 1.3.4.1, 1.3.4.2 | ✅ **Done** |
+| **MAG-7** | Categorized Vendor Directory UI | Frontend | Sprint 2 | 1.2.3.2, 1.2.3.3, 1.2.3.4 | ✅ **Done** |
+| **MAG-8** | Create MySQL Database Tables & Foreign Keys | Database | Sprint 2 | 1.2.1.2, 1.4.2.1 | ✅ **Done** |
+| **MAG-9** | Budget and Guest List REST APIs | Backend | Sprint 2 | 1.3.1.2, 1.3.2.2 | ✅ **Done** |
+| **MAG-10** | Automated JUnit Tests for Backend Services | QA | Sprint 3 | 1.6.3.1 | ✅ **Done** |
+| **MAG-11** | Share Digital Invitations via Web Share API | Backend/FE | Sprint 2 | 1.3.3.1, 1.3.3.2, 1.3.3.3 | ✅ **Done** |
+| **MAG-15** | Deploy React Frontend to InfinityFree & Netlify | DevOps | Sprint 3 | 1.6.2.3, 1.6.2.4 | ✅ **Done** |
+| **MAG-16** | Deploy Backend to Render + Aiven MySQL | DevOps | Sprint 3 | 1.6.2.2 | ✅ **Done** |
+| **MAG-17** | System Testing & Defect Register Management | QA | Sprint 3 | 1.6.3.3, 1.6.3.5 | ✅ **Done** |
+| **MAG-18** | Final Documentation Compilation & Presentation | Management | Sprint 3 | 1.1.2.1, 1.6.3.5 | ✅ **Done** |
+| **MAG-19** | Spring Security & Session Token Filter | Backend | Sprint 3 | 1.5.1.2, 1.5.2.1, 1.5.3.2 | ✅ **Done** |
+| **MAG-20** | Frontend-Backend API Integration & Admin UI | Frontend | Sprint 3 | 1.2.4.1, 1.2.5.1, 1.5.2.2 | ✅ **Done** |
+| **MAG-21** | Production Database Schema Verification | Database | Sprint 3 | 1.2.1.2, 1.6.2.5 | ✅ **Done** |
+| **MAG-22** | Budget Tracker Page & Recharts Visualizations | Frontend | Sprint 3 | 1.3.1.4, 1.3.1.5 | ✅ **Done** |
+| **MAG-23** | Authentication UI & Protected Routing | Frontend | Sprint 3 | 1.3.4.3, 1.5.1.1 | ✅ **Done** |
+| **MAG-24** | Shared UI Components & Guest List CRUD | Frontend | Sprint 3 | 1.3.2.4 | ✅ **Done** |
+| **MAG-25** | Vendor Data Model Enrichment & Ratings | Backend | Sprint 3 | 1.2.2.3 | ✅ **Done** |
+| **MAG-26** | Premium UI Redesign & Cart Drawer Component | Frontend | Sprint 3 | 1.4.1.1, 1.4.1.2, 1.4.1.3 | ✅ **Done** |
+| **MAG-27** | Bearer Token Filter & IDOR Protection | Backend | Sprint 3 | 1.6.1.1, 1.6.1.3 | ✅ **Done** |
+| **MAG-28** | Budget Summary Aggregation Endpoint | Backend | Backlog | 1.3.1.3 | ✅ **Done** |
+| **MAG-29** | Vendor Multi-District Filter & Search API | Backend | Backlog | 1.2.2.2 | ✅ **Done** |
+| **MAG-30** | Multi-Vendor Cart Booking Checkout Engine | Backend | Backlog | 1.4.2.2, 1.4.2.3 | ✅ **Done** |
+| **MAG-31** | Guest RSVP Status PATCH Endpoint | Backend | Backlog | 1.3.2.3 | ✅ **Done** |
+| **MAG-32** | BCrypt Password Cryptography & Case Insensitivity | Backend | Sprint 3 | 1.6.1.2 | ✅ **Done** |
+| **MAG-33** | Production Seed Data with Real Vendor Contacts | Database | Backlog | 1.2.1.3, 1.6.2.5 | ✅ **Done** |
+| **MAG-34** | E2E Share Invitation Test Suite Execution | QA | Sprint 3 | 1.6.3.4 | ✅ **Done** |
 
 ## 5. Communication & Tracking
 
