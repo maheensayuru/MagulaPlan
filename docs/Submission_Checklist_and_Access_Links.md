@@ -7,9 +7,9 @@ In accordance with the **CCS2313 Project Management — Additional Submission Gu
 ## 1. Required Links & Access Configuration
 
 ### 1.1 Figma File
-- **Link:** `[Insert your public Figma View Link here]`
-- **Access Level:** Set to **"Anyone with the link can view"** (No invite or account needed).
-
+- **Link:** `https://www.figma.com/design/Mqc0NW1ampHiNFoExxsvo1/MagulaPlan-%E2%80%94-Wedding-Planning-Platform?node-id=0-1&t=6fczkcZM1hWyjF52-1`
+- **Access Level:** Configured as **"Anyone with the link can view"** (No invite or account needed).
+- **Repository Backups:** Also available in repository at `docs/MagulaPlan Wireframes.pdf` and `docs/MagulaPlan Wireframes(Mobile).pdf`.
 ---
 
 ### 1.2 GitHub Repository
