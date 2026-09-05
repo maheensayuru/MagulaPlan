@@ -35,7 +35,8 @@ public class VendorServiceImpl implements VendorService {
     private final VendorCategoryRepository vendorCategoryRepository;
     private final UserRepository userRepository;
     private final PasswordEncoder passwordEncoder;
-
+    @Autowired(required = false)
+    private com.zerostate.magulaplan.repo.BookingRepository bookingRepository;
     @Autowired
     public VendorServiceImpl(VendorRepository vendorRepository,
                              VendorCategoryRepository vendorCategoryRepository,
@@ -201,6 +202,12 @@ public class VendorServiceImpl implements VendorService {
             if (tier.equals("PRO") || tier.equals("FEATURED")) existingVendor.setVerified(true);
         }
 
+        if ("PENDING".equalsIgnoreCase(requestDto.getStatus())) {
+            existingVendor.setStatus("PENDING");
+        } else if (isAdmin && requestDto.getStatus() != null && !requestDto.getStatus().isBlank()) {
+            existingVendor.setStatus(requestDto.getStatus());
+        }
+
         Vendor updatedVendor = vendorRepository.save(existingVendor);
         return mapToResponseDto(updatedVendor);
     }
@@ -214,10 +221,15 @@ public class VendorServiceImpl implements VendorService {
     public void deleteVendor(Long vendorId, Long authenticatedUserId, boolean isAdmin) {
         Vendor existingVendor = vendorRepository.findById(vendorId)
                 .orElseThrow(() -> new ResourceNotFoundException("Vendor not found with id: " + vendorId));
-
         if (!isAdmin) {
             if (existingVendor.getUser() == null || !existingVendor.getUser().getUserId().equals(authenticatedUserId)) {
                 throw new AccessDeniedException("You are not authorized to delete this vendor listing");
+            }
+        }
+        if (bookingRepository != null) {
+            List<com.zerostate.magulaplan.entity.Booking> bookings = bookingRepository.findByVendor_VendorId(vendorId);
+            if (bookings != null && !bookings.isEmpty()) {
+                bookingRepository.deleteAll(bookings);
             }
         }
         vendorRepository.delete(existingVendor);

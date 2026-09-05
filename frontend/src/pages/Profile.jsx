@@ -43,7 +43,7 @@ export default function Profile() {
   }, [])
 
   const toggleCheck = (item) => setChecked((c) => ({ ...c, [item]: !c[item] }))
-
+  const displayName = profile?.fullName || profile?.coupleNames || profile?.name || (profile?.email ? profile.email.split('@')[0] : 'Couple')
   if (loading) return <Loading />
 
   return (
@@ -54,8 +54,8 @@ export default function Profile() {
             <FaUser size={24} />
           </div>
           <div className="flex-1">
-            <h1 className="text-2xl font-display font-semibold text-charcoal">
-              {profile?.coupleNames || profile?.name || 'Your wedding profile'}
+            <h1 className="text-2xl sm:text-3xl font-display font-semibold text-charcoal">
+              Your wedding profile, {displayName}!
             </h1>
             {profile?.weddingDate ? (
               <p className="flex items-center gap-2 text-charcoal/70 text-sm mt-2">

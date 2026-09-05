@@ -4,12 +4,14 @@ import { motion } from 'framer-motion'
 import {
   FaStore, FaCheckCircle, FaClock, FaTimesCircle, FaCrown,
   FaWhatsapp, FaPhone, FaEnvelope, FaEdit, FaSave, FaCreditCard,
-  FaArrowLeft, FaShoppingBag, FaShieldAlt, FaExternalLinkAlt, FaSignOutAlt
+  FaArrowLeft, FaShoppingBag, FaShieldAlt, FaExternalLinkAlt, FaSignOutAlt,
+  FaTrash, FaRedoAlt
 } from 'react-icons/fa'
 import Logo from '../components/layout/Logo'
 import Badge from '../components/ui/Badge'
 import StatCard from '../components/ui/StatCard'
 import Modal from '../components/ui/Modal'
+import ConfirmDialog from '../components/ui/ConfirmDialog'
 import FormField from '../components/ui/FormField'
 import { SkeletonCard } from '../components/ui/Skeleton'
 import EmptyState from '../components/ui/EmptyState'
@@ -45,12 +47,17 @@ export default function VendorDashboard() {
   const [selectedUpgrade, setSelectedUpgrade] = useState('PRO')
   const [paying, setPaying] = useState(false)
 
+  // Re-apply and Delete states
+  const [reapplying, setReapplying] = useState(false)
+  const [deleteConfirm, setDeleteConfirm] = useState(false)
+  const [deleting, setDeleting] = useState(false)
 
   const handleLogout = () => {
     logout()
     showToast('Logged out successfully', 'success')
     navigate('/')
   }
+
   useEffect(() => {
     if (!isAuthenticated) {
       navigate('/login')
@@ -122,6 +129,46 @@ export default function VendorDashboard() {
       showToast(err.message || 'Failed to update listing', 'error')
     } finally {
       setSaving(false)
+    }
+  }
+
+  const handleReapply = async () => {
+    if (!vendor?.vendorId) return
+    setReapplying(true)
+    try {
+      const updated = await vendorsApi.update(vendor.vendorId, {
+        categoryId: vendor.categoryId,
+        businessName: vendor.businessName,
+        districtLocation: vendor.districtLocation,
+        contactPhone: vendor.contactPhone,
+        contactEmail: vendor.contactEmail,
+        startingPrice: vendor.startingPrice,
+        description: vendor.description,
+        imageUrl: vendor.imageUrl,
+        subscriptionTier: vendor.subscriptionTier,
+        status: 'PENDING',
+      })
+      setVendor(updated)
+      showToast('Re-application submitted! Your listing is now pending admin review.', 'success')
+    } catch (err) {
+      showToast(err.message || 'Failed to re-apply for review', 'error')
+    } finally {
+      setReapplying(false)
+    }
+  }
+
+  const handleDeleteListing = async () => {
+    if (!vendor?.vendorId) return
+    setDeleting(true)
+    try {
+      await vendorsApi.remove(vendor.vendorId)
+      setVendor(null)
+      setDeleteConfirm(false)
+      showToast('Business listing deleted successfully.', 'success')
+    } catch (err) {
+      showToast(err.message || 'Failed to delete listing', 'error')
+    } finally {
+      setDeleting(false)
     }
   }
 
@@ -306,6 +353,13 @@ export default function VendorDashboard() {
               >
                 <FaCrown size={12} /> {tier === 'FREE' ? 'Upgrade Plan' : 'Manage Tier'}
               </button>
+              <button
+                onClick={() => setDeleteConfirm(true)}
+                className="btn-outline text-xs py-2 px-3 text-red-600 border-red-200 hover:bg-red-50 hover:border-red-300 transition-colors"
+                title="Delete Business Listing"
+              >
+                <FaTrash size={11} /> Delete
+              </button>
             </div>
           </div>
 
@@ -335,9 +389,39 @@ export default function VendorDashboard() {
 
       {/* Main Content Area */}
       <div className="container-app py-8 space-y-6">
+        {/* Status Callout Banner if Rejected */}
+        {isRejected && (
+          <div className="card p-5 bg-red-50 border-red-200 text-red-900 flex flex-col sm:flex-row sm:items-center justify-between gap-4 shadow-xs">
+            <div className="flex items-start gap-3">
+              <FaTimesCircle className="text-red-600 shrink-0 mt-0.5" size={22} />
+              <div>
+                <p className="font-semibold text-sm">Your business listing was not approved by MagulaPlan Administrators</p>
+                <p className="text-xs text-red-800/80 mt-0.5">
+                  You can update your business profile and re-apply for review, or permanently delete this listing from the platform.
+                </p>
+              </div>
+            </div>
+            <div className="flex items-center gap-2 shrink-0">
+              <button
+                onClick={handleReapply}
+                disabled={reapplying}
+                className="btn-primary text-xs py-2 px-4 shadow-xs flex items-center gap-1.5"
+              >
+                <FaRedoAlt size={11} /> {reapplying ? 'Re-applying...' : 'Re-apply for Review'}
+              </button>
+              <button
+                onClick={() => setDeleteConfirm(true)}
+                className="btn-outline text-xs py-2 px-3 text-red-600 border-red-200 hover:bg-red-100 hover:border-red-300 flex items-center gap-1.5 bg-white"
+              >
+                <FaTrash size={11} /> Delete Listing
+              </button>
+            </div>
+          </div>
+        )}
+
         {/* Status Callout Banner if Pending */}
         {isPending && (
-          <div className="card p-5 bg-amber-50 border-amber-200 text-amber-900 flex items-start gap-3">
+          <div className="card p-5 bg-amber-50 border-amber-200 text-amber-900 flex items-start gap-3 shadow-xs">
             <FaClock className="text-amber-600 shrink-0 mt-0.5" size={18} />
             <div>
               <p className="font-semibold text-sm">Your business profile is under review by MagulaPlan Administrators</p>
@@ -355,7 +439,7 @@ export default function VendorDashboard() {
               <StatCard
                 icon={FaStore}
                 label="Directory Status"
-                value={isApproved ? 'Active' : isPending ? 'Pending' : 'Inactive'}
+                value={isApproved ? 'Active' : isPending ? 'Pending' : 'Rejected'}
                 color="sage"
               />
               <StatCard
@@ -380,7 +464,15 @@ export default function VendorDashboard() {
 
             <div className="grid lg:grid-cols-3 gap-6">
               <div className="lg:col-span-2 card p-6 space-y-4">
-                <h2 className="text-lg font-display font-semibold text-charcoal">Business Bio & Service Description</h2>
+                <div className="flex items-center justify-between">
+                  <h2 className="text-lg font-display font-semibold text-charcoal">Business Bio & Service Description</h2>
+                  <button
+                    onClick={() => setActiveTab('edit')}
+                    className="btn-ghost text-xs text-maroon-700 flex items-center gap-1"
+                  >
+                    <FaEdit size={11} /> Edit Info
+                  </button>
+                </div>
                 <p className="text-sm text-charcoal/70 leading-relaxed whitespace-pre-line">
                   {vendor.description || 'No description provided yet. Go to Edit Business Profile to add details for engaged couples.'}
                 </p>
@@ -587,21 +679,31 @@ export default function VendorDashboard() {
                 />
               </FormField>
 
-              <div className="flex justify-end gap-3 pt-4 border-t border-charcoal/8">
+              <div className="flex flex-col sm:flex-row items-center justify-between gap-4 pt-4 border-t border-charcoal/8">
                 <button
                   type="button"
-                  onClick={() => setActiveTab('overview')}
-                  className="btn-outline text-sm"
+                  onClick={() => setDeleteConfirm(true)}
+                  className="btn-outline text-xs py-2 px-3 text-red-600 border-red-200 hover:bg-red-50 flex items-center gap-1.5"
                 >
-                  Cancel
+                  <FaTrash size={11} /> Delete Business Listing
                 </button>
-                <button
-                  type="submit"
-                  disabled={saving}
-                  className="btn-primary text-sm shadow-xs"
-                >
-                  <FaSave size={13} /> {saving ? 'Saving changes...' : 'Save Profile Changes'}
-                </button>
+
+                <div className="flex items-center gap-3">
+                  <button
+                    type="button"
+                    onClick={() => setActiveTab('overview')}
+                    className="btn-outline text-sm"
+                  >
+                    Cancel
+                  </button>
+                  <button
+                    type="submit"
+                    disabled={saving}
+                    className="btn-primary text-sm shadow-xs"
+                  >
+                    <FaSave size={13} /> {saving ? 'Saving changes...' : 'Save Profile Changes'}
+                  </button>
+                </div>
               </div>
             </form>
           </div>
@@ -787,6 +889,17 @@ export default function VendorDashboard() {
           </div>
         </div>
       </Modal>
+
+      {/* Delete Listing Confirmation */}
+      <ConfirmDialog
+        open={deleteConfirm}
+        onClose={() => setDeleteConfirm(false)}
+        onConfirm={handleDeleteListing}
+        title="Delete Business Listing"
+        message={`Permanently delete "${vendor.businessName}"? This action cannot be undone and will remove your business from MagulaPlan.`}
+        confirmLabel="Delete Listing"
+        loading={deleting}
+      />
     </div>
   )
 }

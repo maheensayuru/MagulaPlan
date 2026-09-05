@@ -1,7 +1,7 @@
 import { useState } from 'react'
 import { Link, useNavigate } from 'react-router-dom'
 import { motion } from 'framer-motion'
-import { FaEnvelope, FaLock, FaEye, FaEyeSlash, FaArrowRight } from 'react-icons/fa'
+import { FaEnvelope, FaLock, FaEye, FaEyeSlash, FaArrowRight, FaTimes } from 'react-icons/fa'
 import Logo from '../components/layout/Logo'
 import { LotusMark, SectionDivider, EditorialEyebrow } from '../components/ui/Ornament'
 import { useToast } from '../context/ToastContext'
@@ -33,7 +33,10 @@ export default function Login() {
         navigate('/dashboard')
       }
     } catch (err) {
-      showToast(err.message || 'Login failed', 'error')
+      const msg = (err.message && !err.message.includes('401') && !err.message.includes('failed'))
+        ? err.message
+        : 'Invalid email or password. Please check your credentials and try again.'
+      showToast(msg, 'error')
     } finally {
       setLoading(false)
     }
@@ -68,7 +71,15 @@ export default function Login() {
 
       {/* ─── FORM PANEL ─── */}
       <div className="relative flex items-center justify-center p-6 sm:p-12 overflow-hidden">
-        {/* soft decorative wash */}
+        {/* Close / Back to Home in the corner */}
+        <Link
+          to="/"
+          aria-label="Back to home"
+          className="absolute top-6 right-6 z-20 h-10 w-10 rounded-full bg-white/80 hover:bg-white border border-charcoal/10 flex items-center justify-center text-charcoal/60 hover:text-maroon-700 shadow-xs transition-all"
+        >
+          <FaTimes size={15} />
+        </Link>
+
         <div className="absolute -top-24 -right-24 h-72 w-72 rounded-full bg-blush-100/50 blur-3xl pointer-events-none" />
         <div className="absolute -bottom-32 -left-20 h-72 w-72 rounded-full bg-sage-100/40 blur-3xl pointer-events-none" />
 

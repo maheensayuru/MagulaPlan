@@ -1,5 +1,5 @@
 import { useState } from 'react'
-import { FaCheck, FaTimes, FaClipboardCheck, FaMapMarkerAlt } from 'react-icons/fa'
+import { FaCheck, FaTimes, FaClipboardCheck, FaMapMarkerAlt, FaTrash } from 'react-icons/fa'
 import EmptyState from '../../components/ui/EmptyState'
 import { SkeletonCard } from '../../components/ui/Skeleton'
 import ConfirmDialog from '../../components/ui/ConfirmDialog'
@@ -16,6 +16,7 @@ export default function VendorApprovals() {
     { initialData: [] },
   )
   const [rejecting, setRejecting] = useState(null)
+  const [deletingVendor, setDeletingVendor] = useState(null)
   const [busyId, setBusyId] = useState(null)
   const { showToast } = useToast()
 
@@ -45,6 +46,22 @@ export default function VendorApprovals() {
       setRejecting(null)
     } catch (err) {
       showToast(err.message || 'Could not reject yet: admin service is not connected', 'error')
+    } finally {
+      setBusyId(null)
+    }
+  }
+
+  const handleDelete = async () => {
+    if (!deletingVendor) return
+    const id = deletingVendor.vendorId ?? deletingVendor.id
+    setBusyId(id)
+    try {
+      await adminApi.deleteVendor(id)
+      showToast(`${deletingVendor.businessName} deleted successfully`, 'success')
+      setVendors((list) => list.filter((v) => (v.vendorId ?? v.id) !== id))
+      setDeletingVendor(null)
+    } catch (err) {
+      showToast(err.message || 'Could not delete vendor', 'error')
     } finally {
       setBusyId(null)
     }
@@ -100,6 +117,14 @@ export default function VendorApprovals() {
                   >
                     <FaTimes size={11} /> Reject
                   </button>
+                  <button
+                    onClick={() => setDeletingVendor(vendor)}
+                    disabled={busyId === id}
+                    className="btn-outline text-xs px-3 py-2.5 text-red-600 hover:bg-red-50 hover:border-red-300"
+                    title="Delete Vendor"
+                  >
+                    <FaTrash size={11} /> Delete
+                  </button>
                 </div>
               </li>
             )
@@ -115,6 +140,16 @@ export default function VendorApprovals() {
         message={`Reject "${rejecting?.businessName}"? They won't be listed in the directory.`}
         confirmLabel="Reject"
         loading={busyId === (rejecting?.vendorId ?? rejecting?.id)}
+      />
+
+      <ConfirmDialog
+        open={!!deletingVendor}
+        onClose={() => setDeletingVendor(null)}
+        onConfirm={handleDelete}
+        title="Delete Vendor Listing"
+        message={`Permanently delete "${deletingVendor?.businessName}"? This will remove their business listing from MagulaPlan.`}
+        confirmLabel="Delete"
+        loading={busyId === (deletingVendor?.vendorId ?? deletingVendor?.id)}
       />
     </div>
   )
