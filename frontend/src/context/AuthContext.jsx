@@ -28,6 +28,12 @@ export function AuthProvider({ children }) {
   const logout = () => {
     clearToken()
     clearUserId()
+    try {
+      localStorage.removeItem('magulaplan_cart')
+    } catch {}
+    if (typeof window !== 'undefined') {
+      window.dispatchEvent(new Event('magulaplan:logout'))
+    }
     setTokenState(null)
     setUserIdState(null)
   }
