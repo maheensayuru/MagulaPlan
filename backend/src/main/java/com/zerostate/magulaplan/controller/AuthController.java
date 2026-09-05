@@ -12,6 +12,7 @@ import org.springframework.web.bind.annotation.*;
 
 import java.time.LocalDateTime;
 import java.util.Map;
+import java.util.Optional;
 import java.util.UUID;
 
 @RestController
@@ -66,32 +67,33 @@ public class AuthController {
 
         if (email == null || email.isBlank() || password == null) {
             return ResponseEntity.status(HttpStatus.UNAUTHORIZED)
-                    .body(new AuthResponseDto());
+                    .body(Map.of("message", "Invalid email or password. Please check your credentials and try again."));
         }
 
         String trimmedEmail = email.trim();
+        Optional<User> userOpt = userRepository.findByEmailIgnoreCase(trimmedEmail);
+        if (userOpt.isEmpty()) {
+            userOpt = userRepository.findByEmail(trimmedEmail);
+        }
 
-        return userRepository.findByEmailIgnoreCase(trimmedEmail)
-                .or(() -> userRepository.findByEmail(trimmedEmail))
-                .filter(u -> Boolean.TRUE.equals(u.getIsActive()))
-                .filter(u -> credentialsMatch(password, u))
-                .map(u -> {
-                    // Upgrade legacy plain-text passwords to BCrypt on successful login
-                    if (isLegacyPlainText(u)) {
-                        u.setPasswordHash(passwordEncoder.encode(password));
-                    }
-                    // Refresh token on each login
-                    String token = UUID.randomUUID().toString();
-                    u.setSessionToken(token);
-                    userRepository.save(u);
-                    return ResponseEntity.ok(
-                            new AuthResponseDto(token, u.getUserId(), u.getFullName(), u.getEmail(), u.getRole())
-                    );
-                })
-                .orElseGet(() -> ResponseEntity.status(HttpStatus.UNAUTHORIZED)
-                        .body(new AuthResponseDto()));
+        if (userOpt.isPresent()) {
+            User u = userOpt.get();
+            if (Boolean.TRUE.equals(u.getIsActive()) && credentialsMatch(password, u)) {
+                if (isLegacyPlainText(u)) {
+                    u.setPasswordHash(passwordEncoder.encode(password));
+                }
+                String token = UUID.randomUUID().toString();
+                u.setSessionToken(token);
+                userRepository.save(u);
+                return ResponseEntity.ok(
+                        new AuthResponseDto(token, u.getUserId(), u.getFullName(), u.getEmail(), u.getRole())
+                );
+            }
+        }
+
+        return ResponseEntity.status(HttpStatus.UNAUTHORIZED)
+                .body(Map.of("message", "Invalid email or password. Please check your credentials and try again."));
     }
-
     private boolean credentialsMatch(String rawPassword, User user) {
         if (isLegacyPlainText(user)) {
             return rawPassword.equals(user.getPasswordHash());

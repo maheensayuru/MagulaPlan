@@ -1,5 +1,5 @@
 import { useEffect, useState } from 'react'
-import { Outlet, NavLink, useNavigate } from 'react-router-dom'
+import { Outlet, NavLink, Link, useNavigate } from 'react-router-dom'
 import { AnimatePresence, motion } from 'framer-motion'
 import { FaBars, FaTimes, FaBell, FaSearch, FaTachometerAlt, FaStore, FaUsers, FaWallet, FaUser, FaCog, FaShoppingBag } from 'react-icons/fa'
 import Sidebar from './Sidebar'
@@ -7,6 +7,7 @@ import MobileBottomNav from './MobileBottomNav'
 import Logo from './Logo'
 import { notificationsApi } from '../../services/api'
 import { useCart } from '../../context/CartContext'
+import { useAuth } from '../../context/AuthContext'
 
 const items = [
   { to: '/dashboard', label: 'Dashboard', icon: FaTachometerAlt, end: true },
@@ -23,8 +24,8 @@ export default function DashboardLayout() {
   const [search, setSearch] = useState('')
   const [unreadCount, setUnreadCount] = useState(0)
   const navigate = useNavigate()
+  const { isAuthenticated } = useAuth()
   const { count: cartCount, setOpen: setCartOpen } = useCart()
-
   useEffect(() => {
     let cancelled = false
     notificationsApi
@@ -64,10 +65,16 @@ export default function DashboardLayout() {
                 </span>
               )}
             </button>
-            <NavLink to="/notifications" aria-label="Notifications" className="relative h-9 w-9 flex items-center justify-center text-charcoal/70 hover:text-maroon-700">
-              <FaBell size={18} />
-              {unreadCount > 0 && <span className="absolute 1 top-1.5 right-1.5 h-2 w-2 rounded-full bg-maroon-600" />}
-            </NavLink>
+            {isAuthenticated ? (
+              <NavLink to="/notifications" aria-label="Notifications" className="relative h-9 w-9 flex items-center justify-center text-charcoal/70 hover:text-maroon-700">
+                <FaBell size={18} />
+                {unreadCount > 0 && <span className="absolute 1 top-1.5 right-1.5 h-2 w-2 rounded-full bg-maroon-600" />}
+              </NavLink>
+            ) : (
+              <Link to="/login" className="text-xs font-semibold text-maroon-700 px-2 py-1">
+                Log in
+              </Link>
+            )}
           </div>
         </header>
 
@@ -90,20 +97,32 @@ export default function DashboardLayout() {
                 </span>
               )}
             </button>
-            <NavLink to="/notifications" aria-label="Notifications" className="relative text-charcoal/60 hover:text-maroon-700 transition-colors">
-              <FaBell size={18} />
-              {unreadCount > 0 && <span className="absolute -top-1 -right-1 h-2 w-2 rounded-full bg-maroon-600" />}
-            </NavLink>
-            <NavLink
-              to="/profile"
-              aria-label="Profile"
-              className="h-8 w-8 rounded-full bg-blush-100 flex items-center justify-center text-maroon-700 border border-blush-300 hover:border-maroon-500 transition-colors"
-            >
-              <FaUser size={13} />
-            </NavLink>
+            {isAuthenticated ? (
+              <>
+                <NavLink to="/notifications" aria-label="Notifications" className="relative text-charcoal/60 hover:text-maroon-700 transition-colors">
+                  <FaBell size={18} />
+                  {unreadCount > 0 && <span className="absolute -top-1 -right-1 h-2 w-2 rounded-full bg-maroon-600" />}
+                </NavLink>
+                <NavLink
+                  to="/profile"
+                  aria-label="Profile"
+                  className="h-8 w-8 rounded-full bg-blush-100 flex items-center justify-center text-maroon-700 border border-blush-300 hover:border-maroon-500 transition-colors"
+                >
+                  <FaUser size={13} />
+                </NavLink>
+              </>
+            ) : (
+              <div className="flex items-center gap-2">
+                <Link to="/login" className="btn-ghost text-xs py-1.5 px-3">
+                  Log in
+                </Link>
+                <Link to="/register" className="btn-primary text-xs py-1.5 px-3">
+                  Get started
+                </Link>
+              </div>
+            )}
           </div>
         </div>
-
         <main className="flex-1 p-4 sm:p-6 lg:p-8 pb-24 lg:pb-8">
           <Outlet />
         </main>

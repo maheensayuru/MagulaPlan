@@ -45,7 +45,7 @@ public class VendorRequestDto {
     private String paymentStatus;
     private String password;
     private Long userId;
-
+    private String status;
     // Retain legacy 12-arg constructor so existing unit tests compile and run unchanged
     public VendorRequestDto(Long categoryId, String businessName, String description,
                             String districtLocation, String contactPhone, String contactEmail,

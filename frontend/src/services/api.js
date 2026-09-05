@@ -146,6 +146,7 @@ export const vendorsApi = {
   me: () => apiFetch('/api/v1/vendors/me'),
   update: (id, payload) => apiFetch(`/api/v1/vendors/${id}`, { method: 'PUT', body: payload }),
   bookings: (vendorId) => apiFetch(`/api/v1/bookings/vendor/${vendorId}`),
+  remove: (id) => apiFetch(`/api/v1/vendors/${id}`, { method: 'DELETE' }),
 }
 // Vendor categories
 export const categoriesApi = {
@@ -193,4 +194,5 @@ export const adminApi = {
   users: () => apiFetch('/api/v1/admin/users'),
   suspendUser: (id) => apiFetch(`/api/v1/admin/users/${id}/suspend`, { method: 'PUT' }),
   reinstateUser: (id) => apiFetch(`/api/v1/admin/users/${id}/reinstate`, { method: 'PUT' }),
+  deleteVendor: (id) => apiFetch(`/api/v1/vendors/${id}`, { method: 'DELETE' }),
 }
