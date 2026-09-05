@@ -62,12 +62,21 @@ public class TestAccountInitializer {
     private User seedUser(UserRepository repo, PasswordEncoder encoder,
                           String email, String rawPassword, String name, String role) {
         return repo.findByEmailIgnoreCase(email).map(existing -> {
-            // Ensure password and role are correct in case of schema reset or plain-text legacy
-            if (!existing.getRole().equalsIgnoreCase(role)) {
+            boolean needsUpdate = false;
+            if (!role.equalsIgnoreCase(existing.getRole())) {
                 existing.setRole(role);
-                repo.save(existing);
+                needsUpdate = true;
             }
-            return existing;
+            if (!Boolean.TRUE.equals(existing.getIsActive())) {
+                existing.setIsActive(true);
+                needsUpdate = true;
+            }
+            if (existing.getPasswordHash() == null ||
+                (!encoder.matches(rawPassword, existing.getPasswordHash()) && !rawPassword.equals(existing.getPasswordHash()))) {
+                existing.setPasswordHash(encoder.encode(rawPassword));
+                needsUpdate = true;
+            }
+            return needsUpdate ? repo.save(existing) : existing;
         }).orElseGet(() -> {
             User user = User.builder()
                     .email(email)

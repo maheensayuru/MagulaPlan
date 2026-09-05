@@ -9,4 +9,5 @@ FROM eclipse-temurin:17-jre
 WORKDIR /app
 COPY --from=build /app/target/*.war app.war
 EXPOSE 8080
-ENTRYPOINT ["java", "-jar", "app.war"]
+ENV SPRING_PROFILES_ACTIVE=prod
+ENTRYPOINT ["java", "-Dspring.profiles.active=prod", "-jar", "app.war"]
