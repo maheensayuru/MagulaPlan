@@ -4,8 +4,9 @@ import { motion } from 'framer-motion'
 import {
   FaStore, FaCheckCircle, FaClock, FaTimesCircle, FaCrown,
   FaWhatsapp, FaPhone, FaEnvelope, FaEdit, FaSave, FaCreditCard,
-  FaArrowLeft, FaShoppingBag, FaShieldAlt, FaExternalLinkAlt
+  FaArrowLeft, FaShoppingBag, FaShieldAlt, FaExternalLinkAlt, FaSignOutAlt
 } from 'react-icons/fa'
+import Logo from '../components/layout/Logo'
 import Badge from '../components/ui/Badge'
 import StatCard from '../components/ui/StatCard'
 import Modal from '../components/ui/Modal'
@@ -44,6 +45,12 @@ export default function VendorDashboard() {
   const [selectedUpgrade, setSelectedUpgrade] = useState('PRO')
   const [paying, setPaying] = useState(false)
 
+
+  const handleLogout = () => {
+    logout()
+    showToast('Logged out successfully', 'success')
+    navigate('/')
+  }
   useEffect(() => {
     if (!isAuthenticated) {
       navigate('/login')
@@ -156,20 +163,42 @@ export default function VendorDashboard() {
 
   if (!vendor) {
     return (
-      <div className="container-app py-16 text-center">
-        <div className="card max-w-md mx-auto p-8 border-blush-200">
-          <FaStore className="mx-auto text-maroon-600 mb-4" size={48} />
-          <h2 className="text-xl font-display font-semibold text-charcoal mb-2">No Vendor Business Found</h2>
-          <p className="text-sm text-charcoal/60 mb-6">
-            You are logged in, but there is no registered wedding business linked to this account yet.
-          </p>
-          <div className="flex flex-col gap-3">
-            <Link to="/vendors/new" className="btn-primary">
-              Register Your Business
-            </Link>
-            <Link to="/dashboard" className="btn-outline">
-              Go to Couple Dashboard
-            </Link>
+      <div className="min-h-screen bg-ivory-50 flex flex-col">
+        <header className="bg-white border-b border-charcoal/10 h-16 flex items-center justify-between px-4 sm:px-8">
+          <div className="flex items-center gap-3">
+            <Logo />
+            <span className="hidden sm:inline-block text-[11px] uppercase font-bold tracking-widest px-2.5 py-0.5 rounded-md bg-blush-100 text-maroon-800 border border-blush-200">
+              Vendor Portal
+            </span>
+          </div>
+          <button
+            onClick={handleLogout}
+            className="btn-outline text-xs py-1.5 px-3 flex items-center gap-1.5 text-red-600 border-red-200 hover:bg-red-50"
+          >
+            <FaSignOutAlt size={12} /> Log out
+          </button>
+        </header>
+        <div className="flex-1 flex items-center justify-center p-4">
+          <div className="card max-w-md w-full p-8 border-blush-200 text-center">
+            <FaStore className="mx-auto text-maroon-600 mb-4" size={48} />
+            <h2 className="text-xl font-display font-semibold text-charcoal mb-2">No Vendor Business Found</h2>
+            <p className="text-sm text-charcoal/60 mb-6">
+              You are logged in, but there is no registered wedding business linked to this account yet.
+            </p>
+            <div className="flex flex-col gap-3">
+              <Link to="/vendors/new" className="btn-primary">
+                Register Your Business
+              </Link>
+              <Link to="/dashboard" className="btn-outline">
+                Go to Couple Dashboard
+              </Link>
+              <button
+                onClick={handleLogout}
+                className="btn-ghost text-xs text-red-600 hover:bg-red-50 mt-2"
+              >
+                Log out
+              </button>
+            </div>
           </div>
         </div>
       </div>
@@ -183,6 +212,43 @@ export default function VendorDashboard() {
 
   return (
     <div className="min-h-screen bg-ivory-50 pb-16">
+      {/* Top Navbar */}
+      <header className="bg-white border-b border-charcoal/10 sticky top-0 z-40 shadow-xs">
+        <div className="container-app h-16 flex items-center justify-between">
+          <div className="flex items-center gap-4">
+            <Logo />
+            <span className="hidden sm:inline-block text-[11px] uppercase font-bold tracking-widest px-2.5 py-1 rounded-md bg-blush-100 text-maroon-800 border border-blush-200">
+              Vendor Portal
+            </span>
+          </div>
+
+          <div className="flex items-center gap-2 sm:gap-3">
+            <Link
+              to="/"
+              className="btn-ghost text-xs flex items-center gap-1.5 text-charcoal/70 hover:text-maroon-700 py-2 px-3"
+            >
+              <FaStore size={12} />
+              <span className="hidden sm:inline">Explore Website</span>
+            </Link>
+            
+            <Link
+              to="/vendors"
+              className="btn-ghost text-xs flex items-center gap-1.5 text-charcoal/70 hover:text-maroon-700 py-2 px-3"
+            >
+              <span className="hidden sm:inline">Public Directory</span>
+            </Link>
+
+            <button
+              onClick={handleLogout}
+              className="btn-outline text-xs py-1.5 px-3 flex items-center gap-1.5 text-red-600 border-red-200 hover:bg-red-50 hover:border-red-300 transition-colors"
+            >
+              <FaSignOutAlt size={12} />
+              <span>Log out</span>
+            </button>
+          </div>
+        </div>
+      </header>
+
       {/* Header Banner */}
       <div className="bg-white border-b border-charcoal/10 shadow-xs">
         <div className="container-app py-6">

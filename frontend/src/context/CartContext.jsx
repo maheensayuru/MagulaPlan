@@ -21,6 +21,19 @@ export function CartProvider({ children }) {
     localStorage.setItem(STORAGE_KEY, JSON.stringify(items))
   }, [items])
 
+  useEffect(() => {
+    const onLogout = () => {
+      setItems([])
+      try {
+        localStorage.removeItem(STORAGE_KEY)
+      } catch {}
+    }
+    if (typeof window !== 'undefined') {
+      window.addEventListener('magulaplan:logout', onLogout)
+      return () => window.removeEventListener('magulaplan:logout', onLogout)
+    }
+  }, [])
+
   const addItem = (vendor) => {
     const id = vendor.vendorId ?? vendor.id
     setItems((list) => {
